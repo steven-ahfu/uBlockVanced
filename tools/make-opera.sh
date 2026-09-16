@@ -2,13 +2,14 @@
 #
 # This script assumes a linux environment
 
-set -e
+set -euo pipefail
 
 echo "*** uBlock0.opera: Creating web store package"
 
-DES=dist/build/uBlock0.opera
-rm -rf $DES
-mkdir -p $DES
+BLDIR="dist/build"
+DES="$BLDIR/uBlock0.opera"
+rm -rf "$DES"
+mkdir -p "$DES"
 
 echo "*** uBlock0.opera: Copying common files"
 bash ./tools/copy-common-files.sh $DES
@@ -22,19 +23,11 @@ cp platform/chromium/*.html $DES/
 echo "*** uBlock0.opera: Copying opera-specific files"
 cp platform/opera/manifest.json $DES/
 
-rm -r $DES/_locales/az
-rm -r $DES/_locales/be
-rm -r $DES/_locales/cv
-rm -r $DES/_locales/gu
-rm -r $DES/_locales/hi
-rm -r $DES/_locales/hy
-rm -r $DES/_locales/ka
-rm -r $DES/_locales/kk
-rm -r $DES/_locales/ku
-rm -r $DES/_locales/mr
-rm -r $DES/_locales/si
-rm -r $DES/_locales/so
-rm -r $DES/_locales/th
+# Locales not accepted by the Opera add-ons store. Some of these no longer
+# exist in src/_locales, so tolerate missing directories.
+for locale in az be cv gu hi hy ka kk ku mr si so th; do
+    rm -rf "$DES/_locales/$locale"
+done
 
 # Removing WASM modules until I receive an answer from Opera people: Opera's
 # uploader issue an error for hntrie.wasm and this prevents me from
@@ -49,5 +42,17 @@ rm $DES/lib/publicsuffixlist/wasm/*.wat
 
 echo "*** uBlock0.opera: Generating meta..."
 python3 tools/make-opera-meta.py $DES/
+
+if [ "${1:-}" = "all" ]; then
+    echo "*** uBlock0.opera: Creating plain package..."
+    pushd "$(dirname "$DES/")" > /dev/null
+    zip "uBlock0.opera.zip" -qr "$(basename "$DES/")"/*
+    popd > /dev/null
+elif [ -n "${1:-}" ]; then
+    echo "*** uBlock0.opera: Creating versioned package..."
+    pushd "$(dirname "$DES/")" > /dev/null
+    zip "uBlock0_$1.opera.zip" -qr "$(basename "$DES/")"/*
+    popd > /dev/null
+fi
 
 echo "*** uBlock0.opera: Package done."

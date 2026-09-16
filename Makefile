@@ -1,12 +1,16 @@
 # https://stackoverflow.com/a/6273809
 run_options := $(filter-out $@,$(MAKECMDGOALS))
 
-.PHONY: all clean cleanassets test lint chromium opera firefox npm dig \
+.PHONY: all clean cleanassets test lint chromium opera firefox thunderbird \
+	crx packages npm dig \
 	mv3-chromium mv3-firefox mv3-edge mv3-safari ubol-codemirror \
 	compare maxcost medcost mincost modifiers record wasm \
 	publish-chromium publish-edge publish-firefox \
 	publish-dev-chromium publish-dev-firefox \
 	upload-firefox upload-dev-firefox
+
+version := $(shell cat ./dist/version)
+crx_key ?= uBlockVanced.pem
 
 sources := ./dist/version $(shell find ./assets -type f) $(shell find ./src -type f)
 platform := $(wildcard platform/*/*)
@@ -40,6 +44,37 @@ dist/build/uBlock0.firefox: tools/make-firefox.sh $(sources) $(platform) $(asset
 
 # Build the extension for Firefox.
 firefox: dist/build/uBlock0.firefox
+
+dist/build/uBlock0.thunderbird: tools/make-thunderbird.sh $(sources) $(platform) $(assets)
+	tools/make-thunderbird.sh all
+
+# Build the extension for Thunderbird.
+thunderbird: dist/build/uBlock0.thunderbird
+
+# Sign the Chromium build as a CRX3 package. The RSA key at $(crx_key) is
+# created on first run; keep it (it is gitignored) so the extension ID is
+# stable across releases. Override with `make crx crx_key=path/to/key.pem`.
+dist/build/uBlock0_$(version).chromium.crx: dist/build/uBlock0.chromium
+	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
+		dist/build/uBlock0_$(version).chromium.crx $(crx_key)
+
+crx: dist/build/uBlock0_$(version).chromium.crx
+
+# Build every distributable package, versioned from dist/version:
+#   uBlock0_<v>.chromium.zip  Chrome / Edge / Brave / Vivaldi (load unpacked or drag-drop)
+#   uBlock0_<v>.chromium.crx  same, signed CRX3 for direct install / enterprise policy
+#   uBlock0_<v>.firefox.xpi   Firefox desktop + Android (unsigned; see README)
+#   uBlock0_<v>.opera.zip     Opera (no WASM, trimmed locales, per store rules)
+#   uBlock0_<v>.thunderbird.xpi
+packages: $(assets)
+	tools/make-chromium.sh $(version)
+	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
+		dist/build/uBlock0_$(version).chromium.crx $(crx_key)
+	tools/make-firefox.sh $(version)
+	tools/make-opera.sh $(version)
+	tools/make-thunderbird.sh $(version)
+	@echo
+	@ls -1 dist/build/uBlock0_$(version).*
 
 dist/build/uBlock0.npm: tools/make-nodejs.sh $(sources) $(platform) $(assets)
 	tools/make-npm.sh

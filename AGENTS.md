@@ -28,11 +28,12 @@ npm test                 # node --test over tests/*.test.js
 node --test tests/user-filters.test.js            # single test file
 node --test --test-name-pattern='subdomains' tests/user-filters.test.js   # single test by name
 make chromium            # dist/build/uBlock0.chromium (also: firefox, opera, thunderbird)
-make chromium version=X  # zipped, versioned package
+make crx                 # signed CRX3 of the chromium build; key in uBlockVanced.pem (gitignored)
+make packages            # all release files: chromium.zip, chromium.crx, firefox.xpi, opera.zip, thunderbird.xpi
 make clean               # rm dist/build, node_modules
 ```
 
-No build step is needed for development: load `src/` unpacked in `chrome://extensions`. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too.
+No build step is needed for development: load `src/` unpacked in `chrome://extensions`. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. First build clones uAssets into `dist/build/uAssets` (needs network). Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too. Releases: bump `dist/version`, `package.json`, README badge, and `CHANGELOG.md`, then push a tag equal to `dist/version`; `.github/workflows/release.yml` builds all packages and opens a draft release. Requires `openssl` and `zip`; `tools/pack-crx3.py` has no Python deps.
 
 Tests are plain `node:test` + `node:assert/strict` and import ES modules directly from `src/js/`. Only pure modules (no `chrome.*`, no `vAPI`) are testable this way. `package.json` lists test files explicitly; add new files there.
 

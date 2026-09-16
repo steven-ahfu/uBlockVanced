@@ -102,11 +102,28 @@ Right-click any element and select **Inspect with Element Probe** to set it as t
 
 ## Building
 
+Requires Node 22+, Python 3, `zip`, and `openssl`. Filter lists are pulled from uAssets on first build.
+
 ```bash
-make chromium   # Build for Chrome/Edge
-make firefox    # Build for Firefox
-make opera      # Build for Opera
+make packages   # Everything below, versioned from dist/version, into dist/build/
+make chromium   # dist/build/uBlock0.chromium/ (Chrome, Edge, Brave, Vivaldi)
+make crx        # Signed CRX3 of the Chromium build (key: uBlockVanced.pem, created on first run)
+make firefox    # dist/build/uBlock0.firefox.xpi (desktop + Android, unsigned)
+make opera      # dist/build/uBlock0.opera/
+make thunderbird
 ```
+
+`make packages` produces:
+
+| File | Browser | Install |
+|---|---|---|
+| `uBlock0_<v>.chromium.zip` | Chrome, Edge, Brave, Vivaldi | Extract, `chrome://extensions` → Developer mode → Load unpacked |
+| `uBlock0_<v>.chromium.crx` | Same | Drag onto `chrome://extensions`, or enterprise policy. Keep `uBlockVanced.pem` so the extension ID stays stable |
+| `uBlock0_<v>.firefox.xpi` | Firefox, Firefox Android | `about:debugging` → Load Temporary Add-on. For a permanent install use Developer Edition/Nightly/ESR with `xpinstall.signatures.required=false`, or sign via AMO |
+| `uBlock0_<v>.opera.zip` | Opera | Extract, `opera://extensions` → Developer mode → Load unpacked |
+| `uBlock0_<v>.thunderbird.xpi` | Thunderbird | Add-ons Manager → Install Add-on From File |
+
+Safari is not supported (no MV2 WebExtensions). Pushing a tag matching `dist/version` runs `.github/workflows/release.yml`, which builds all of the above and attaches them to a draft GitHub release. Set the `CRX_PRIVATE_KEY` repo secret to the contents of your `uBlockVanced.pem` for a stable CRX extension ID.
 
 ## License
 

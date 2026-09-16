@@ -1,0 +1,99 @@
+name: Build packages
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  build:
+    name: Build packages
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve version
+        run: |
+          VERSION="$(cat dist/version)"
+          if [[ "$GITHUB_REF" == refs/tags/* && "${GITHUB_REF#refs/tags/}" != "$VERSION" ]]; then
+            echo "::error::Tag ${GITHUB_REF#refs/tags/} does not match dist/version ($VERSION)"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Clone uAssets
+        run: tools/pull-assets.sh
+
+      # Optional: store the CRX signing key (PEM) in the CRX_PRIVATE_KEY secret
+      # so the extension ID stays the same across releases. Without it a fresh
+      # key is generated per run and the ID changes every release.
+      - name: Restore CRX signing key
+        env:
+          CRX_PRIVATE_KEY: ${{ secrets.CRX_PRIVATE_KEY }}
+        run: |
+          if [ -n "$CRX_PRIVATE_KEY" ]; then
+            printf '%s\n' "$CRX_PRIVATE_KEY" > uBlockVanced.pem
+          else
+            echo "::warning::CRX_PRIVATE_KEY secret not set; generating a throwaway key (extension ID will change)"
+          fi
+
+      - name: Build all packages
+        run: make packages
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uBlockVanced-${{ env.VERSION }}
+          path: |
+            dist/build/uBlock0_${{ env.VERSION }}.chromium.zip
+            dist/build/uBlock0_${{ env.VERSION }}.chromium.crx
+            dist/build/uBlock0_${{ env.VERSION }}.firefox.xpi
+            dist/build/uBlock0_${{ env.VERSION }}.opera.zip
+            dist/build/uBlock0_${{ env.VERSION }}.thunderbird.xpi
+
+      - name: Assemble release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          # First CHANGELOG section (up to the next top-level heading), then install notes.
+          awk 'NR==1{print; next} /^# /{exit} {print}' CHANGELOG.md > release.body.txt
+          sed -e "s/%version%/${VERSION}/g" .github/RELEASE.HEAD.md >> release.body.txt
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: uBlockVanced ${{ env.VERSION }}
+          draft: true
+          body_path: release.body.txt
+          files: |
+            dist/build/uBlock0_${{ env.VERSION }}.chromium.zip
+            dist/build/uBlock0_${{ env.VERSION }}.chromium.crx
+            dist/build/uBlock0_${{ env.VERSION }}.firefox.xpi
+            dist/build/uBlock0_${{ env.VERSION }}.opera.zip
+            dist/build/uBlock0_${{ env.VERSION }}.thunderbird.xpi
