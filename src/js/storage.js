@@ -797,7 +797,7 @@ const saveFilterListDiffs = ( ) => {
         this.hiddenSettings.autoCommentFilterTemplate.indexOf('{{') !== -1
     ) {
         let url;
-        try { url = new URL(options.docURL); } catch(_) { }
+        try { url = new URL(options.docURL); } catch { }
         if ( url !== undefined ) {
             const d = new Date();
             comment = '! ' +
