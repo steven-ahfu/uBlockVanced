@@ -123,7 +123,11 @@ make thunderbird
 | `uBlock0_<v>.opera.zip` | Opera | Extract, `opera://extensions` → Developer mode → Load unpacked |
 | `uBlock0_<v>.thunderbird.xpi` | Thunderbird | Add-ons Manager → Install Add-on From File |
 
-Safari is not supported (no MV2 WebExtensions). Pushing a tag matching `dist/version` runs `.github/workflows/release.yml`, which builds all of the above and attaches them to a draft GitHub release. Set the `CRX_PRIVATE_KEY` repo secret to the contents of your `uBlockVanced.pem` for a stable CRX extension ID.
+Safari is not supported (no MV2 WebExtensions).
+
+### Releases
+
+Every push to `main` runs lint and tests. When `dist/version` changes to a version with no tag yet, `.github/workflows/release.yml` builds all of the above, tags the commit, and publishes a GitHub release with the files attached and the top `CHANGELOG.md` section as notes. Four-part versions (`0.3.2.1`) are marked pre-release. Set the `CRX_PRIVATE_KEY` repo secret to the contents of your `uBlockVanced.pem` for a stable CRX extension ID.
 
 ## License
 
