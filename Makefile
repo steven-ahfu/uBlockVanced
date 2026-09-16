@@ -54,27 +54,27 @@ thunderbird: dist/build/uBlock0.thunderbird
 # Sign the Chromium build as a CRX3 package. The RSA key at $(crx_key) is
 # created on first run; keep it (it is gitignored) so the extension ID is
 # stable across releases. Override with `make crx crx_key=path/to/key.pem`.
-dist/build/uBlock0_$(version).chromium.crx: dist/build/uBlock0.chromium
+dist/build/uBlockVanced-$(version).chromium.crx: dist/build/uBlock0.chromium
 	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
-		dist/build/uBlock0_$(version).chromium.crx $(crx_key)
+		dist/build/uBlockVanced-$(version).chromium.crx $(crx_key)
 
-crx: dist/build/uBlock0_$(version).chromium.crx
+crx: dist/build/uBlockVanced-$(version).chromium.crx
 
 # Build every distributable package, versioned from dist/version:
-#   uBlock0_<v>.chromium.zip  Chrome / Edge / Brave / Vivaldi (load unpacked or drag-drop)
-#   uBlock0_<v>.chromium.crx  same, signed CRX3 for direct install / enterprise policy
-#   uBlock0_<v>.firefox.xpi   Firefox desktop + Android (unsigned; see README)
-#   uBlock0_<v>.opera.zip     Opera (no WASM, trimmed locales, per store rules)
-#   uBlock0_<v>.thunderbird.xpi
+#   uBlockVanced-<v>.chromium.zip  Chrome / Edge / Brave / Vivaldi (load unpacked or drag-drop)
+#   uBlockVanced-<v>.chromium.crx  same, signed CRX3 for direct install / enterprise policy
+#   uBlockVanced-<v>.firefox.xpi   Firefox desktop + Android (unsigned; see README)
+#   uBlockVanced-<v>.opera.zip     Opera (no WASM, trimmed locales, per store rules)
+#   uBlockVanced-<v>.thunderbird.xpi
 packages: $(assets)
 	tools/make-chromium.sh $(version)
 	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
-		dist/build/uBlock0_$(version).chromium.crx $(crx_key)
+		dist/build/uBlockVanced-$(version).chromium.crx $(crx_key)
 	tools/make-firefox.sh $(version)
 	tools/make-opera.sh $(version)
 	tools/make-thunderbird.sh $(version)
 	@echo
-	@ls -1 dist/build/uBlock0_$(version).*
+	@ls -1 dist/build/uBlockVanced-$(version).*
 
 dist/build/uBlock0.npm: tools/make-nodejs.sh $(sources) $(platform) $(assets)
 	tools/make-npm.sh

@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: uBlockVanced-${{ steps.version.outputs.version }}
-          path: dist/build/uBlock0_${{ steps.version.outputs.version }}.*
+          path: dist/build/uBlockVanced-${{ steps.version.outputs.version }}.*
 
       - name: Assemble release notes
         if: steps.version.outputs.release == 'true'
@@ -107,4 +107,4 @@ jobs:
           name: uBlockVanced ${{ steps.version.outputs.version }}
           prerelease: ${{ steps.version.outputs.prerelease }}
           body_path: release.body.txt
-          files: dist/build/uBlock0_${{ steps.version.outputs.version }}.*
+          files: dist/build/uBlockVanced-${{ steps.version.outputs.version }}.*

@@ -108,7 +108,7 @@ Requires Node 22+, Python 3, `zip`, and `openssl`. Filter lists are pulled from 
 make packages   # Everything below, versioned from dist/version, into dist/build/
 make chromium   # dist/build/uBlock0.chromium/ (Chrome, Edge, Brave, Vivaldi)
 make crx        # Signed CRX3 of the Chromium build (key: uBlockVanced.pem, created on first run)
-make firefox    # dist/build/uBlock0.firefox.xpi (desktop + Android, unsigned)
+make firefox    # dist/build/uBlockVanced.firefox.xpi (desktop + Android, unsigned)
 make opera      # dist/build/uBlock0.opera/
 make thunderbird
 ```
@@ -117,11 +117,11 @@ make thunderbird
 
 | File | Browser | Install |
 |---|---|---|
-| `uBlock0_<v>.chromium.zip` | Chrome, Edge, Brave, Vivaldi | Extract, `chrome://extensions` → Developer mode → Load unpacked |
-| `uBlock0_<v>.chromium.crx` | Same | Drag onto `chrome://extensions`, or enterprise policy. Keep `uBlockVanced.pem` so the extension ID stays stable |
-| `uBlock0_<v>.firefox.xpi` | Firefox, Firefox Android | `about:debugging` → Load Temporary Add-on. For a permanent install use Developer Edition/Nightly/ESR with `xpinstall.signatures.required=false`, or sign via AMO |
-| `uBlock0_<v>.opera.zip` | Opera | Extract, `opera://extensions` → Developer mode → Load unpacked |
-| `uBlock0_<v>.thunderbird.xpi` | Thunderbird | Add-ons Manager → Install Add-on From File |
+| `uBlockVanced-<v>.chromium.zip` | Chrome, Edge, Brave, Vivaldi | Extract, `chrome://extensions` → Developer mode → Load unpacked |
+| `uBlockVanced-<v>.chromium.crx` | Same | Drag onto `chrome://extensions`, or enterprise policy. Keep `uBlockVanced.pem` so the extension ID stays stable |
+| `uBlockVanced-<v>.firefox.xpi` | Firefox, Firefox Android | `about:debugging` → Load Temporary Add-on. For a permanent install use Developer Edition/Nightly/ESR with `xpinstall.signatures.required=false`, or sign via AMO |
+| `uBlockVanced-<v>.opera.zip` | Opera | Extract, `opera://extensions` → Developer mode → Load unpacked |
+| `uBlockVanced-<v>.thunderbird.xpi` | Thunderbird | Add-ons Manager → Install Add-on From File |
 
 Safari is not supported (no MV2 WebExtensions).
 

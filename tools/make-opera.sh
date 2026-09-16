@@ -46,12 +46,12 @@ python3 tools/make-opera-meta.py $DES/
 if [ "${1:-}" = "all" ]; then
     echo "*** uBlock0.opera: Creating plain package..."
     pushd "$(dirname "$DES/")" > /dev/null
-    zip "uBlock0.opera.zip" -qr "$(basename "$DES/")"/*
+    zip "uBlockVanced.opera.zip" -qr "$(basename "$DES/")"/*
     popd > /dev/null
 elif [ -n "${1:-}" ]; then
     echo "*** uBlock0.opera: Creating versioned package..."
     pushd "$(dirname "$DES/")" > /dev/null
-    zip "uBlock0_$1.opera.zip" -qr "$(basename "$DES/")"/*
+    zip "uBlockVanced-$1.opera.zip" -qr "$(basename "$DES/")"/*
     popd > /dev/null
 fi
 
