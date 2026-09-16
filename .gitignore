@@ -5,8 +5,6 @@ node_modules/
 /dist/build/
 /tmp/
 .DS_Store
-CLAUDE.md
-AGENTS.md
 ROADMAP.md
 RESEARCH.md
 Roadmap_Blocked.md
