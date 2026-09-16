@@ -28,12 +28,22 @@ npm test                 # node --test over tests/*.test.js
 node --test tests/user-filters.test.js            # single test file
 node --test --test-name-pattern='subdomains' tests/user-filters.test.js   # single test by name
 make chromium            # dist/build/uBlock0.chromium (also: firefox, opera, thunderbird)
-make crx                 # signed CRX3 of the chromium build; key in uBlockVanced.pem (gitignored)
+make crx                 # signed CRX3 of the chromium build; key in uBlockVanced.pem (gitignored, see below)
 make packages            # all release files: chromium.zip, chromium.crx, firefox.xpi, opera.zip, thunderbird.xpi
 make clean               # rm dist/build, node_modules
 ```
 
 No build step is needed for development: load `src/` unpacked in `chrome://extensions`. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. First build clones uAssets into `dist/build/uAssets` (needs network). Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too. Releases are automatic: bump `dist/version`, `package.json`, the README badge, and add a `CHANGELOG.md` section, then push to `main`; `.github/workflows/release.yml` sees the untagged version, builds all packages, tags the commit, and publishes the release. Never push tags by hand. Requires `openssl` and `zip`; `tools/pack-crx3.py` has no Python deps.
+
+**CRX signing key.** The extension ID is derived from the RSA key, so the same key must sign every release. It lives in three places, all outside git:
+- `uBlockVanced.pem` at the repo root: what `make crx` / `make packages` read locally. Generated on first run if absent.
+- `.env` at the repo root (gitignored): holds the same PEM as `CRX_PRIVATE_KEY="..."` (multi-line, double-quoted) as a backup copy. Restore the key with the snippet below.
+- GitHub repo secret `CRX_PRIVATE_KEY` on `steven-ahfu/uBlockVanced`: `.github/workflows/release.yml` writes it to `uBlockVanced.pem` before `make packages`. Without it CI generates a throwaway key and the extension ID changes.
+
+Current extension ID: `ongbahmlaoecaggpjgeojpgahgeojnmo`. Never commit `.env` or any `.pem`. To rotate or re-seed: `make crx` (generates a key if missing), then `gh secret set CRX_PRIVATE_KEY < uBlockVanced.pem` and refresh `.env`. To restore `uBlockVanced.pem` from `.env`:
+```
+sed -n '/^CRX_PRIVATE_KEY="/,/"$/p' .env | sed -e 's/^CRX_PRIVATE_KEY="//' -e 's/"$//' > uBlockVanced.pem
+```
 
 Tests are plain `node:test` + `node:assert/strict` and import ES modules directly from `src/js/`. Only pure modules (no `chrome.*`, no `vAPI`) are testable this way. `package.json` lists test files explicitly; add new files there.
 
