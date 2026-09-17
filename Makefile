@@ -1,7 +1,7 @@
 # https://stackoverflow.com/a/6273809
 run_options := $(filter-out $@,$(MAKECMDGOALS))
 
-.PHONY: all clean cleanassets test lint chromium opera firefox thunderbird \
+.PHONY: all clean cleanassets test lint chromium opera firefox thunderbird ui \
 	crx packages npm dig \
 	mv3-chromium mv3-firefox mv3-edge mv3-safari ubol-codemirror \
 	compare maxcost medcost mincost modifiers record wasm \
@@ -27,25 +27,30 @@ mv3-safari-deps := $(wildcard platform/mv3/safari/*)
 
 all: chromium firefox npm
 
-dist/build/uBlock0.chromium: tools/make-chromium.sh $(sources) $(platform) $(assets)
+# uBlockVanced: bundle the React UI layer (ui/) into dist/ui before packaging.
+ui: node_modules
+	npm run build:ui
+
+
+dist/build/uBlock0.chromium: tools/make-chromium.sh $(sources) $(platform) $(assets) ui
 	tools/make-chromium.sh
 
 # Build the extension for Chromium.
 chromium: dist/build/uBlock0.chromium
 
-dist/build/uBlock0.opera: tools/make-opera.sh $(sources) $(platform) $(assets)
+dist/build/uBlock0.opera: tools/make-opera.sh $(sources) $(platform) $(assets) ui
 	tools/make-opera.sh
 
 # Build the extension for Opera.
 opera: dist/build/uBlock0.opera
 
-dist/build/uBlock0.firefox: tools/make-firefox.sh $(sources) $(platform) $(assets)
+dist/build/uBlock0.firefox: tools/make-firefox.sh $(sources) $(platform) $(assets) ui
 	tools/make-firefox.sh all
 
 # Build the extension for Firefox.
 firefox: dist/build/uBlock0.firefox
 
-dist/build/uBlock0.thunderbird: tools/make-thunderbird.sh $(sources) $(platform) $(assets)
+dist/build/uBlock0.thunderbird: tools/make-thunderbird.sh $(sources) $(platform) $(assets) ui
 	tools/make-thunderbird.sh all
 
 # Build the extension for Thunderbird.
@@ -66,7 +71,7 @@ crx: dist/build/uBlockVanced-$(version).chromium.crx
 #   uBlockVanced-<v>.firefox.xpi   Firefox desktop + Android (unsigned; see README)
 #   uBlockVanced-<v>.opera.zip     Opera (no WASM, trimmed locales, per store rules)
 #   uBlockVanced-<v>.thunderbird.xpi
-packages: $(assets)
+packages: $(assets) ui
 	tools/make-chromium.sh $(version)
 	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
 		dist/build/uBlockVanced-$(version).chromium.crx $(crx_key)

@@ -1,0 +1,178 @@
+/*
+ * uBlockVanced popup (React + Material 3 Expressive). Layout ids (#panes,
+ * #main, #sticky, #firewall, body[data-more]) come from upstream
+ * popup-fenix.css; this file only styles the Material controls and the
+ * ribbons that replaced the upstream toolbars.
+ */
+#root { display: contents; }
+
+/* Panels: solid, no glass */
+#panes {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--md-sys-color-surface);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    box-shadow: var(--el-card);
+}
+#main {
+    background: var(--md-sys-color-surface-container);
+    border-color: var(--md-sys-color-outline-variant);
+}
+#sticky {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--md-sys-color-surface-container);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    padding: 10px 10px 6px;
+}
+body.off #sticky,
+body.off #main,
+body.off #firewall { border-color: var(--md-sys-color-outline-variant); }
+
+.ubv-sticky {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+.ubv-cluster {
+    align-items: center;
+    display: inline-flex;
+    gap: 2px;
+    min-width: 40px;
+}
+.ubv-cluster-end { justify-content: flex-end; }
+
+/* Power control: a 56px tonal toggle that fills the space between clusters. */
+.ubv-power {
+    flex: 1 1 auto;
+    height: 56px !important;
+    justify-content: center;
+    min-width: 0;
+    padding-inline: 16px !important;
+}
+.ubv-power md-icon { --md-icon-size: 30px; }
+.ubv-power.off {
+    background: var(--md-sys-color-error-container) !important;
+    color: var(--md-sys-color-error) !important;
+}
+:root.desktop .ubv-power:not([disabled]):hover { filter: brightness(1.08); }
+
+/* Ribbons of tiles */
+.ubv-ribbon {
+    display: grid;
+    gap: 8px;
+    padding: 12px 10px 4px;
+}
+.ubv-ribbon-switches { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ubv-ribbon-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-bottom: 12px; }
+:root.mobile .ubv-ribbon-switches,
+:root body[data-ui~="-no-popups"] .ubv-ribbon-switches { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* A tile: stacked icon + caption inside an M3 button */
+.ubv-tile {
+    flex-direction: column !important;
+    gap: 6px;
+    height: auto !important;
+    min-height: 88px;
+    padding: 12px 6px 10px !important;
+    width: 100%;
+}
+.ubv-tile .caption,
+.ubv-tile-body .caption {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-align: center;
+    text-wrap: balance;
+    white-space: normal;
+}
+.ubv-tile-icon { display: inline-flex; position: relative; }
+.ubv-tile-icon md-icon { --md-icon-size: 26px; }
+.ubv-badge {
+    background: var(--md-sys-color-primary);
+    border-radius: 999px;
+    color: var(--md-sys-color-on-primary);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 16px;
+    padding: 3px 4px;
+    position: absolute;
+    right: -10px;
+    text-align: center;
+    top: -6px;
+}
+.ubv-tile[aria-pressed="true"] .ubv-badge {
+    background: var(--md-sys-color-on-secondary);
+    color: var(--md-sys-color-secondary);
+}
+:root.mobile body.no-tooltips .ubv-tile .caption,
+:root.mobile body[data-ui~="-captions"] .ubv-tile .caption { display: none; }
+
+.ubv-tool {
+    --md-filled-tonal-button-container-height: 88px;
+    --md-filled-tonal-button-container-shape: 22px;
+    --md-filled-tonal-button-leading-space: 8px;
+    --md-filled-tonal-button-trailing-space: 8px;
+    width: 100%;
+}
+.ubv-tool.isDisabled { opacity: 0.55; }
+.ubv-tile-body {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+}
+.ubv-tile-body md-icon { --md-icon-size: 26px; }
+:root.mobile .ubv-tool-logger,
+:root body[data-ui~="-logger"] .ubv-tool-logger { display: none; }
+
+/* Unprocessed-request warning */
+.ubv-warning {
+    align-items: center;
+    background: var(--md-sys-color-error-container);
+    border-radius: 16px;
+    color: var(--md-sys-color-on-error-container);
+    display: none;
+    font-size: 12.5px;
+    gap: 8px;
+    margin: 0 10px 10px;
+    padding: 8px 6px 8px 12px;
+}
+:root.warn .ubv-warning { display: flex; }
+.ubv-warning > span { flex: 1 1 auto; }
+.ubv-warning-icon { --md-icon-size: 20px; color: var(--md-sys-color-error); flex-shrink: 0; }
+
+.ubv-version {
+    color: var(--md-sys-color-on-surface-variant);
+    display: flex;
+    font-size: 11.5px;
+    gap: 4px;
+    justify-content: center;
+    padding: 6px 0 10px;
+}
+
+/* Firewall filter chips (M3) */
+#firewall > section { align-items: center; gap: 6px; padding: 4px 6px; }
+.ubv-filter-icon { --md-icon-size: 18px; color: var(--md-sys-color-on-surface-variant); }
+.ubv-filters { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.ubv-chipset { --md-chip-set-gap: 4px; }
+.ubv-chip {
+    --md-filter-chip-container-height: 26px;
+    --md-filter-chip-container-shape: 10px;
+    --md-filter-chip-label-text-size: 11.5px;
+    --md-filter-chip-leading-space: 10px;
+    --md-filter-chip-trailing-space: 10px;
+    --md-filter-chip-selected-container-color: var(--md-sys-color-primary-container);
+    --md-filter-chip-selected-label-text-color: var(--md-sys-color-on-primary-container);
+}
+.ubv-chip-not { --md-filter-chip-selected-container-color: var(--md-sys-color-error-container); }
+
+/* Firewall rows: upstream draws the matrix; only the surface differs. */
+#firewall {
+    background: var(--md-sys-color-surface-container);
+    border-color: var(--md-sys-color-outline-variant);
+}

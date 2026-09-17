@@ -4,6 +4,7 @@
 __pycache__/
 node_modules/
 /dist/build/
+/dist/ui/
 /tmp/
 .DS_Store
 ROADMAP.md

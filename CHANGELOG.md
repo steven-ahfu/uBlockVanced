@@ -10,6 +10,8 @@ Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and
 - **Element picker dialog**: smaller by default (27rem wide, shorter editor and candidate list) and resizable from its bottom-right corner; the candidate list grows to fill a taller dialog.
 - **My filters editor**: in short windows the toolbar, options, and per-site card left the editor a few dozen pixels tall, and focus changes scrolled the clipped page invisibly. The editor now keeps at least 16rem / 40vh and the page scrolls normally when there is not enough room.
 - **Pointer cursor**: buttons, selects, checkbox and radio rows, sliders, file and colour inputs, tabs, and the logger and CodeMirror search controls now show a pointer cursor across the dashboard; disabled controls show not-allowed.
+- **React + Material 3 Expressive popup**: the popup is now a React 19 app built on `material-expressive-react` (Google's `@material/web` components): toggle tiles for the per-site switches, tonal tiles for the tools, filter chips for the firewall row filters, and an M3E toggle for the power control. It lives in `ui/` and is overlaid onto the package at build time, so upstream files stay untouched for rebases. Remaining pages follow.
+- **JetBrains Mono** in every code editor.
 
 ----------
 

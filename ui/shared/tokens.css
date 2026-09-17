@@ -1,0 +1,78 @@
+/*
+ * uBlockVanced: Material 3 token bridge.
+ * Maps the --ctp-* palette slots (Rosé Pine by default, Catppuccin via the
+ * catppuccinPalette hidden setting, Latte for light) onto the
+ * --md-sys-color-* tokens that @material/web and material-expressive-react
+ * consume. Kept as one file so a palette change never needs component edits.
+ */
+:root.ubv-m3 {
+    --md-ref-typeface-brand: Geist, Inter, "Segoe UI", system-ui, sans-serif;
+    --md-ref-typeface-plain: Geist, Inter, "Segoe UI", system-ui, sans-serif;
+
+    --md-sys-color-primary: rgb(var(--primary-70));
+    --md-sys-color-on-primary: rgb(var(--ctp-mantle));
+    --md-sys-color-primary-container: rgb(var(--primary-20));
+    --md-sys-color-on-primary-container: rgb(var(--primary-90));
+    --md-sys-color-inverse-primary: rgb(var(--primary-30));
+    --md-sys-color-surface-tint: rgb(var(--primary-70));
+
+    --md-sys-color-secondary: rgb(var(--ctp-subtext1));
+    --md-sys-color-on-secondary: rgb(var(--ctp-mantle));
+    --md-sys-color-secondary-container: rgb(var(--ctp-surface0));
+    --md-sys-color-on-secondary-container: rgb(var(--ctp-text));
+
+    --md-sys-color-tertiary: rgb(var(--ctp-lavender));
+    --md-sys-color-on-tertiary: rgb(var(--ctp-mantle));
+    --md-sys-color-tertiary-container: rgb(var(--ctp-teal));
+    --md-sys-color-on-tertiary-container: rgb(var(--ctp-text));
+
+    --md-sys-color-error: rgb(var(--ctp-red));
+    --md-sys-color-on-error: rgb(var(--ctp-mantle));
+    --md-sys-color-error-container: color-mix(in srgb, rgb(var(--ctp-red)) 24%, rgb(var(--ctp-base)));
+    --md-sys-color-on-error-container: rgb(var(--ctp-text));
+
+    --md-sys-color-background: rgb(var(--ctp-mantle));
+    --md-sys-color-on-background: rgb(var(--ctp-text));
+    --md-sys-color-surface: rgb(var(--ctp-mantle));
+    --md-sys-color-on-surface: rgb(var(--ctp-text));
+    --md-sys-color-surface-variant: rgb(var(--ctp-surface0));
+    --md-sys-color-on-surface-variant: rgb(var(--ctp-subtext0));
+    --md-sys-color-surface-dim: rgb(var(--ctp-crust));
+    --md-sys-color-surface-bright: rgb(var(--ctp-surface0));
+    --md-sys-color-surface-container-lowest: rgb(var(--ctp-crust));
+    --md-sys-color-surface-container-low: rgb(var(--ctp-mantle));
+    --md-sys-color-surface-container: rgb(var(--ctp-base));
+    --md-sys-color-surface-container-high: rgb(var(--ctp-surface0));
+    --md-sys-color-surface-container-highest: color-mix(in srgb, rgb(var(--ctp-surface0)) 70%, rgb(var(--ctp-surface1)));
+    --md-sys-color-inverse-surface: rgb(var(--ctp-text));
+    --md-sys-color-inverse-on-surface: rgb(var(--ctp-mantle));
+
+    --md-sys-color-outline: rgb(var(--ctp-surface2));
+    --md-sys-color-outline-variant: rgb(var(--ctp-surface1));
+    --md-sys-color-shadow: rgb(0 0 0);
+    --md-sys-color-scrim: rgb(0 0 0);
+
+    /* Expressive shapes: M3E leans on large radii; selection tightens them. */
+    --md-sys-shape-corner-extra-small: 8px;
+    --md-sys-shape-corner-small: 12px;
+    --md-sys-shape-corner-medium: 16px;
+    --md-sys-shape-corner-large: 22px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --md-sys-shape-corner-full: 9999px;
+
+    /* Motion: the same spring-ish curve the CSS layer uses. */
+    --md-sys-motion-easing-standard: cubic-bezier(0.32, 0.72, 0.28, 1);
+    --md-sys-motion-easing-emphasized: cubic-bezier(0.32, 0.72, 0.28, 1);
+}
+
+:root.ubv-m3 md-icon {
+    --md-icon-size: 24px;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+}
+:root.ubv-m3 md-icon > svg {
+    fill: currentColor;
+    height: var(--md-icon-size);
+    width: var(--md-icon-size);
+}

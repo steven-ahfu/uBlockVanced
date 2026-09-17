@@ -27,6 +27,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+      - run: npm run typecheck
       - run: npm test
 
   build:
@@ -60,6 +61,12 @@ jobs:
           else
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
 
       - name: Clone uAssets
         run: tools/pull-assets.sh

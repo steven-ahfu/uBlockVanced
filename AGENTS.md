@@ -27,13 +27,16 @@ npm run lint             # eslint over src/js, platform, *.json (excludes lib/, 
 npm test                 # node --test over tests/*.test.js
 node --test tests/user-filters.test.js            # single test file
 node --test --test-name-pattern='subdomains' tests/user-filters.test.js   # single test by name
+npm run build:ui         # bundle the React UI (ui/) into dist/ui; make targets run this automatically
+npm run dev:ui           # esbuild watch + sync into dist/build/uBlock0.firefox (Reload in about:debugging)
+npm run typecheck        # tsc --noEmit over ui/
 make chromium            # dist/build/uBlock0.chromium (also: firefox, opera, thunderbird)
 make crx                 # signed CRX3 of the chromium build; key in uBlockVanced.pem (gitignored, see below)
 make packages            # all release files: chromium.zip, chromium.crx, firefox.xpi, opera.zip, thunderbird.xpi
 make clean               # rm dist/build, node_modules
 ```
 
-No build step is needed for development: load `src/` unpacked in `chrome://extensions`. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. First build clones uAssets into `dist/build/uAssets` (needs network). Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too. Releases are automatic: bump `dist/version`, `package.json`, the README badge, and add a `CHANGELOG.md` section, then push to `main`; `.github/workflows/release.yml` sees the untagged version, builds all packages, tags the commit, and publishes the release. Never push tags by hand. Requires `openssl` and `zip`; `tools/pack-crx3.py` has no Python deps.
+Pages that have been ported to React (see `ui/README.md`) need `make firefox` (or `npm run build:ui`) and are loaded from `dist/build/uBlock0.firefox`; the remaining upstream pages still work when `src/` is loaded unpacked. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. First build clones uAssets into `dist/build/uAssets` (needs network). Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too. Releases are automatic: bump `dist/version`, `package.json`, the README badge, and add a `CHANGELOG.md` section, then push to `main`; `.github/workflows/release.yml` sees the untagged version, builds all packages, tags the commit, and publishes the release. Never push tags by hand. Requires `openssl` and `zip`; `tools/pack-crx3.py` has no Python deps.
 
 **CRX signing key.** The extension ID is derived from the RSA key, so the same key must sign every release. It lives in three places, all outside git:
 - `uBlockVanced.pem` at the repo root: what `make crx` / `make packages` read locally. Generated on first run if absent.
@@ -53,6 +56,7 @@ Tests are plain `node:test` + `node:assert/strict` and import ES modules directl
 - `src/` — the extension as shipped (HTML pages, `js/`, `css/`, `_locales/`, `lib/` third-party). `src/js/lib` and `src/lib` are vendored; don't lint or edit.
 - `platform/common/` — `vapi*.js`: the browser-API abstraction layer. `vapi-background.js` (extension process), `vapi-client.js` (content scripts), `vapi-common.js` (both). `platform/{chromium,firefox,opera,...}/` hold per-browser `manifest.json` and overrides copied over `common` at build time.
 - `platform/mv3/` — uBOL (MV3 Lite). Untouched by the fork; ignore unless working on it.
+- `ui/` — React + Material 3 Expressive UI layer, bundled by esbuild into `dist/ui` and overlaid onto packages (see below).
 - `tools/` — build scripts. `tests/` — unit tests. `docs/tests/` — browser-run filter test pages.
 
 ### Extension process (background)
@@ -68,6 +72,16 @@ Entry is `src/background.html` → `src/js/background.js` defines the `µBlock` 
 
 ### UI pages
 Each `src/*.html` has a matching `src/js/*.js` and `src/css/*.css`. Dashboard tabs (`settings`, `1p-filters`, `3p-filters`, `dyna-rules`, `whitelist`, `advanced-settings`) are iframes inside `dashboard.html`. Theming is applied by `theme.js` (dark is the default in this fork) with palette tokens in `src/css/themes/` and `--ctp-*` CSS variables; the `catppuccinPalette` hidden setting swaps palettes.
+
+### Fork-specific: React + Material 3 Expressive UI (`ui/`)
+The user-facing pages are being ported to React 19 with `material-expressive-react` (wrappers over `@material/web`). Read `ui/README.md` first. The rules that keep upstream rebases cheap:
+- **Never edit upstream `src/*.html`, `src/js/*.js` or `src/css/*.css` for UI work.** React pages live in `ui/pages/<page>/` and are overlaid onto the package at build time by `tools/copy-common-files.sh`; delete a page directory and the upstream page is back.
+- React pages send the same `{ what: ... }` messages the upstream page sends, through the global `vAPI.messaging`; `messaging.js` needs no React-specific handlers.
+- Keep upstream ids/attributes where upstream CSS drives layout (`#panes`, `#firewall`, `body[data-more]`).
+- Shared building blocks live in `ui/shared/` (`Tile`, `Icon`, `icons`, `i18n`, `vapi`, `tokens.css`). Reuse them; do not duplicate a control inside a page.
+- `ui/shared/tokens.css` maps the `--ctp-*` palette slots onto `--md-sys-color-*`, so palettes keep working without component changes.
+- Icons are Material Symbols SVGs inlined at build time (no icon font, CSP unchanged).
+Ported so far: popup (`ui/pages/popup/`).
 
 ### Fork-specific: Element Probe
 A DevTools panel (`manifest.json: devtools_page` → `devtools-page.html` → `devtools-page.js` registers the panel → `element-probe-panel.html`/`.js`). The panel entry point only orchestrates; logic is in `src/js/element-probe/`:
