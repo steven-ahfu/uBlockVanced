@@ -1,3 +1,14 @@
+# uBlockVanced 0.3.2
+
+Release tooling and packaging update; no runtime changes to the extension.
+
+- **Every browser packaged**: `make packages` now emits chromium.zip, a signed chromium.crx, firefox.xpi, opera.zip, and thunderbird.xpi from a single `dist/version`, named `uBlockVanced-<version>.<browser>.<ext>`.
+- **Automatic releases**: pushing a new `dist/version` to `main` builds all packages, tags the commit, and publishes the GitHub release. Tags are no longer pushed by hand.
+- **Stable extension ID**: the CRX signing key is documented and stored outside git (`uBlockVanced.pem`, `.env`, and the `CRX_PRIVATE_KEY` repo secret) so the Chromium extension ID stays `ongbahmlaoecaggpjgeojpgahgeojnmo` across releases.
+- **AGENTS.md**: added a codebase overview and contribution rules for AI coding agents.
+
+----------
+
 # uBlockVanced 0.3.1
 
 Roadmap drain release: filter-list change visibility, resilient logger resizing, and the completed Element Probe and filtering improvements below.
