@@ -6,6 +6,8 @@ Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and
 - **Geist type** replaces Inter/Metropolis across popup, dashboard, logger, picker, Element Probe, and the blocked-document page.
 - **Material 3 Expressive surfaces**: solid flat cards with soft ambient elevation; every glass blur, decorative gradient, glow, and inset highlight removed. Border radius changes only on selection or toggle, never on hover. No idle animation on the power control.
 - **uOV shield mark**: new toolbar icons, off and loading variants, and the dashboard logo, rasterised from one SVG.
+- **Element Probe context menu**: "Inspect with Element Probe" now keeps the right-clicked element marked and shows an in-page hint; the panel's Inspect selection uses that element when nothing is selected in the Elements panel. Previously the entry did nothing visible.
+- **Element picker dialog**: smaller by default (27rem wide, shorter editor and candidate list) and resizable from its bottom-right corner; the candidate list grows to fill a taller dialog.
 
 ----------
 

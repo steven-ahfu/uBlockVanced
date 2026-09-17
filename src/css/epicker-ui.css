@@ -22,16 +22,23 @@ html#ublock0-epicker,
     cursor: default;
     display: flex;
     flex-direction: column;
-    max-width: min(32rem, 100vw - 4px);
-    min-width: min(24rem, 100vw - 4px);
-    overflow-y: auto;
+    /* uBlockVanced: compact default, user-resizable from the corner */
+    max-height: calc(100vh - 4px);
+    max-width: calc(100vw - 4px);
+    min-height: 12rem;
+    min-width: min(18rem, 100vw - 4px);
+    overflow: auto;
     position: fixed;
-    width: min(32rem, 100vw - 4px);
+    resize: both;
+    width: min(27rem, 100vw - 4px);
     z-index: 100;
 }
 #ublock0-epicker.zap aside {
     bottom: unset !important;
+    height: auto !important;
+    min-height: unset !important;
     min-width: unset !important;
+    resize: none;
     top: 50%;
     transform: translateY(-50%);
     width: unset !important;
@@ -47,9 +54,13 @@ html#ublock0-epicker,
 }
 #ublock0-epicker:not(.paused) aside,
 #ublock0-epicker.minimized aside {
-    min-width: min(16rem, 100vw - 4px);
+    /* !important so a user-resized (inline) size does not leak into the minimized bar */
+    height: auto !important;
+    min-height: unset !important;
+    min-width: min(16rem, 100vw - 4px) !important;
     overflow: hidden;
-    width: min(16rem, 100vw - 4px);
+    resize: none;
+    width: min(16rem, 100vw - 4px) !important;
 }
 #ublock0-epicker:not(.paused) aside > *:not(#windowbar),
 #ublock0-epicker.minimized aside > *:not(#windowbar) {
@@ -90,8 +101,8 @@ html#ublock0-epicker,
 #ublock0-epicker section .codeMirrorContainer {
     border: none;
     box-sizing: border-box;
-    height: 10em;
-    max-height: min(10em, 10vh);
+    height: 7em;
+    max-height: min(7em, 10vh);
     min-height: 1em;
     padding: 2px;
     width: 100%;
@@ -194,8 +205,14 @@ html#ublock0-epicker,
     overflow: hidden;
 }
 #ublock0-epicker #candidateFilters {
-    max-height: min(18em, 18vh);
+    flex: 1 1 auto;
+    max-height: min(14em, 18vh);
+    min-height: 0;
     overflow-y: auto;
+}
+/* Once the user resizes the dialog, let the candidate list use the extra room. */
+#ublock0-epicker aside[style*="height"] #candidateFilters {
+    max-height: none;
 }
 #ublock0-epicker .changeFilter > li > span:nth-of-type(1) {
     font-weight: bold;
