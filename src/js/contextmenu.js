@@ -137,19 +137,31 @@ const onViewSource = function(details, tab) {
 const onElementProbe = function(details, tab) {
     if ( tab === undefined ) { return; }
     if ( /^https?:\/\//.test(tab.url) === false ) { return; }
-    // Store the last right-clicked element for inspection in the Element
-    // Probe DevTools panel. A content-level contextmenu listener captures
-    // the target, then this handler tells the page to expose it via
-    // window.__ubp_target__ so $0 can reference it in the panel.
-    const frameId = details.frameId || 0;
+    // The content-level contextmenu listener installed by ensureProbeListener
+    // has already tagged the right-clicked element with [data-uv-ctx]. The
+    // Element Probe panel falls back to that element when nothing is selected
+    // in the Elements panel. Extensions cannot open DevTools themselves, so
+    // show a short in-page hint telling the user where to go next.
+    const hint = JSON.stringify(i18n$('contextMenuElementProbeHint'));
     vAPI.tabs.executeScript(tab.id, {
-        frameId,
+        frameId: 0,
         code: `(function(){
-            var el = document.querySelector('[data-uv-ctx]');
-            if ( !el ) { el = document.body; }
-            el.removeAttribute('data-uv-ctx');
+            var id = 'ubv-probe-hint';
+            var prev = document.getElementById(id);
+            if ( prev ) { prev.remove(); }
+            var el = document.createElement('div');
+            el.id = id;
+            el.setAttribute('role', 'status');
+            el.textContent = ${hint};
+            el.style.cssText = 'position:fixed;z-index:2147483647;left:50%;bottom:24px;' +
+                'transform:translateX(-50%);max-width:min(90vw,32rem);padding:10px 16px;' +
+                'border-radius:14px;background:#1F1D2E;color:#E0DEF4;border:1px solid #393652;' +
+                'box-shadow:0 2px 6px rgba(0,0,0,.3),0 14px 34px rgba(0,0,0,.4);' +
+                'font:500 13.5px/1.4 Geist,"Segoe UI",system-ui,sans-serif;pointer-events:none';
+            (document.body || document.documentElement).appendChild(el);
+            setTimeout(function(){ el.remove(); }, 7000);
         })()`,
-        runAt: 'document_start',
+        runAt: 'document_end',
     }).catch(( ) => { /* tab may have closed or navigated */ });
 };
 

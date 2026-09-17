@@ -1864,6 +1864,10 @@
     "message": "Inspect with Element Probe",
     "description": "A context menu entry, to open the Element Probe DevTools panel for deep element inspection"
   },
+  "contextMenuElementProbeHint": {
+    "message": "Element marked. Open DevTools (F12), pick the Element Probe tab, then click Inspect selection.",
+    "description": "In-page hint shown after choosing the Element Probe context menu entry; browsers do not let extensions open DevTools"
+  },
   "shortcutCapturePlaceholder": {
     "message": "Type a shortcut",
     "description": "Placeholder string for input field used to capture a keyboard shortcut"

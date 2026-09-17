@@ -30,8 +30,11 @@ export function buildInspectScript(patterns) {
     const patternsJson = JSON.stringify(patterns);
     return `
 (function() {
-    var el = $0;
-    if (!el) return JSON.stringify({ error: 'No element selected. Select one in the Elements panel.' });
+    // uBlockVanced: fall back to the element marked by the "Inspect with
+    // Element Probe" context menu entry when nothing is selected in the
+    // Elements panel.
+    var el = $0 || document.querySelector('[data-uv-ctx]');
+    if (!el) return JSON.stringify({ error: 'No element selected. Select one in the Elements panel, or right-click an element and choose "Inspect with Element Probe".' });
 
     var result = {
         tag: el.tagName ? el.tagName.toLowerCase() : '',
