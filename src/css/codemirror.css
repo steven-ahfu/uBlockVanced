@@ -1,3 +1,9 @@
+/* uBlockVanced: JetBrains Mono for every code editor (OFL 1.1, see fonts/JetBrainsMono/OFL.txt) */
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; src: url('fonts/JetBrainsMono/JetBrainsMono-Regular.woff2') format('woff2'); }
+@font-face { font-family: "JetBrains Mono"; font-style: italic; font-weight: 400; src: url('fonts/JetBrainsMono/JetBrainsMono-Italic.woff2') format('woff2'); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 500; src: url('fonts/JetBrainsMono/JetBrainsMono-Medium.woff2') format('woff2'); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 700; src: url('fonts/JetBrainsMono/JetBrainsMono-Bold.woff2') format('woff2'); }
+
 .codeMirrorContainer {
     line-height: 1.25;
     overflow: hidden;
@@ -15,6 +21,8 @@
     box-sizing: border-box;
     color: var(--ink-1);
     flex-grow: 1;
+    font-family: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-feature-settings: "liga" 1, "calt" 1;
     font-size: var(--monospace-size);
     height: 100%;
     width: 100%;
