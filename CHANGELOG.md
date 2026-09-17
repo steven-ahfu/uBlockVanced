@@ -8,6 +8,8 @@ Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and
 - **uOV shield mark**: new toolbar icons, off and loading variants, and the dashboard logo, rasterised from one SVG.
 - **Element Probe context menu**: "Inspect with Element Probe" now keeps the right-clicked element marked and shows an in-page hint; the panel's Inspect selection uses that element when nothing is selected in the Elements panel. Previously the entry did nothing visible.
 - **Element picker dialog**: smaller by default (27rem wide, shorter editor and candidate list) and resizable from its bottom-right corner; the candidate list grows to fill a taller dialog.
+- **My filters editor**: in short windows the toolbar, options, and per-site card left the editor a few dozen pixels tall, and focus changes scrolled the clipped page invisibly. The editor now keeps at least 16rem / 40vh and the page scrolls normally when there is not enough room.
+- **Pointer cursor**: buttons, selects, checkbox and radio rows, sliders, file and colour inputs, tabs, and the logger and CodeMirror search controls now show a pointer cursor across the dashboard; disabled controls show not-allowed.
 
 ----------
 

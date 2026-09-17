@@ -1261,3 +1261,5 @@ body > .permatoolbar {
 #modalOverlay { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(20 18 28 / 0.6); }
 #modalOverlay > div > div { border-radius: var(--radius-large); box-shadow: var(--el-card); }
 .inspector .permatoolbar { background: var(--surface-0); }
+/* uBlockVanced: rows that open the details dialog read as clickable */
+#netInspector .logEntry.canDetails > div > span:not(:has(a)) { cursor: pointer; }

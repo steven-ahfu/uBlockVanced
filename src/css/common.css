@@ -482,6 +482,41 @@ textarea:focus-visible {
     outline: none;
 }
 
+/* uBlockVanced: pointer cursor on interactive controls */
+button:not(:disabled):not(.disabled),
+[role="button"],
+[role="tab"]:not([aria-selected="true"]),
+select:not(:disabled),
+summary,
+a[href],
+label:has(> .checkbox:not([disabled])),
+label:has(> .radio:not([disabled])),
+label:has(> .input.checkbox:not([disabled])),
+label:has(> .input.radio:not([disabled])),
+label:has(> input[type="checkbox"]:not(:disabled)),
+label:has(> input[type="radio"]:not(:disabled)),
+label[for],
+.checkbox:not([disabled]),
+.radio:not([disabled]),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="range"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="color"]:not(:disabled) {
+    cursor: pointer;
+}
+
+button:disabled,
+button.disabled,
+select:disabled,
+.checkbox[disabled],
+.radio[disabled],
+label:has(> .checkbox[disabled]),
+label:has(> .radio[disabled]),
+[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
 html:not(#uBO-popup-panel) button {
     border: 1px solid transparent;
     background: var(--button-surface);
