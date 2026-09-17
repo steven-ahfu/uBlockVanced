@@ -1,3 +1,14 @@
+# uBlockVanced 0.3.3
+
+Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and asset change; no behaviour, DOM, i18n, or filtering logic changed.
+
+- **Rosé Pine dark palette** mapped onto the existing `--ctp-*` slots: `#191724` base, `#1F1D2E` cards, iris `#C4A7E7` as the single accent. Set the `catppuccinPalette` hidden setting to `catppuccin-mocha` to get the previous default back.
+- **Geist type** replaces Inter/Metropolis across popup, dashboard, logger, picker, Element Probe, and the blocked-document page.
+- **Material 3 Expressive surfaces**: solid flat cards with soft ambient elevation; every glass blur, decorative gradient, glow, and inset highlight removed. Border radius changes only on selection or toggle, never on hover. No idle animation on the power control.
+- **uOV shield mark**: new toolbar icons, off and loading variants, and the dashboard logo, rasterised from one SVG.
+
+----------
+
 # uBlockVanced 0.3.2
 
 Release tooling and packaging update; no runtime changes to the extension.
