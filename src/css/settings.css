@@ -236,3 +236,9 @@ input[type="number"][data-setting-name="largeMediaSize"] {
         min-width: 0;
     }
 }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (settings)
+ */
+.fieldset { border-radius: var(--radius-large); box-shadow: var(--el-2); }
+.li label:hover .checkbox:not([disabled]) { background: var(--surface-2); }

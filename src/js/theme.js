@@ -54,7 +54,7 @@ function setTheme(theme, propagate = false) {
     }
 }
 
-const CTP_PALETTES = ['catppuccin-latte', 'catppuccin-frappe', 'catppuccin-macchiato'];
+const CTP_PALETTES = ['catppuccin-mocha', 'catppuccin-latte', 'catppuccin-frappe', 'catppuccin-macchiato']; // uBlockVanced: mocha opts back out of the Rosé Pine default
 
 function setCatppuccinPalette(palette, propagate = false) {
     let w = self;

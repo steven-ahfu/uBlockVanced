@@ -253,3 +253,11 @@ body {
     background: rgb(var(--red-40) / 18%);
     border-left: 3px solid rgb(var(--red-40));
 }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (my filters)
+ */
+.editorToolbar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--surface-0); box-shadow: var(--el-2); padding: 10px 12px; }
+.editorToolbar button { border-radius: var(--radius-small); min-height: 40px; }
+.editorOptions > .li { background: var(--surface-2); border-color: var(--border-1); border-radius: var(--radius-medium); box-shadow: var(--el-1); }
+.editorOptions > .li:has(input:checked) { background: var(--primary-container); border-color: var(--primary-outline); border-radius: 18px; color: var(--on-primary-container); }

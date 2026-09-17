@@ -41,33 +41,29 @@ html#ublock0-inspector,
 }
 
 /*
- * uBlockVanced: Catppuccin Mocha inspector overlay polish
+ * uBlockVanced: inspector overlay polish (theme tokens, no glow)
  */
-#ublock0-inspector svg {
-    filter: drop-shadow(0 0 10px rgb(17 17 27 / 0.18));
-}
-
 #ublock0-inspector svg > path {
     stroke-linejoin: round;
     stroke-width: 1.25px;
 }
 
 #ublock0-inspector svg > path:nth-of-type(1) {
-    fill: rgb(243 139 168 / 0.14);
-    stroke: rgb(243 139 168 / 0.9);
+    fill: rgb(var(--ctp-red) / 0.14);
+    stroke: rgb(var(--ctp-red) / 0.9);
 }
 
 #ublock0-inspector svg > path:nth-of-type(2) {
-    fill: rgb(137 180 250 / 0.14);
-    stroke: rgb(137 180 250 / 0.9);
+    fill: rgb(var(--primary-70) / 0.14);
+    stroke: rgb(var(--primary-70) / 0.9);
 }
 
 #ublock0-inspector svg > path:nth-of-type(3) {
-    fill: rgb(250 179 135 / 0.12);
-    stroke: rgb(250 179 135 / 0.92);
+    fill: rgb(var(--ctp-peach) / 0.12);
+    stroke: rgb(var(--ctp-peach) / 0.92);
 }
 
 #ublock0-inspector svg > path:nth-of-type(4) {
-    fill: rgb(148 226 213 / 0.08);
-    stroke: rgb(148 226 213 / 0.72);
+    fill: rgb(var(--ctp-lavender) / 0.08);
+    stroke: rgb(var(--ctp-lavender) / 0.72);
 }

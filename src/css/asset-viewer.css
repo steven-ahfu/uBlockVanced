@@ -83,9 +83,7 @@ body.loading #subscribe > .fa-icon > svg {
  * uBlockForge premium asset viewer polish
  */
 body {
-    background:
-        radial-gradient(circle at top left, rgb(var(--primary-70) / 0.16), transparent 24rem),
-        var(--surface-2);
+    background: var(--surface-1);
     box-sizing: border-box;
     padding: 1.1rem;
 }
@@ -154,7 +152,7 @@ body {
 }
 
 .statusPill {
-    background: rgb(255 255 255 / 0.05);
+    background: var(--surface-2);
     border: 1px solid var(--border-1);
     border-radius: 999px;
     color: var(--ink-2);
@@ -172,20 +170,20 @@ body {
 }
 
 .statusPill[data-tone="running"] {
-    background: rgb(var(--primary-70) / 0.18);
-    border-color: rgb(var(--primary-70) / 0.34);
-    color: var(--ink-1);
+    background: var(--primary-container);
+    border-color: var(--primary-outline);
+    color: var(--on-primary-container);
 }
 
 .statusPill[data-tone="success"] {
-    background: rgb(var(--green-30, 166 227 161) / 0.16);
-    border-color: rgb(var(--green-30, 166 227 161) / 0.3);
+    background: var(--success-surface);
+    border-color: var(--success-border);
     color: var(--ink-1);
 }
 
 .statusPill[data-tone="warning"] {
-    background: rgb(var(--yellow-30, 249 226 175) / 0.18);
-    border-color: rgb(var(--yellow-30, 249 226 175) / 0.3);
+    background: var(--warning-surface);
+    border-color: var(--warning-border);
     color: var(--ink-1);
 }
 
@@ -194,9 +192,10 @@ body {
 }
 
 .sourceLink {
-    background: var(--field-surface);
+    background: var(--surface-2);
     border: 1px solid var(--border-1);
     border-radius: 999px;
+    box-shadow: var(--el-1);
     color: var(--ink-2);
     display: inline-flex;
     font-size: 0.88rem;
@@ -204,22 +203,21 @@ body {
     line-height: 1.2;
     padding: 0.55rem 0.8rem;
     text-decoration: none;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
 }
 
 .sourceLink:hover {
-    background: rgb(var(--primary-70) / 0.14);
+    background: var(--surface-3);
+    box-shadow: var(--el-2);
     color: var(--ink-1);
 }
 
 #subscribe {
     align-items: center;
-    backdrop-filter: blur(18px);
-    background:
-        linear-gradient(145deg, rgb(255 255 255 / 0.1), transparent 55%),
-        rgb(var(--surface-0-rgb) / 86%);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     gap: 0.9rem;
     margin: 0 auto 1rem;
     max-height: none;
@@ -229,10 +227,8 @@ body {
 
 .logo {
     align-items: center;
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.14), transparent 55%),
-        rgb(var(--surface-0-rgb) / 76%);
-    border: 1px solid rgb(255 255 255 / 0.05);
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
     border-radius: 1rem;
     display: inline-flex;
     justify-content: center;
@@ -341,12 +337,10 @@ body {
 }
 
 #content {
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 45%),
-        var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-card);
     margin: 0 auto;
     max-width: var(--default-page-max-width);
     overflow: hidden;
