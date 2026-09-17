@@ -10,7 +10,11 @@ body {
     flex-direction: column;
     height: 100%;
     justify-content: stretch;
-    overflow: hidden;
+    /* uBlockVanced: the workbench above the editor is tall enough that short
+       windows would squeeze the editor to a sliver and hidden overflow would
+       let focus changes scroll the layout invisibly. Allow a real vertical
+       page scroll instead and guarantee the editor a usable height below. */
+    overflow: hidden auto;
     width: 100%;
 }
 
@@ -43,7 +47,7 @@ body {
     border-radius: var(--radius-large);
     box-shadow: var(--panel-shadow);
     margin: 0 auto 12px;
-    min-height: 8em;
+    min-height: max(16rem, 40vh);
     overflow: hidden;
     text-align: left;
     word-wrap: normal;
