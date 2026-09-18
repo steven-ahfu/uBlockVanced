@@ -1,3 +1,7 @@
+# uBlockVanced 0.3.5
+
+- **One shared file picker.** Importing filters, rules, trusted sites or a settings backup went through a hand-rolled hidden `<input type="file">` repeated on four pages, each with its own ref and change handler. There is now a single `FilePicker` component: the visible control is an ordinary Material button, and the native input it drives is hidden inside the component, next to its own button. Only a native input can open the OS file dialog, so it remains the engine, but it is no longer part of any page's markup. The import buttons look and behave exactly as before, including picking the same file twice in a row.
+
 # uBlockVanced 0.3.4
 
 Every dashboard page is now React + Material 3 Expressive, and the popup is rebuilt against the original design.

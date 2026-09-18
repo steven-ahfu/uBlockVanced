@@ -27,6 +27,10 @@
     transition: var(--ubv-hover-transition);
     width: var(--ubv-control);
 }
+/* The native input behind ui/shared/FilePicker.tsx: the engine for the OS
+   file dialog, never part of the layout. Belt and braces over [hidden]. */
+.ubv-file-input { display: none !important; }
+
 :root.ubv-m3 .ubv-icon-button-sm {
     height: var(--ubv-control-sm);
     width: var(--ubv-control-sm);

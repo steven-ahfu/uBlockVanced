@@ -2,6 +2,7 @@ import { FilledButton, FilledTonalButton, OutlinedButton } from 'material-expres
 import { useRef } from 'react';
 import { CloudWidget } from '../../shared/CloudWidget';
 import { Icon } from '../../shared/Icon';
+import { FilePicker } from '../../shared/FilePicker';
 import { icons } from '../../shared/icons';
 import { Tooltips } from '../../shared/Tooltip';
 import { t } from '../../shared/i18n';
@@ -25,7 +26,6 @@ export function App() {
     syncRef.current = actions.sync;
     saveRef.current = () => { if ( state.changed && state.bad === false ) { actions.apply(); } };
 
-    const filePicker = useRef<HTMLInputElement>(null);
 
     return (
         <div className="ubv-page ubv-editor-page">
@@ -57,15 +57,13 @@ export function App() {
                         </FilledTonalButton>
                     </div>
                     <div className="ubv-actions ubv-actions-end">
-                        <OutlinedButton data-tip={t('whitelistImport')} onClick={() => {
-                            const input = filePicker.current;
-                            if ( input === null ) { return; }
-                            input.value = '';
-                            input.click();
-                        }}>
-                            <Icon slot="icon" svg={icons.download} />
-                            {t('whitelistImport')}
-                        </OutlinedButton>
+                        <FilePicker
+                            label={t('whitelistImport')}
+                            icon={icons.download}
+                            accept="text/plain,.txt"
+                            inputName="whitelistImport"
+                            onFile={file => { actions.importFile(file); }}
+                        />
                         <OutlinedButton disabled={!state.hasContent} data-tip={t('whitelistExport')} onClick={() => { actions.exportText(); }}>
                             <Icon slot="icon" svg={icons.upload} />
                             {t('whitelistExport')}
@@ -79,11 +77,6 @@ export function App() {
                 <div id="whitelist" ref={host} className="codeMirrorContainer cm-theme-override"></div>
             </Card>
 
-            <input ref={filePicker} type="file" name="whitelistImport" accept="text/plain,.txt" hidden
-                onChange={ev => {
-                    const file = ev.target.files?.[0];
-                    if ( file !== undefined ) { actions.importFile(file); }
-                }} />
             <Tooltips />
         </div>
     );

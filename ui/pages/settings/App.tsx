@@ -7,6 +7,7 @@ import { AccentSwatches } from './components/AccentSwatches';
 import { DocLink, Section, ToggleRow, stopRowToggle } from './components/Rows';
 import { pageIcons } from './icons';
 import { Icon } from '../../shared/Icon';
+import { FilePicker } from '../../shared/FilePicker';
 import { ListItem } from '../../shared/ListItem';
 import { icons } from '../../shared/icons';
 import { Tooltips } from '../../shared/Tooltip';
@@ -20,7 +21,6 @@ const THEME_OPTIONS: Array<[ string, string ]> = [ [ 'auto', 'Auto' ], [ 'light'
 
 export function App() {
     const [ state, actions ] = useSettings();
-    const restorePicker = useRef<HTMLInputElement>(null);
     const themeSelect = useRef<MdOutlinedSelect>(null);
     const canLeak = state.settings?.canLeakLocalIPAddresses === true;
 
@@ -158,15 +158,14 @@ export function App() {
                         <Icon slot="icon" svg={pageIcons.backup} />
                         {t('aboutBackupDataButton')}
                     </FilledTonalButton>
-                    <OutlinedButton id="import" data-tip={t('aboutRestoreDataButton')} onClick={() => {
-                        const input = restorePicker.current;
-                        if ( input === null ) { return; }
-                        input.value = '';
-                        input.click();
-                    }}>
-                        <Icon slot="icon" svg={pageIcons.restore} />
-                        {t('aboutRestoreDataButton')}
-                    </OutlinedButton>
+                    <FilePicker
+                        id="import"
+                        inputId="restoreFilePicker"
+                        label={t('aboutRestoreDataButton')}
+                        icon={pageIcons.restore}
+                        accept="text/plain,application/json"
+                        onFile={file => { actions.restoreFile(file); }}
+                    />
                     <OutlinedButton id="reset" className="ubv-danger" data-tip={t('aboutResetDataButton')} onClick={() => { actions.reset(); }}>
                         <Icon slot="icon" svg={pageIcons.reset} />
                         {t('aboutResetDataButton')}
@@ -174,11 +173,6 @@ export function App() {
                 </div>
             </Card>
 
-            <input ref={restorePicker} id="restoreFilePicker" type="file" accept="text/plain,application/json" hidden
-                onChange={ev => {
-                    const file = ev.target.files?.[0];
-                    if ( file !== undefined ) { actions.restoreFile(file); }
-                }} />
             <Tooltips />
         </div>
     );

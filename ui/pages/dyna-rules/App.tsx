@@ -1,9 +1,9 @@
 import { FilledButton, FilledTonalButton, OutlinedButton } from 'material-expressive-react/button';
 import { OutlinedSelect, SelectOption } from 'material-expressive-react/select';
 import { Textfield } from 'material-expressive-react/textfield';
-import { useRef } from 'react';
 import { CloudWidget } from '../../shared/CloudWidget';
 import { Icon } from '../../shared/Icon';
+import { FilePicker } from '../../shared/FilePicker';
 import { IconButton } from '../../shared/IconButton';
 import { icons } from '../../shared/icons';
 import { Tooltips } from '../../shared/Tooltip';
@@ -21,7 +21,6 @@ const FILTER_TIP = 'Filter rules';
 export function App() {
     const [ host, merge ] = useMergeView();
     const [ state, actions ] = useDynaRules(merge);
-    const filePicker = useRef<HTMLInputElement>(null);
 
     const editing = state.isClean === false;
     const status = editing ? t('rulesEditSave') : state.isDirty ? t('rulesTemporaryHeader') : t('rulesPermanentHeader');
@@ -64,15 +63,14 @@ export function App() {
                                 <Icon slot="icon" svg={pageIcons.commit} />
                                 {t('rulesCommit')}
                             </FilledTonalButton>
-                            <OutlinedButton id="importButton" disabled={editing} data-tip={t('rulesImport')} onClick={() => {
-                                const input = filePicker.current;
-                                if ( input === null ) { return; }
-                                input.value = '';
-                                input.click();
-                            }}>
-                                <Icon slot="icon" svg={icons.download} />
-                                {t('rulesImport')}
-                            </OutlinedButton>
+                            <FilePicker
+                                id="importButton"
+                                label={t('rulesImport')}
+                                icon={icons.download}
+                                accept="text/plain"
+                                disabled={editing}
+                                onFile={file => { actions.importFile(file); }}
+                            />
                             <FilledButton id="editSaveButton" disabled={editing === false} data-tip={t('rulesEditSave')} onClick={() => { actions.editSave(); }}>
                                 <Icon slot="icon" svg={pageIcons.save} />
                                 {t('rulesEditSave')}
@@ -117,11 +115,6 @@ export function App() {
                 <div ref={host} className="codeMirrorContainer codeMirrorMergeContainer cm-theme-override"></div>
             </Card>
 
-            <input ref={filePicker} type="file" accept="text/plain" hidden
-                onChange={ev => {
-                    const file = ev.target.files?.[0];
-                    if ( file !== undefined ) { actions.importFile(file); }
-                }} />
             <Tooltips />
         </div>
     );

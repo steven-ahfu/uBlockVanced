@@ -7,6 +7,7 @@ import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { CloudWidget } from '../../shared/CloudWidget';
 import { Icon } from '../../shared/Icon';
+import { FilePicker } from '../../shared/FilePicker';
 import { List, ListItem } from '../../shared/ListItem';
 import { icons } from '../../shared/icons';
 import { Tooltips } from '../../shared/Tooltip';
@@ -34,7 +35,6 @@ export function App() {
     syncRef.current = actions.sync;
     saveRef.current = () => { actions.apply(); };
 
-    const filePicker = useRef<HTMLInputElement>(null);
     const [ siteInput, setSiteInput ] = useState('');
 
     const onSiteSubmit = async (ev: FormEvent) => {
@@ -73,15 +73,13 @@ export function App() {
                         </FilledTonalButton>
                     </div>
                     <div className="ubv-actions ubv-actions-end">
-                        <OutlinedButton data-tip={t('1pImport')} onClick={() => {
-                            const input = filePicker.current;
-                            if ( input === null ) { return; }
-                            input.value = '';
-                            input.click();
-                        }}>
-                            <Icon slot="icon" svg={icons.download} />
-                            {t('1pImport')}
-                        </OutlinedButton>
+                        <FilePicker
+                            label={t('1pImport')}
+                            icon={icons.download}
+                            accept="text/plain,.txt"
+                            inputName="userFiltersImport"
+                            onFile={file => { actions.importFile(file); }}
+                        />
                         <OutlinedButton disabled={!state.hasContent} data-tip={t('1pExport')} onClick={() => { actions.exportText(); }}>
                             <Icon slot="icon" svg={icons.upload} />
                             {t('1pExport')}
@@ -185,11 +183,6 @@ export function App() {
                 {state.siteStatus ? <p className="ubv-muted" role="status" aria-live="polite">{state.siteStatus}</p> : null}
             </Card>
 
-            <input ref={filePicker} type="file" name="userFiltersImport" accept="text/plain,.txt" hidden
-                onChange={ev => {
-                    const file = ev.target.files?.[0];
-                    if ( file !== undefined ) { actions.importFile(file); }
-                }} />
             <Tooltips />
         </div>
     );
