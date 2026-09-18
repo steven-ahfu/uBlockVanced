@@ -22,9 +22,11 @@ const syncDir = syncArg ? path.resolve(root, syncArg.slice('--sync='.length)) : 
 const pages = readdirSync(pagesDir).filter(name =>
     existsSync(path.join(pagesDir, name, 'main.tsx'))
 );
+// Pages whose HTML is still derived from the upstream page: the React tree
+// renders on top of that markup and keeps a few upstream nodes. A page that
+// ships its own .html under ui/pages/<page>/ is not listed here.
 const legacyPages = new Map([
     [ 'logger-ui', [ 'logger-ui.html', [ 'logger-ui.js', 'logger-ui-inspector.js' ] ] ],
-    [ 'element-probe-panel', [ 'element-probe-panel.html', [ 'element-probe-panel.js' ] ] ],
 ]);
 if ( pages.length === 0 ) {
     console.error('ui/build.mjs: no pages found under ui/pages/*/main.tsx');

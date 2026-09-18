@@ -4,11 +4,11 @@ import { createRoot } from 'react-dom/client';
 import '../../shared/page.css';
 import './element-probe-panel.css';
 
-// ui/build.mjs still derives dist/ui/element-probe-panel.html from the
-// upstream page while its `legacyPages` map lists this page; that document
-// carries the upstream markup and loads neither the palette nor js/theme.js.
-// Drop what it brought and pull the palette in, so the panel renders the same
-// whichever HTML the build shipped.
+// This page ships its own element-probe-panel.html (React root, the palette
+// stylesheets and js/theme.js), so normally there is nothing to do here.
+// The guard stays for the other case: a package built before that html
+// existed carries the upstream markup and no palette. Drop what it brought
+// and pull the palette in, so the panel renders the same either way.
 function claimDocument(): void {
     const root = document.getElementById('root');
     for ( const node of Array.from(document.body.children) ) {
