@@ -30,11 +30,11 @@ export function buildInspectScript(patterns) {
     const patternsJson = JSON.stringify(patterns);
     return `
 (function() {
-    // uBlockVanced: fall back to the element marked by the "Inspect with
-    // Element Probe" context menu entry when nothing is selected in the
-    // Elements panel.
-    var el = $0 || document.querySelector('[data-uv-ctx]');
-    if (!el) return JSON.stringify({ error: 'No element selected. Select one in the Elements panel, or right-click an element and choose "Inspect with Element Probe".' });
+    // uBlockVanced: $0 is whatever DevTools has selected -- set by the
+    // Elements panel, or by this panel's own Pick mode, which calls
+    // inspect() on the element the user clicks.
+    var el = $0;
+    if (!el) return JSON.stringify({ error: 'No element selected. Click Pick, then click an element on the page, or select one in the Elements panel.' });
 
     var result = {
         tag: el.tagName ? el.tagName.toLowerCase() : '',
@@ -812,17 +812,49 @@ export function buildInspectScript(patterns) {
 
 /******************************************************************************/
 
+// Highlight overlays are position:fixed boxes drawn at an element's viewport
+// rect. Two rules keep them from taking over the page:
+//   - <html> and <body> are never painted. Their rect IS the viewport, so a
+//     filter that resolves to either (an over-deep :upward(N), a bare
+//     procedural chain) turned the whole screen into one purple sheet.
+//   - the overlays are torn down on the next scroll or resize, because a
+//     fixed box cannot follow the element it describes.
+const HIGHLIGHT_HELPERS = `
+    function __ubpPaintable(el) {
+        if (!el || el.nodeType !== 1) return false;
+        if (el === document.documentElement || el === document.body) return false;
+        var rect = el.getBoundingClientRect();
+        if (rect.width === 0 && rect.height === 0) return false;
+        return true;
+    }
+    function __ubpArmDismiss() {
+        if (window.__ubp_hl_armed__) return;
+        window.__ubp_hl_armed__ = true;
+        var drop = function() {
+            window.__ubp_hl_armed__ = false;
+            window.removeEventListener('scroll', drop, true);
+            window.removeEventListener('resize', drop, true);
+            var stale = document.querySelectorAll('.__ubp_highlight__');
+            for (var i = 0; i < stale.length; i++) stale[i].remove();
+        };
+        window.addEventListener('scroll', drop, true);
+        window.addEventListener('resize', drop, true);
+    }
+`;
+
 export const HIGHLIGHT_SCRIPT = (selector) => `
 (function() {
     var prev = document.querySelectorAll('.__ubp_highlight__');
     for (var i = 0; i < prev.length; i++) prev[i].remove();
 
     if (!${JSON.stringify(selector)}) return;
-
+${HIGHLIGHT_HELPERS}
     try {
         var els = document.querySelectorAll(${JSON.stringify(selector)});
         var max = Math.min(els.length, 200);
+        __ubpArmDismiss();
         for (var i = 0; i < max; i++) {
+            if (!__ubpPaintable(els[i])) continue;
             var overlay = document.createElement('div');
             overlay.className = '__ubp_highlight__';
             var rect = els[i].getBoundingClientRect();
@@ -850,7 +882,7 @@ export const PROCEDURAL_HIGHLIGHT_SCRIPT = (proceduralSelector) => {
 (function() {
     var prev = document.querySelectorAll('.__ubp_highlight__');
     for (var i = 0; i < prev.length; i++) prev[i].remove();
-
+${HIGHLIGHT_HELPERS}
     var baseSel = ${JSON.stringify(baseSel)};
     var opChain = ${JSON.stringify(opChain)};
 
@@ -954,13 +986,22 @@ export const PROCEDURAL_HIGHLIGHT_SCRIPT = (proceduralSelector) => {
 
     // Highlight matched elements (capped to prevent DOM bomb on broad selectors)
     var hlMax = Math.min(matched.length, 200);
+    var painted = 0;
+    __ubpArmDismiss();
     for (var i = 0; i < hlMax; i++) {
+        if (!__ubpPaintable(matched[i])) continue;
+        painted++;
         var rect = matched[i].getBoundingClientRect();
-        if (rect.width === 0 && rect.height === 0) continue;
         var overlay = document.createElement('div');
         overlay.className = '__ubp_highlight__';
         overlay.style.cssText = 'position:fixed !important;top:' + rect.top + 'px !important;left:' + rect.left + 'px !important;width:' + rect.width + 'px !important;height:' + rect.height + 'px !important;background:rgba(203,166,247,0.25) !important;border:2px solid rgba(203,166,247,0.8) !important;pointer-events:none !important;z-index:2147483647 !important;box-sizing:border-box !important;transition:opacity 150ms ease !important;';
         document.documentElement.appendChild(overlay);
+    }
+    if (matched.length !== 0 && painted === 0) {
+        return JSON.stringify({
+            count: matched.length,
+            note: 'Matches the page root (html/body) — not previewable, and not a filter you want',
+        });
     }
     return JSON.stringify({ count: matched.length });
 })()`;
@@ -1148,13 +1189,24 @@ export const PICK_ELEMENT_SCRIPT = `
 
     window.addEventListener('beforeunload', cleanup);
 
-    // Delay pointer-events to avoid capturing the triggering click
-    setTimeout(function() {
+    // Escape has to work from the first frame: it is the only way out if
+    // anything below fails, and cleanup() is what unfreezes the page.
+    document.addEventListener('keydown', onKeydown, true);
+
+    // Delay pointer-events to avoid capturing the triggering click. This MUST
+    // go through origSetTimeout: window.setTimeout is frozen by the code
+    // above, so an unqualified setTimeout(..., 100) queues itself into
+    // frozenTimers and never runs -- leaving the picker unarmed, Escape
+    // unbound and the page's timers hijacked until it is reloaded.
+    origSetTimeout.call(window, function() {
         overlay.style.pointerEvents = 'auto';
         document.addEventListener('mousemove', onMove, true);
         document.addEventListener('click', onClick, true);
-        document.addEventListener('keydown', onKeydown, true);
     }, 100);
+
+    // Watchdog: a frozen page is worse than a cancelled pick, so the freeze
+    // can never outlive the picker by more than a minute.
+    origSetTimeout.call(window, cleanup, 60000);
 
     return 'picker_started';
 })()

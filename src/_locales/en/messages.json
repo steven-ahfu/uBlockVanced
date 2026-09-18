@@ -1467,7 +1467,6 @@
     "message": "Markdown",
     "description": "Label for radio-button to pick export text format"
   },
-
   "supportOpenButton": {
     "message": "Open",
     "description": "Text for button which open an external web page in Support pane"
@@ -1883,14 +1882,6 @@
   "contextMenuViewSource": {
     "message": "View source code…",
     "description": "A context menu entry, to view the source code of the target resource"
-  },
-  "contextMenuElementProbe": {
-    "message": "Inspect with Element Probe",
-    "description": "A context menu entry, to open the Element Probe DevTools panel for deep element inspection"
-  },
-  "contextMenuElementProbeHint": {
-    "message": "Remembered the element you right-clicked. Nothing is inspected yet: press F12, open the Element Probe tab, then click Inspect selection.",
-    "description": "In-page hint shown after choosing the Element Probe context menu entry; browsers do not let extensions open DevTools"
   },
   "shortcutCapturePlaceholder": {
     "message": "Type a shortcut",

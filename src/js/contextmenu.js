@@ -41,7 +41,6 @@ const BLOCK_RESOURCE_BIT         = 0b000010;
 const TEMP_ALLOW_LARGE_MEDIA_BIT = 0b000100;
 const SUBSCRIBE_TO_LIST_BIT      = 0b001000;
 const VIEW_SOURCE_BIT            = 0b010000;
-const ELEMENT_PROBE_BIT          = 0b100000;
 
 /******************************************************************************/
 
@@ -134,74 +133,6 @@ const onViewSource = function(details, tab) {
 
 /******************************************************************************/
 
-const onElementProbe = function(details, tab) {
-    if ( tab === undefined ) { return; }
-    if ( /^https?:\/\//.test(tab.url) === false ) { return; }
-    // The content-level contextmenu listener installed by ensureProbeListener
-    // has already tagged the right-clicked element with [data-uv-ctx]. The
-    // Element Probe panel falls back to that element when nothing is selected
-    // in the Elements panel. Extensions cannot open DevTools themselves, so
-    // show a short in-page hint telling the user where to go next.
-    const hint = JSON.stringify(i18n$('contextMenuElementProbeHint'));
-    vAPI.tabs.executeScript(tab.id, {
-        frameId: 0,
-        code: `(function(){
-            var id = 'ubv-probe-hint';
-            var prev = document.getElementById(id);
-            if ( prev ) { prev.remove(); }
-            var el = document.createElement('div');
-            el.id = id;
-            el.setAttribute('role', 'status');
-            el.textContent = ${hint};
-            el.style.cssText = 'position:fixed;z-index:2147483647;left:50%;bottom:24px;' +
-                'transform:translateX(-50%);max-width:min(90vw,32rem);padding:10px 16px;' +
-                'border-radius:14px;background:#1F1D2E;color:#E0DEF4;border:1px solid #393652;' +
-                'box-shadow:0 2px 6px rgba(0,0,0,.3),0 14px 34px rgba(0,0,0,.4);' +
-                'font:500 13.5px/1.4 Geist,"Segoe UI",system-ui,sans-serif;pointer-events:none';
-            (document.body || document.documentElement).appendChild(el);
-            setTimeout(function(){ el.remove(); }, 7000);
-        })()`,
-        runAt: 'document_end',
-    }).catch(( ) => { /* tab may have closed or navigated */ });
-};
-
-// Inject a lightweight listener that marks the right-clicked element so
-// the context-menu handler above can retrieve it. Installs in the top
-// frame and, when supported, in every sub-frame too — otherwise a
-// right-click inside an iframe would never mark its target and we'd
-// fall back to the top-frame <body> (wrong element).
-const ensureProbeListener = function(tabId) {
-    const script = {
-        code: `(function(){
-            if ( document.__uv_ctx_ready__ ) return;
-            document.__uv_ctx_ready__ = true;
-            document.addEventListener('contextmenu', function(ev) {
-                var prev = document.querySelector('[data-uv-ctx]');
-                if ( prev ) prev.removeAttribute('data-uv-ctx');
-                if ( ev.target && ev.target.setAttribute ) {
-                    ev.target.setAttribute('data-uv-ctx', '');
-                }
-            }, true);
-        })()`,
-        runAt: 'document_start',
-        allFrames: true,
-    };
-    const p = vAPI.tabs.executeScript(tabId, script);
-    if ( p && typeof p.catch === 'function' ) {
-        p.catch(( ) => {
-            // Some frames may reject (e.g. sandboxed / cross-origin in MV2);
-            // retry top frame only so the common case still works.
-            vAPI.tabs.executeScript(tabId, {
-                code: script.code,
-                runAt: script.runAt,
-                frameId: 0,
-            }).catch(( ) => { /* tab closed/navigated */ });
-        });
-    }
-};
-
-/******************************************************************************/
-
 const onEntryClicked = function(details, tab) {
     if ( details.menuItemId === 'uBlock0-blockElement' ) {
         return onBlockElement(details, tab);
@@ -220,9 +151,6 @@ const onEntryClicked = function(details, tab) {
     }
     if ( details.menuItemId === 'uBlock0-viewSource' ) {
         return onViewSource(details, tab);
-    }
-    if ( details.menuItemId === 'uBlock0-elementProbe' ) {
-        return onElementProbe(details, tab);
     }
 };
 
@@ -265,12 +193,6 @@ const menuEntries = {
         contexts: [ 'page', 'frame', 'link' ],
         documentUrlPatterns: [ 'http://*/*', 'https://*/*' ],
     },
-    elementProbe: {
-        id: 'uBlock0-elementProbe',
-        title: i18n$('contextMenuElementProbe'),
-        contexts: [ 'all' ],
-        documentUrlPatterns: [ 'http://*/*', 'https://*/*' ],
-    },
 };
 
 /******************************************************************************/
@@ -288,7 +210,6 @@ const update = function(tabId = undefined) {
                 } else {
                     newBits |= BLOCK_RESOURCE_BIT;
                 }
-                newBits |= ELEMENT_PROBE_BIT;
             }
             if ( pageStore.largeMediaCount !== 0 ) {
                 newBits |= TEMP_ALLOW_LARGE_MEDIA_BIT;
@@ -317,10 +238,6 @@ const update = function(tabId = undefined) {
     }
     if ( (newBits & VIEW_SOURCE_BIT) !== 0 ) {
         usedEntries.push(menuEntries.viewSource);
-    }
-    if ( (newBits & ELEMENT_PROBE_BIT) !== 0 ) {
-        usedEntries.push(menuEntries.elementProbe);
-        if ( tabId ) { ensureProbeListener(tabId); }
     }
     vAPI.contextMenu.setEntries(usedEntries, onEntryClicked);
 };

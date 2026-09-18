@@ -1,3 +1,12 @@
+# uBlockVanced 0.3.7
+
+Element Probe no longer freezes the page it is inspecting, and the context menu is down to one entry.
+
+- **Pick mode froze the page instead of picking.** The picker replaces `window.setTimeout`, `setInterval` and `requestAnimationFrame` so dynamic elements hold still while you aim — then armed its own listeners with a bare `setTimeout(..., 100)`, which resolved to the replacement it had just installed. At 100 ms it exceeded the 50 ms freeze threshold, so the picker queued its own arming call into the frozen list and never ran it: no hover highlight, no click to pick, no Escape binding, and the page's timer APIs hijacked with nothing left able to restore them. The page stayed dead until it was reloaded. The arming call now goes through the captured original, Escape is bound before anything else can fail, and a 60-second watchdog unfreezes the page unconditionally.
+- **Highlighting the page root painted the whole screen purple.** Overlays are drawn at an element's viewport rect, so a selector that resolved to `<html>` or `<body>` — an `:upward(N)` climbing past the element's ancestry does it easily — covered the viewport in one mauve sheet. Neither highlight script paints the page root now; a match that lands there is reported as "Matches the page root (html/body) — not previewable" instead. Overlays also drop themselves on the next scroll or resize, so a fixed box can no longer drift away from the element it describes.
+- **One right-click entry.** "Inspect with Element Probe" only stamped a `data-uv-ctx` attribute onto the page and showed a toast telling you to press F12 — and it stamped nothing at all in the common case, because the listener that did it was installed after an early return that fires on every same-state navigation. The entry, the listener, the toast and the dead `[data-uv-ctx]` fallback are gone, along with the page-DOM writes on every right-click. An ordinary page now shows exactly one uBlockVanced entry: Block element. Use the panel's own Pick button to select an element.
+- **The page-context scripts have tests.** `tests/element-probe-page-scripts.test.js` runs them in a `node:vm` context whose global object is the stub window, so a bare `setTimeout` resolves the way a page resolves it. Against the previous code it reproduces the freeze exactly.
+
 # uBlockVanced 0.3.6
 
 Popup header and tool rows rebuilt: less than half the vertical height, and every control on one size.
