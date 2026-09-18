@@ -13,6 +13,7 @@ Roadmap_Blocked.md
 LOGO_PROMPTS.md
 MANIFESTO.md
 REMOVED.md
+.agents/
 
 # Build artifacts copied into src/ by tools/copy-common-files.sh
 /src/js/vapi.js

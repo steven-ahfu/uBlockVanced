@@ -197,6 +197,17 @@ export function cellRuleClass(
     return classes.join(' ');
 }
 
+export type CellRuleName = 'none' | 'allow' | 'block' | 'noop';
+
+// The rule a cell currently shows, read back from the class names
+// cellRuleClass() produced. Used for the cell's accessible name.
+export function cellRuleName(className: string): CellRuleName {
+    if ( className.includes('allowRule') ) { return 'allow'; }
+    if ( className.includes('blockRule') ) { return 'block'; }
+    if ( className.includes('noopRule') ) { return 'noop'; }
+    return 'none';
+}
+
 /******************************************************************************/
 
 // Popup state hash: which changes require a page reload to take effect.

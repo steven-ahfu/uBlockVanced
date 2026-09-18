@@ -327,17 +327,23 @@ html, body { background-image: none; }
     font-weight: 700;
 }
 .tabStrip { gap: 4px; }
-.tabButton {
+/* #dashboard-nav prefix: outranks the html:not(#uBO-popup-panel) button rules in common.css. */
+#dashboard-nav > span { overflow: visible; padding: 3px 2px; }
+#dashboard-nav .tabButton {
+    background: transparent;
     border: 0;
     border-radius: 19px;
+    box-shadow: none;
     color: var(--ink-2);
+    fill: var(--ink-2);
     font-size: 13.5px;
     font-weight: 500;
     min-height: 38px;
     padding: 0 17px;
+    transform: none;
     transition: background-color var(--transition-fast), color var(--transition-fast), border-radius var(--transition-normal);
 }
-.tabButton.selected {
+#dashboard-nav .tabButton.selected {
     background: rgb(var(--primary-70));
     border: 0;
     border-radius: var(--radius-selected);
@@ -346,12 +352,22 @@ html, body { background-image: none; }
     fill: var(--surface-1);
     font-weight: 600;
 }
-:root.desktop .tabButton:not(.selected):hover,
-.tabButton:not(.selected):hover {
+:root.desktop #dashboard-nav .tabButton:not(.selected):hover,
+#dashboard-nav .tabButton:not(.selected):hover {
     background: var(--surface-2);
     border: 0;
     border-radius: 19px;
+    box-shadow: none;
     color: var(--ink-1);
+    fill: var(--ink-1);
+    transform: none;
 }
+#dashboard-nav .tabButton.selected:hover { background: rgb(var(--primary-80)); }
+#dashboard-nav .tabButton:active { box-shadow: none; transform: none; }
+#dashboard-nav .tabButton:focus-visible { box-shadow: var(--focus-ring); }
+/* Pane switches crossfade (dashboard.js toggles .paneLoading around the load). */
+iframe { opacity: 1; transition: opacity 160ms var(--m3e-ease); }
+iframe.paneLoading { opacity: 0; transition-duration: 60ms; }
+@media (prefers-reduced-motion: reduce) { iframe { transition: none; } }
 #unsavedWarning > div:first-of-type { background: var(--surface-0); border-radius: var(--radius-large); box-shadow: var(--el-card); }
 #unsavedWarning > div:last-of-type { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(20 18 28 / 0.6); }

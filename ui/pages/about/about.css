@@ -1,0 +1,49 @@
+/*
+ * uBlockVanced About (React + Material 3 Expressive).
+ * Page frame, cards, lists and pills come from ui/shared/page.css.
+ */
+.ubv-about { max-width: 920px; }
+.ubv-about-section { display: grid; gap: var(--ubv-gap); }
+.ubv-about-links { --md-chip-set-gap: var(--ubv-gap); }
+.ubv-about .ubv-chip {
+    --md-assist-chip-container-shape: var(--ubv-radius-chip);
+    --md-assist-chip-outline-color: var(--md-sys-color-outline-variant);
+    --md-assist-chip-label-text-size: 12.5px;
+}
+
+/* Credits: md-list rows, the two links as IconButtons in slot="end". */
+.ubv-credits { display: grid; gap: 2px; }
+.ubv-credit {
+    --md-list-item-label-text-weight: 600;
+    --md-list-item-two-line-container-height: 56px;
+    --md-list-item-top-space: 8px;
+    --md-list-item-bottom-space: 8px;
+    background: transparent;
+}
+:root .ubv-credit:hover { background: var(--md-sys-color-surface-container-high); }
+.ubv-credit-links { align-items: center; display: inline-flex; gap: 2px; }
+.ubv-credit-links .ubv-icon-button {
+    --ubv-control: 32px;
+    --ubv-icon: 18px;
+}
+
+/* Links inside running prose: Material text buttons at body density. The
+   line box is looser so an inline button never crowds the line above. */
+.ubv-about-note { line-height: 1.7; }
+.ubv-inline-link {
+    --md-text-button-container-height: 24px;
+    --md-text-button-leading-space: 6px;
+    --md-text-button-trailing-space: 6px;
+    --md-text-button-label-text-size: 12.5px;
+    --md-text-button-label-text-weight: 600;
+    --md-text-button-container-shape: var(--ubv-radius-chip);
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-chip);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-wrap: wrap;
+    transition: var(--ubv-hover-transition);
+    vertical-align: baseline;
+}
+:root .ubv-inline-link:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-about-footer { padding: 0 6px; }

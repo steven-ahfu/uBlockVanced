@@ -1,0 +1,122 @@
+/*
+ * uBlockVanced My filters (React + Material 3 Expressive).
+ * Page frame, cards, pills and settings rows come from ui/shared/page.css.
+ * CodeMirror keeps its upstream ids/classes so css/codemirror.css applies.
+ */
+html {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+:root.ubv-m3 body {
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+}
+.ubv-editor-page {
+    grid-template-rows: auto;
+    margin: 0;
+    max-width: none;
+    padding-bottom: var(--ubv-pad);
+}
+
+.ubv-workbench { display: grid; gap: var(--ubv-pad); }
+
+/* The two editor switches: one md-list, two columns when there is room. The
+   row is the toggle; the checkbox in its end slot only mirrors the state. */
+.ubv-settings-list {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.ubv-setting-row {
+    --md-list-item-one-line-container-height: 56px;
+    --md-list-item-disabled-opacity: 1;
+    gap: 12px;
+}
+.ubv-setting-row.is-disabled { opacity: 0.5; }
+.ubv-setting-end {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+.ubv-toolbar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap) var(--ubv-pad);
+    justify-content: space-between;
+}
+.ubv-actions-end { justify-content: flex-end; }
+@media (max-width: 720px) {
+    .ubv-toolbar { flex-direction: column; align-items: stretch; }
+    .ubv-actions-end { justify-content: flex-start; }
+}
+
+/* Editor card: the CodeMirror instance fills it */
+.ubv-editor-card {
+    display: flex;
+    height: clamp(24rem, 55svh, 48rem);
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
+.ubv-editor-card .codeMirrorContainer {
+    display: block;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+.ubv-editor-card .CodeMirror {
+    background: var(--md-sys-color-surface-container-lowest);
+    border-radius: var(--ubv-radius-card);
+    height: 100%;
+    width: 100%;
+}
+.ubv-editor-card .CodeMirror-gutters {
+    background: var(--md-sys-color-surface-container-low);
+    border-color: var(--md-sys-color-outline-variant);
+}
+.dead-domain-line {
+    background: color-mix(in srgb, var(--md-sys-color-error) 18%, transparent);
+    border-left: 3px solid var(--md-sys-color-error);
+}
+
+/* Per-site disable list */
+.ubv-sites { display: grid; gap: var(--ubv-gap); }
+.ubv-site-form {
+    align-items: center;
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-top: 4px;
+}
+.ubv-site-form md-filled-tonal-button {
+    --md-filled-tonal-button-container-height: 48px;
+    --md-filled-tonal-button-leading-space: 20px;
+    --md-filled-tonal-button-trailing-space: 24px;
+}
+@media (max-width: 560px) {
+    .ubv-site-form { grid-template-columns: minmax(0, 1fr); }
+}
+.ubv-site-chips { --md-chip-set-gap: var(--ubv-gap); }
+/* One md-input-chip per site: the remove button is the chip's own trailing
+   action, so the whole row is a single Material component. */
+.ubv-site-chip {
+    --md-input-chip-container-shape: var(--ubv-radius-chip);
+    --md-input-chip-container-height: 32px;
+    --md-input-chip-label-text-size: 12.5px;
+    --md-input-chip-leading-space: 12px;
+    --md-input-chip-trailing-space: 4px;
+    --md-input-chip-with-trailing-icon-trailing-space: 4px;
+    --md-input-chip-icon-size: 16px;
+    --md-input-chip-outline-width: 0px;
+    --md-input-chip-selected-outline-width: 0px;
+    --md-input-chip-selected-container-color: var(--md-sys-color-surface-container-high);
+    --md-input-chip-selected-label-text-color: var(--md-sys-color-on-surface);
+    --md-input-chip-selected-trailing-icon-color: var(--md-sys-color-on-surface-variant);
+}

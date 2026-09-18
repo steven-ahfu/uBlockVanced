@@ -1,0 +1,229 @@
+/*
+ * uBlockVanced Filter lists (React + Material 3 Expressive).
+ * Page frame, cards, pills and list rows come from ui/shared/page.css.
+ */
+.ubv-controls { display: grid; gap: var(--ubv-pad); position: relative; }
+.ubv-progress {
+    border-radius: 999px;
+    bottom: 0;
+    left: var(--ubv-pad);
+    position: absolute;
+    right: var(--ubv-pad);
+}
+.ubv-toolbar {
+    align-items: center;
+    display: grid;
+    gap: var(--ubv-pad);
+    grid-template-columns: auto minmax(0, 1fr);
+}
+@media (max-width: 720px) {
+    .ubv-toolbar { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The four list-loading settings: one md-list, two columns when there is
+   room. The row is the toggle; the checkbox only mirrors its state. */
+.ubv-settings-list {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.ubv-setting-row {
+    --md-list-item-one-line-container-height: 56px;
+    --md-list-item-disabled-opacity: 1;
+    gap: 12px;
+}
+.ubv-setting-end {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+.ubv-info { --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant); }
+
+/* Groups and rows */
+#lists { display: grid; gap: var(--ubv-pad); }
+.ubv-group { display: grid; gap: 6px; }
+.ubv-group-header {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+    justify-content: space-between;
+    padding: 2px 6px 6px;
+}
+.ubv-group-title {
+    color: var(--md-sys-color-on-surface);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    margin: 0;
+    text-transform: uppercase;
+}
+/* Counts are Pills (md-assist-chip); keep them as compact as the old span. */
+.ubv-count {
+    --md-assist-chip-container-height: 26px;
+    --md-assist-chip-label-text-size: 12px;
+    --md-assist-chip-label-text-weight: 600;
+    --md-assist-chip-leading-space: 10px;
+    --md-assist-chip-trailing-space: 10px;
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-surface-container-highest);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-surface);
+    flex-shrink: 0;
+}
+.ubv-group-body { display: grid; gap: 2px; }
+.ubv-entry { display: grid; gap: 2px; }
+.ubv-children {
+    border-left: 1px solid var(--md-sys-color-outline-variant);
+    display: grid;
+    gap: 2px;
+    margin-left: 22px;
+    padding-left: 6px;
+}
+/* A catalog row: md-list-item[type=text], so the checkbox, the name and the
+   actions sit in the item's own start / headline / end slots. */
+.ubv-row {
+    --md-list-item-one-line-container-height: 48px;
+    --md-list-item-top-space: 4px;
+    --md-list-item-bottom-space: 4px;
+    --md-list-item-leading-space: 12px;
+    --md-list-item-trailing-space: 8px;
+    background: transparent;
+    gap: 12px;
+}
+:root .ubv-row:hover { background: var(--md-sys-color-surface-container-high); }
+.ubv-row-check { flex-shrink: 0; }
+.ubv-row-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    min-width: 0;
+}
+.ubv-row-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.ubv-row-node .ubv-row-name { font-weight: 600; }
+.ubv-row-stats {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.ubv-row-stats:empty { display: none; }
+.ubv-row-end {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--ubv-gap);
+}
+.ubv-row-actions {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 2px;
+}
+:root .ubv-row-actions md-icon-button,
+:root .ubv-row-actions .ubv-diff-toggle {
+    opacity: 0.72;
+    transition: opacity var(--ubv-hover-duration) var(--ubv-hover-ease);
+}
+:root .ubv-row:hover .ubv-row-actions md-icon-button,
+:root .ubv-row:hover .ubv-row-actions .ubv-diff-toggle,
+:root .ubv-row:focus-within .ubv-row-actions md-icon-button,
+:root .ubv-row:focus-within .ubv-row-actions .ubv-diff-toggle { opacity: 1; }
+.ubv-row.toRemove .ubv-row-check { visibility: hidden; }
+.ubv-row.toRemove .ubv-row-name { opacity: 0.6; text-decoration: line-through; }
+.ubv-remove[aria-pressed="true"] { --md-icon-button-icon-color: var(--md-sys-color-error); opacity: 1 !important; }
+.ubv-cache.recent { --md-icon-button-icon-color: var(--md-sys-color-primary); }
+
+.ubv-status {
+    --md-icon-size: var(--ubv-icon);
+    align-items: center;
+    color: var(--md-sys-color-on-surface-variant);
+    display: inline-flex;
+    height: var(--ubv-control);
+    justify-content: center;
+    width: var(--ubv-control);
+}
+.ubv-status-obsolete { color: var(--md-sys-color-tertiary); }
+.ubv-status-unsecure,
+.ubv-status-failed { color: var(--md-sys-color-error); }
+/* The updating spinner is the md-circular-progress itself; it keeps the
+   width of the control box it replaced. */
+.ubv-status-updating {
+    --md-circular-progress-size: 22px;
+    flex-shrink: 0;
+    margin-inline: calc((var(--ubv-control) - 22px) / 2);
+}
+
+.ubv-diff-toggle {
+    --md-text-button-container-height: 36px;
+    --md-text-button-leading-space: 10px;
+    --md-text-button-trailing-space: 12px;
+    white-space: nowrap;
+}
+
+/* Diff panel: an outlined card, one collapsible block per change set */
+.ubv-diff {
+    --md-outlined-card-container-color: var(--md-sys-color-surface-container-low);
+    --md-outlined-card-container-shape: var(--ubv-radius-control);
+    --md-outlined-card-outline-color: transparent;
+    box-shadow: none;
+    display: grid;
+    gap: var(--ubv-gap);
+    margin: 0 0 6px 42px;
+    padding: 12px 14px;
+}
+.ubv-diff-heading { font-size: 13px; font-weight: 600; }
+.ubv-diff-summary { --md-chip-set-gap: 6px; }
+.ubv-diff-count {
+    --md-assist-chip-container-height: 26px;
+    --md-assist-chip-label-text-size: 11.5px;
+    --md-assist-chip-leading-space: 10px;
+    --md-assist-chip-trailing-space: 10px;
+}
+.ubv-diff-section { display: grid; gap: 4px; justify-items: start; }
+.ubv-diff-section-toggle {
+    --md-text-button-container-height: 32px;
+    --md-text-button-leading-space: 8px;
+    --md-text-button-trailing-space: 12px;
+    --md-text-button-label-text-size: 12.5px;
+    --md-text-button-label-text-weight: 600;
+    --md-text-button-icon-size: 18px;
+}
+.ubv-diff-section.added { --md-text-button-label-text-color: var(--md-sys-color-primary); }
+.ubv-diff-section.removed { --md-text-button-label-text-color: var(--md-sys-color-error); }
+.ubv-diff-section.modified { --md-text-button-label-text-color: var(--md-sys-color-tertiary); }
+.ubv-diff-section pre {
+    background: var(--md-sys-color-surface-container-lowest);
+    border-radius: var(--ubv-radius-chip);
+    color: var(--md-sys-color-on-surface-variant);
+    font: 12px/1.5 "JetBrains Mono", ui-monospace, Menlo, monospace;
+    justify-self: stretch;
+    margin: 0;
+    max-height: 15rem;
+    overflow: auto;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+    width: 100%;
+    word-break: break-word;
+}
+.ubv-diff-note { color: var(--md-sys-color-on-surface-variant); font-size: 12px; margin: 0; }
+
+/* Import */
+.ubv-import { display: grid; gap: 6px; }
+.ubv-import-field {
+    --md-outlined-text-field-container-shape: var(--ubv-radius-control);
+    --md-outlined-text-field-input-text-font: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --md-outlined-text-field-input-text-size: 13px;
+    width: 100%;
+}
+
+/* Flags inside list titles */
+.ubv-row-name .countryFlag {
+    height: 0.9em;
+    margin-inline-end: 2px;
+    vertical-align: -0.08em;
+}

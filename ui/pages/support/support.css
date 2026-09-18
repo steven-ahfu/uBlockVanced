@@ -1,0 +1,104 @@
+/*
+ * uBlockVanced Support (React + Material 3 Expressive).
+ * Page frame, cards, lists and pills come from ui/shared/page.css.
+ */
+.ubv-support { max-width: 920px; }
+
+/* One topic per card: icon, copy, action */
+.ubv-support-entry {
+    align-items: flex-start;
+    display: flex;
+    gap: var(--ubv-pad);
+}
+.ubv-support-icon {
+    --md-icon-size: 22px;
+    align-items: center;
+    background: var(--md-sys-color-primary-container);
+    border-radius: var(--ubv-radius-control);
+    color: var(--md-sys-color-on-primary-container);
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 44px;
+    justify-content: center;
+    width: 44px;
+}
+.ubv-support-copy {
+    display: grid;
+    flex: 1 1 auto;
+    gap: 6px;
+    min-width: 0;
+}
+.ubv-support-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: 2px 0 0;
+}
+.ubv-support-action { align-self: center; flex-shrink: 0; }
+@media (max-width: 640px) {
+    .ubv-support-entry { flex-wrap: wrap; }
+    .ubv-support-action { width: 100%; }
+}
+
+/* Markup carried by upstream strings: parsed into text spans and Material
+   text buttons (ui/pages/support/Prose.tsx). Prose lines are looser so the
+   inline buttons never crowd the line above. */
+.ubv-support-html { line-height: 1.7; }
+.ubv-code-text {
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: 6px;
+    font: 12px/1.4 "JetBrains Mono", ui-monospace, Menlo, monospace;
+    padding: 1px 5px;
+}
+.ubv-strong-text { color: var(--md-sys-color-on-surface); font-weight: 600; }
+.ubv-underline-text { text-decoration: underline; }
+.ubv-inline-link {
+    --md-text-button-container-height: 24px;
+    --md-text-button-leading-space: 6px;
+    --md-text-button-trailing-space: 6px;
+    --md-text-button-label-text-size: 12.5px;
+    --md-text-button-label-text-weight: 600;
+    --md-text-button-container-shape: var(--ubv-radius-chip);
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-chip);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-wrap: wrap;
+    transition: var(--ubv-hover-transition);
+    vertical-align: baseline;
+}
+:root .ubv-inline-link:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-inline-link .ubv-code-text { background: transparent; padding: 0; }
+
+/* Filter-issue reporter */
+.ubv-report { display: grid; gap: var(--ubv-gap); }
+.ubv-report.is-locked { opacity: 0.45; pointer-events: none; }
+.ubv-report .ubv-field {
+    --md-outlined-select-text-field-container-shape: var(--ubv-radius-control);
+    width: 100%;
+}
+.ubv-nsfw-row md-checkbox {
+    --md-checkbox-container-shape: 4px;
+    --md-checkbox-state-layer-size: 24px;
+    height: 24px;
+    width: 24px;
+}
+.ubv-support.updating { pointer-events: none; }
+
+/* Diagnostics */
+.ubv-diagnostics { display: grid; gap: var(--ubv-gap); }
+.ubv-diagnostics .codeMirrorContainer {
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--ubv-radius-control);
+    min-height: 18rem;
+    overflow: hidden;
+}
+.ubv-diagnostics .CodeMirror {
+    background: var(--md-sys-color-surface-container-lowest);
+    min-height: 18rem;
+}
+.ubv-diagnostics .CodeMirror-gutters {
+    background: var(--md-sys-color-surface-container-low);
+    border-color: var(--md-sys-color-outline-variant);
+}

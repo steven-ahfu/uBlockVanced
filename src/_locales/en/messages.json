@@ -719,6 +719,30 @@
     "message": "frame",
     "description": "Appears as an option to filter out firewall rows"
   },
+  "popupTipFirewallFilters": {
+    "message": "Filter the rows below",
+    "description": "Tooltip for the funnel button above the dynamic filtering pane"
+  },
+  "popupTipFilterNot": {
+    "message": "Invert the filters on this line: hide matching rows instead of showing only them",
+    "description": "Tooltip for the 'Not' chip in the firewall row filters"
+  },
+  "popupTipFilterBlocked": {
+    "message": "Show only rows with blocked requests",
+    "description": "Tooltip for the 'blocked' chip in the firewall row filters"
+  },
+  "popupTipFilterAllowed": {
+    "message": "Show only rows with allowed requests",
+    "description": "Tooltip for the 'allowed' chip in the firewall row filters"
+  },
+  "popupTipFilterScript": {
+    "message": "Show only rows that loaded 3rd-party scripts",
+    "description": "Tooltip for the 'script' chip in the firewall row filters"
+  },
+  "popupTipFilterFrame": {
+    "message": "Show only rows that loaded 3rd-party frames",
+    "description": "Tooltip for the 'frame' chip in the firewall row filters"
+  },
   "pickerCreate": {
     "message": "Create",
     "description": "English: Create"
@@ -1032,7 +1056,7 @@
     "description": "Label for the checkbox use to trust the content of 'My filters' list"
   },
   "1pImport": {
-    "message": "Import and append…",
+    "message": "Import…",
     "description": "Button in the 'My filters' pane"
   },
   "1pExport": {
@@ -1116,7 +1140,7 @@
     "description": "A concise description of the 'Trusted sites' pane."
   },
   "whitelistImport": {
-    "message": "Import and append…",
+    "message": "Import…",
     "description": "Button in the 'Trusted sites' pane"
   },
   "whitelistExport": {
@@ -1865,7 +1889,7 @@
     "description": "A context menu entry, to open the Element Probe DevTools panel for deep element inspection"
   },
   "contextMenuElementProbeHint": {
-    "message": "Element marked. Open DevTools (F12), pick the Element Probe tab, then click Inspect selection.",
+    "message": "Remembered the element you right-clicked. Nothing is inspected yet: press F12, open the Element Probe tab, then click Inspect selection.",
     "description": "In-page hint shown after choosing the Element Probe context menu entry; browsers do not let extensions open DevTools"
   },
   "shortcutCapturePlaceholder": {
@@ -2247,6 +2271,234 @@
   "epHelpColDesc": {
     "message": "Description",
     "description": "Element Probe syntax help table column header"
+  },
+  "popupFilterSentenceAll": {
+    "message": "Showing all rows.",
+    "description": "Popup firewall filter summary when no filter is active"
+  },
+  "popupFilterShowing": {
+    "message": "Showing only rows with {{what}}",
+    "description": "Popup firewall filter summary clause; {{what}} is e.g. 'blocked requests'"
+  },
+  "popupFilterHiding": {
+    "message": "Hiding rows with {{what}}",
+    "description": "Popup firewall filter summary clause (inverted); {{what}} is e.g. 'blocked requests'"
+  },
+  "popupFilterOr": {
+    "message": " or ",
+    "description": "Joins two subjects inside a popup firewall filter clause, with surrounding spaces"
+  },
+  "popupFilterClauseSeparator": {
+    "message": "; ",
+    "description": "Joins two clauses of the popup firewall filter summary"
+  },
+  "popupFilterBlockedRequests": {
+    "message": "blocked requests",
+    "description": "Popup firewall filter subject and menu item"
+  },
+  "popupFilterAllowedRequests": {
+    "message": "allowed requests",
+    "description": "Popup firewall filter subject and menu item"
+  },
+  "popupFilter3pScripts": {
+    "message": "3rd-party scripts",
+    "description": "Popup firewall filter subject and menu item"
+  },
+  "popupFilter3pFrames": {
+    "message": "3rd-party frames",
+    "description": "Popup firewall filter subject and menu item"
+  },
+  "popupFilterGroupRequests": {
+    "message": "Requests",
+    "description": "Popup firewall filter menu group heading"
+  },
+  "popupFilterGroup3p": {
+    "message": "3rd-party content",
+    "description": "Popup firewall filter menu group heading"
+  },
+  "popupFilterInvert": {
+    "message": "Hide these rows instead",
+    "description": "Popup firewall filter menu item that inverts the group above it"
+  },
+  "settingsAccentPresetsLabel": {
+    "message": "Accent color presets",
+    "description": "Accessible label for the row of preset accent-color swatches in Settings"
+  },
+  "settingsAccentCustomLabel": {
+    "message": "Custom…",
+    "description": "Chip that opens the operating system color picker for a custom accent color"
+  },
+  "settingsAccentPickLabel": {
+    "message": "Use accent color {{color}}",
+    "description": "Accessible label for one preset accent-color swatch; {{color}} is a hex color"
+  },
+  "3pDiffSectionCollapse": {
+    "message": "Hide {{name}}",
+    "description": "Collapses one change set in the filter-list update diff; {{name}} is Added/Removed/Modified"
+  },
+  "3pDiffSectionExpand": {
+    "message": "Show {{name}}",
+    "description": "Expands one change set in the filter-list update diff; {{name}} is Added/Removed/Modified"
+  },
+  "aboutCreditBy": {
+    "message": "by",
+    "description": "Credits row: precedes the author of a bundled dependency"
+  },
+  "aboutCreditProject": {
+    "message": "Open the {{name}} home page",
+    "description": "Credits row: tooltip of the button opening a dependency's home page"
+  },
+  "aboutCreditAuthor": {
+    "message": "Open the page of {{name}}",
+    "description": "Credits row: tooltip of the button opening an author's page"
+  },
+  "docblockedStrictBlockingHelp": {
+    "message": "About strict blocking (wiki)",
+    "description": "Tooltip of the warning sign linking to the strict-blocking wiki page"
+  },
+  "popupFirewallCell": {
+    "message": "{{scope}} rule for {{what}}: {{rule}}",
+    "description": "Accessible name of a cell in the popup's dynamic filtering matrix"
+  },
+  "popupFirewallCellWithCounts": {
+    "message": "{{scope}} rule for {{what}}: {{rule}}. {{allowed}} allowed, {{blocked}} blocked",
+    "description": "Accessible name of a matrix cell that also reports request counts"
+  },
+  "popupFirewallScopeGlobal": {
+    "message": "All sites",
+    "description": "Scope of the global column of the popup's dynamic filtering matrix"
+  },
+  "popupFirewallScopeLocal": {
+    "message": "This site",
+    "description": "Scope of the local column of the popup's dynamic filtering matrix"
+  },
+  "popupFirewallRuleNone": {
+    "message": "no rule",
+    "description": "State of a matrix cell which has no dynamic filtering rule"
+  },
+  "popupFirewallRuleAllow": {
+    "message": "allow",
+    "description": "State of a matrix cell whose dynamic filtering rule is allow"
+  },
+  "popupFirewallRuleBlock": {
+    "message": "block",
+    "description": "State of a matrix cell whose dynamic filtering rule is block"
+  },
+  "popupFirewallRuleNoop": {
+    "message": "no filtering",
+    "description": "State of a matrix cell whose dynamic filtering rule is noop"
+  },
+  "popupFirewallRuleInherited": {
+    "message": "{{rule}}, inherited",
+    "description": "State of a matrix cell whose rule comes from a broader rule"
+  },
+  "popupFirewallActions": {
+    "message": "Set a rule for this cell",
+    "description": "Group label for the allow / no filtering / block buttons over a matrix cell"
+  },
+  "popupFirewallSetAllow": {
+    "message": "Allow",
+    "description": "Button which sets the allow rule on a matrix cell"
+  },
+  "popupFirewallSetNoop": {
+    "message": "No filtering",
+    "description": "Button which sets the noop rule on a matrix cell"
+  },
+  "popupFirewallSetBlock": {
+    "message": "Block",
+    "description": "Button which sets the block rule on a matrix cell"
+  },
+  "popupFirewallExpandAll": {
+    "message": "Expand every domain",
+    "description": "Expander on the 'all' row of the popup's dynamic filtering matrix"
+  },
+  "popupFirewallCollapseAll": {
+    "message": "Collapse every domain",
+    "description": "Expander on the 'all' row of the popup's dynamic filtering matrix"
+  },
+  "popupFirewallExpandAllTip": {
+    "message": "Expand or collapse every domain. Shift+Ctrl opens this panel in a tab.",
+    "description": "Tooltip for the expander on the 'all' row of the dynamic filtering matrix"
+  },
+  "popupFirewallExpandRow": {
+    "message": "Show the subdomains of {{what}}",
+    "description": "Expander on a domain row of the popup's dynamic filtering matrix"
+  },
+  "popupFirewallCollapseRow": {
+    "message": "Hide the subdomains of {{what}}",
+    "description": "Expander on a domain row of the popup's dynamic filtering matrix"
+  },
+  "epBtnYtSweep": {
+    "message": "YouTube sweep",
+    "description": "Element Probe: scans the page for known YouTube ad containers"
+  },
+  "epHelpShow": {
+    "message": "Show",
+    "description": "Element Probe: expands the filter syntax reference"
+  },
+  "epHelpHide": {
+    "message": "Hide",
+    "description": "Element Probe: collapses the filter syntax reference"
+  },
+  "epHistoryUndo": {
+    "message": "Undo",
+    "description": "Element Probe: removes a saved filter from the user filter list"
+  },
+  "epHistoryRedo": {
+    "message": "Redo",
+    "description": "Element Probe: re-applies a previously undone filter"
+  },
+  "epHistoryEmpty": {
+    "message": "Recent saved filters will appear here so you can copy, undo, or re-apply them.",
+    "description": "Element Probe: filter history placeholder"
+  },
+  "epLogEmpty": {
+    "message": "Inspection activity, save events, preview status, and errors will stream here.",
+    "description": "Element Probe: activity log placeholder"
+  },
+  "loggerUiFilterGroupResult": {
+    "message": "Result",
+    "description": "Logger: heading of the built-in row filters matching an outcome"
+  },
+  "loggerUiFilterGroupType": {
+    "message": "Resource type",
+    "description": "Logger: heading of the built-in row filters matching a resource type"
+  },
+  "loggerUiFilterGroupParty": {
+    "message": "Party",
+    "description": "Logger: heading of the built-in first/third-party row filters"
+  },
+  "loggerUiFilterGroupMethod": {
+    "message": "Method",
+    "description": "Logger: heading of the built-in HTTP-method row filters"
+  },
+  "loggerUiFilterGroupModifier": {
+    "message": "Modifier",
+    "description": "Logger: heading of the built-in modifier-filter row filters"
+  },
+  "loggerUiFilterGroupCname": {
+    "message": "CNAME",
+    "description": "Logger: heading of the built-in CNAME-alias row filter"
+  },
+  "loggerUiFilterGroupSeverity": {
+    "message": "Severity",
+    "description": "Logger: heading of the built-in info/error row filters"
+  },
+  "loggerUiFilterReset": {
+    "message": "Reset",
+    "description": "Logger: clears every built-in row-filter expression"
+  },
+  "loggerUiRowCount": {
+    "message": "{{count}} rows",
+    "description": "Logger: number of rows currently shown"
+  },
+  "loggerUiPreview": {
+    "message": "Click to preview",
+    "description": "Logger: reveals the image of the selected entry"
+  },
+  "loggerUiExceptor": {
+    "message": "Except",
+    "description": "Logger: toggles a temporary exception for the selected filter"
   },
   "dummy": {
     "message": "This entry must be the last one",

@@ -1,0 +1,111 @@
+/*
+ * uBlockVanced Settings (React + Material 3 Expressive).
+ * Page frame, cards, pills and list rows come from ui/shared/page.css.
+ */
+.ubv-section { display: grid; gap: var(--ubv-gap); }
+.ubv-section-note { display: flex; align-items: center; gap: 4px; padding: 0 6px 4px; }
+
+/* One md-list per section; the rows stack, one per line. */
+.ubv-section-rows {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(0, 1fr);
+}
+
+/* A setting row: md-list-item[type=button]. The row is the toggle, so its
+   own box is the hover surface and the switch only mirrors the state. */
+.ubv-setting-row {
+    --md-list-item-one-line-container-height: 56px;
+    --md-list-item-two-line-container-height: 56px;
+    --md-list-item-disabled-opacity: 1;
+    gap: 12px;
+}
+.ubv-setting-row.is-disabled { opacity: 0.5; }
+.ubv-setting-end {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+.ubv-setting-row md-switch {
+    --md-switch-track-outline-color: var(--md-sys-color-outline-variant);
+    flex-shrink: 0;
+}
+.ubv-setting-extra { display: block; padding-block: 2px 4px; }
+.ubv-doc {
+    --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
+    flex-shrink: 0;
+}
+
+/* Theme select */
+.ubv-select {
+    --md-outlined-select-text-field-container-shape: var(--ubv-radius-chip);
+    --md-outlined-select-text-field-top-space: 6px;
+    --md-outlined-select-text-field-bottom-space: 6px;
+    --md-outlined-select-text-field-leading-space: 12px;
+    --md-outlined-select-text-field-trailing-space: 8px;
+    min-width: 132px;
+}
+
+/* Number field inside the "larger than … KB" sentence */
+.ubv-inline-sentence { align-items: center; display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.ubv-inline-number {
+    --md-outlined-text-field-container-shape: var(--ubv-radius-chip);
+    --md-outlined-text-field-top-space: 5px;
+    --md-outlined-text-field-bottom-space: 5px;
+    --md-outlined-text-field-leading-space: 10px;
+    --md-outlined-text-field-trailing-space: 10px;
+    --md-outlined-text-field-input-text-size: 13px;
+    width: 6em;
+}
+
+/* Accent colour: one md-filter-chip per preset, painted from its own tokens,
+   plus the chip that hands over to the platform picker. */
+.ubv-accent-chips { --md-chip-set-gap: 6px; }
+.ubv-accent-chip,
+.ubv-accent-custom {
+    --md-filter-chip-container-height: 28px;
+    --md-filter-chip-label-text-size: 11px;
+    --md-filter-chip-label-text-weight: 600;
+    --md-filter-chip-leading-space: 10px;
+    --md-filter-chip-trailing-space: 10px;
+    --md-filter-chip-with-leading-icon-leading-space: 6px;
+    --md-filter-chip-icon-label-space: 4px;
+    --md-filter-chip-icon-size: 16px;
+    --md-assist-chip-container-height: 28px;
+    --md-assist-chip-label-text-size: 11px;
+    --md-assist-chip-label-text-weight: 600;
+    --md-assist-chip-leading-space: 10px;
+    --md-assist-chip-trailing-space: 10px;
+    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+}
+.ubv-accent-custom { text-transform: none; }
+.ubv-accent-custom.selected { --md-assist-chip-outline-width: 2px; }
+
+/* Material has no colour picker: the native input stays for the platform
+   dialog, out of sight, and the "Custom…" chip clicks it. */
+.ubv-color {
+    block-size: 1px;
+    border: 0;
+    inline-size: 1px;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    padding: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+/* Backup / restore / reset */
+.ubv-data { display: grid; gap: var(--ubv-pad); }
+.ubv-data-meta { display: flex; flex-wrap: wrap; gap: var(--ubv-gap); }
+.ubv-danger {
+    --md-outlined-button-label-text-color: var(--md-sys-color-error);
+    --md-outlined-button-hover-label-text-color: var(--md-sys-color-error);
+    --md-outlined-button-focus-label-text-color: var(--md-sys-color-error);
+    --md-outlined-button-pressed-label-text-color: var(--md-sys-color-error);
+    --md-outlined-button-icon-color: var(--md-sys-color-error);
+    --md-outlined-button-hover-icon-color: var(--md-sys-color-error);
+    --md-outlined-button-outline-color: color-mix(in srgb, var(--md-sys-color-error) 45%, transparent);
+}

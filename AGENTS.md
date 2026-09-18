@@ -36,6 +36,8 @@ make packages            # all release files: chromium.zip, chromium.crx, firefo
 make clean               # rm dist/build, node_modules
 ```
 
+**Do not try to verify UI changes in Chrome.** The extension is Manifest V2 and Chrome no longer runs it, so neither the Claude-in-Chrome tools nor a local harness page count as verification. Build (`make firefox`), run `npm run typecheck`, `npm run lint`, `npm test`, and hand the build to the maintainer to load in Firefox via about:debugging.
+
 Pages that have been ported to React (see `ui/README.md`) need `make firefox` (or `npm run build:ui`) and are loaded from `dist/build/uBlock0.firefox`; the remaining upstream pages still work when `src/` is loaded unpacked. Builds only copy files (`tools/copy-common-files.sh` + `platform/<browser>/*`) and generate a manifest via `tools/make-<browser>-meta.py`. First build clones uAssets into `dist/build/uAssets` (needs network). Version lives in `dist/version` and is stamped into manifests at build time; `package.json` and the README badge carry it too. Releases are automatic: bump `dist/version`, `package.json`, the README badge, and add a `CHANGELOG.md` section, then push to `main`; `.github/workflows/release.yml` sees the untagged version, builds all packages, tags the commit, and publishes the release. Never push tags by hand. Requires `openssl` and `zip`; `tools/pack-crx3.py` has no Python deps.
 
 **CRX signing key.** The extension ID is derived from the RSA key, so the same key must sign every release. It lives in three places, all outside git:
@@ -74,14 +76,21 @@ Entry is `src/background.html` → `src/js/background.js` defines the `µBlock` 
 Each `src/*.html` has a matching `src/js/*.js` and `src/css/*.css`. Dashboard tabs (`settings`, `1p-filters`, `3p-filters`, `dyna-rules`, `whitelist`, `advanced-settings`) are iframes inside `dashboard.html`. Theming is applied by `theme.js` (dark is the default in this fork) with palette tokens in `src/css/themes/` and `--ctp-*` CSS variables; the `catppuccinPalette` hidden setting swaps palettes.
 
 ### Fork-specific: React + Material 3 Expressive UI (`ui/`)
-The user-facing pages are being ported to React 19 with `material-expressive-react` (wrappers over `@material/web`). Read `ui/README.md` first. The rules that keep upstream rebases cheap:
+The user-facing pages are being ported to React 19 with `material-expressive-react` (wrappers over `@material/web`, https://github.com/prudhviraj5/material-expressive-react). Read `ui/README.md` first.
+
+**ALL new UI elements MUST be rendered with material-expressive-react components** (Button/ToggleButton, IconButton, Checkbox, Switch, Chips, Textfield, Select, Dialog, ...). No hand-rolled `<button>`, `<input>`, or styled `<span>` controls, even when a plain element would be easier to style. Size, shape and colour are adjusted through the component's `style`/token variables (see `ui/shared/metrics.ts`) and `--ubv-*` tokens, never by replacing the component. If, in the course of other work, you notice a file that renders UI without these components, update that file to use them as part of that work.
+
+The rules that keep upstream rebases cheap:
 - **Never edit upstream `src/*.html`, `src/js/*.js` or `src/css/*.css` for UI work.** React pages live in `ui/pages/<page>/` and are overlaid onto the package at build time by `tools/copy-common-files.sh`; delete a page directory and the upstream page is back.
 - React pages send the same `{ what: ... }` messages the upstream page sends, through the global `vAPI.messaging`; `messaging.js` needs no React-specific handlers.
 - Keep upstream ids/attributes where upstream CSS drives layout (`#panes`, `#firewall`, `body[data-more]`).
-- Shared building blocks live in `ui/shared/` (`Tile`, `Icon`, `icons`, `i18n`, `vapi`, `tokens.css`). Reuse them; do not duplicate a control inside a page.
+- Shared building blocks live in `ui/shared/`: `Card` (md-outlined-card), `Pill`/`Pills` (md-assist-chip in an md-chip-set), `IconButton` (one 40px size for the whole UI), `List`/`ListItem` (md-list, with the row's control in `slot="end"`), `Tile`, `Tooltip` (`data-tip`), `Icon`, `icons`, `Flags`, `i18n`, `vapi`, `broadcast`, `tokens.css`, `controls.css`, `metrics.ts`. Reuse them; do not duplicate a control inside a page.
+- **Import gotcha:** `Card`, `Toolbar`, `ConnectedButtonGroup`, `ConnectedButton`, `OutlinedSegmentedButtonSet` and `OutlinedSegmentedButton` must be imported from the package root `'material-expressive-react'`. Their subpaths ship no `index.js` in 0.2.1, so typecheck passes but esbuild fails. Everything else imports from its subpath.
 - `ui/shared/tokens.css` maps the `--ctp-*` palette slots onto `--md-sys-color-*`, so palettes keep working without component changes.
+- A control's host element is its own hover box: make the Material container transparent through its tokens and paint the host, so one transition covers mouse-in and mouse-out. Hover motion is global: `--ubv-hover-transition` (500ms ease-in-out), hover surface `--ubv-hover-surface`. Never gate a hover rule on `.desktop` — the popup drops that class in portrait mode.
+- CodeMirror hosts are `display: block` and full width (`ui/shared/page.css`). A flex-row host makes the editor resize as the user scrolls.
 - Icons are Material Symbols SVGs inlined at build time (no icon font, CSP unchanged).
-Ported so far: popup (`ui/pages/popup/`).
+Ported (15 directories under `ui/pages/`): popup, dashboard, settings, 3p-filters, 1p-filters, dyna-rules, whitelist, advanced-settings, about, support, asset-viewer, document-blocked, no-dashboard, logger-ui, element-probe-panel. CodeMirror stays a bespoke widget created in each page's `useEditor.ts`/`useMergeView.ts`. Dashboard pages import `ui/shared/page.css` for the page frame, cards, pills and rows. Scales in `ui/shared/tokens.css`, and nothing else: radius `--ubv-radius-card|control|chip`, spacing `--ubv-gap`/`--ubv-pad`, sizes `--ubv-control` (40) / `--ubv-button` (48) / `--ubv-power` (56) / `--ubv-tile` (72) / `--ubv-icon` (20). Open conversion work is tracked in `.agents/m3e-audit.md`.
 
 ### Fork-specific: Element Probe
 A DevTools panel (`manifest.json: devtools_page` → `devtools-page.html` → `devtools-page.js` registers the panel → `element-probe-panel.html`/`.js`). The panel entry point only orchestrates; logic is in `src/js/element-probe/`:

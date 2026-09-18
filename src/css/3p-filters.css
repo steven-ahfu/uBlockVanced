@@ -555,7 +555,8 @@ body.working #lists .listEntry.checked.obsolete:not(.cached) > .detailbar .iconb
     padding: 18px;
 }
 #actions button { min-height: 48px; padding-inline: 22px; }
-.filtersSearch input { min-height: 48px; border-radius: var(--radius-small); }
+.filtersSearch input { min-height: 48px; border-radius: var(--radius-small); padding-inline-start: 44px; }
+.filtersSearch .fa-icon { color: var(--ink-3); fill: var(--ink-3); font-size: 18px !important; inset-inline-start: 16px; }
 .filtersSettings > .li {
     background: var(--surface-2);
     border-color: var(--border-1);
@@ -593,8 +594,18 @@ body.working #lists .listEntry.checked.obsolete:not(.cached) > .detailbar .iconb
 }
 #lists .listEntry[data-role="node"]:not([data-parent="root"]) { border-top-color: var(--border-1); }
 #lists .listEntry[data-role="node"]:not([data-parent="root"]) > .listEntries { border-left-color: var(--border-1); }
-#lists .detailbar { border-radius: var(--radius-medium); padding: 6px 8px; transition: background-color var(--transition-fast); }
+#lists .detailbar { border-radius: 16px; padding: 6px 8px; transition: background-color var(--transition-fast); }
+#lists .listEntry[data-role="leaf"] > .detailbar {
+    align-items: center;
+    border-radius: 16px;
+    column-gap: 10px;
+    margin: 0 -6px;
+    min-height: 44px;
+    padding: 8px 14px;
+}
 #lists .listEntry[data-role="leaf"] > .detailbar:hover { background: var(--surface-2); }
+#lists .listEntry[data-role="leaf"] > .detailbar:has(input:checked):hover { background: var(--surface-3); }
+#lists .listEntry[data-role="leaf"] > .detailbar .checkbox { margin: 0; }
 #lists .iconbar a, #lists .iconbar button.fa-icon { border-radius: 11px; min-height: 32px; min-width: 32px; }
 #lists .iconbar a:hover, #lists .iconbar button.fa-icon:hover { background: var(--surface-3); color: var(--ink-1); }
 #lists .filterDiffPanel { background: var(--surface-1); border-radius: var(--radius-medium); }

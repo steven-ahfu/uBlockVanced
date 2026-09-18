@@ -1,3 +1,22 @@
+# uBlockVanced 0.3.4
+
+Every dashboard page is now React + Material 3 Expressive, and the popup is rebuilt against the original design.
+
+- **Popup layout back to the design**: `[more · save · revert] [power] [reload · less]` header row, five per-site switch tiles, three tool tiles, main and firewall as two cards. The reload button is a 40 px square whose hover layer matches its box; the upstream `[id]` rules that stretched it no longer reach the Material controls.
+- **Shared size scale** in `ui/shared/tokens.css` (`--ubv-control` 40, `--ubv-button` 48, `--ubv-power` 56, `--ubv-tile` 72, `--ubv-icon` 20) and `ui/shared/metrics.ts`, so every Material host is exactly its hover box. One shared `IconButton` wrapper replaces per-page sizes.
+- **M3E tiles and power control**: ToggleButton / FilledTonalButton with primary-container fill and a tighter radius when selected; off state is neutral, not red.
+- **Hover motion everywhere**: one global 500 ms ease-in-out (`--ubv-hover-transition`) for mouse-in and mouse-out on tiles, icon buttons, page buttons, settings rows and menu items.
+- **Firewall row filter**: an M3E multi-select menu (blocked / allowed, 3rd-party scripts / frames, each group invertible) that reads back as one sentence, e.g. "Showing only rows with blocked requests; hiding rows with 3rd-party scripts".
+- **React ports**: dashboard, settings, 3p-filters, 1p-filters, dyna-rules, whitelist, advanced-settings, about, support, asset-viewer, document-blocked, no-dashboard, plus the shared cloud widget and tooltips.
+- **Element Probe hint** no longer implies an element was inspected: it says the right-clicked element is remembered and how to open the panel.
+- **Editors no longer resize while scrolling**: the CodeMirror host on My filters, Trusted sites, Advanced settings, My rules and the asset viewer was a flex row, so the editor's width followed the widest rendered line. Hosts are block and the editor is pinned to full width.
+- **Material components everywhere**: every rendered control is now a `material-expressive-react` component. Page cards are `md-outlined-card`, status pills are chip sets of assist chips, settings rows are `md-list-item` with the switch in the row's end slot, toolbars are Material toolbars, separators are `md-divider`, counts are `md-badge`. Shared wrappers live in `ui/shared/`: `Card`, `Pill`, `IconButton`, `List`/`ListItem`, `Tile`.
+- **Logger is a React page**: toolbars, page selector, row-filter chips, the virtualised log table with resizable columns, and the entry, settings and export dialogs are Material components. The DOM inspector still runs the upstream module behind a Material shell.
+- **Element Probe panel is a React page**: inspection toolbar, frame selector, selector and procedural lists, filter output, syntax reference and activity log are Material components; the page-context scripts are evaluated unchanged. Filter history is now reachable, having been dead UI upstream.
+- **Firewall matrix rebuilt**: each cell is a tonal toggle button, the hover allow/noop/block hotspots are a segmented button set, and row expanders are icon buttons. Cells are keyboard reachable and carry accessible names.
+- **Popup filter menu**: the row filter is a multi-select menu that reads back as one plain sentence, e.g. "Showing only rows with blocked requests".
+- **Accent colour** is picked from a chip set of preset swatches, with a custom option, instead of a bare colour input.
+
 # uBlockVanced 0.3.3
 
 Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and asset change; no behaviour, DOM, i18n, or filtering logic changed.

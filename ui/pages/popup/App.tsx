@@ -3,10 +3,14 @@ import { Firewall } from './components/Firewall';
 import { PowerControl } from './components/PowerControl';
 import { QuickTools } from './components/QuickTools';
 import { RulesetTools } from './components/RulesetTools';
+import { SiteName } from './components/SiteName';
 import { SiteSwitches } from './components/SiteSwitches';
+import { Tooltips } from '../../shared/Tooltip';
 import { UnprocessedWarning } from './components/UnprocessedWarning';
 import { t } from '../../shared/i18n';
 import { usePopup } from './usePopup';
+import { Divider } from 'material-expressive-react/divider';
+import { Toolbar } from 'material-expressive-react';
 
 // Body/root classes that upstream popup-fenix.css keys its layout on. They
 // live outside the React root, so they are synced from state here.
@@ -102,13 +106,16 @@ export function App() {
         return () => { document.removeEventListener('keydown', onKeyDown, { capture: true }); };
     }, [ actions ]);
 
+    // Header: [more · save · revert] [power] [reload · less], as in the
+    // design. The power control is the middle column and stretches to it.
     const sticky = (
         <div id="sticky">
-            <div id="stickyTools" className="ubv-sticky" role="toolbar" aria-label="Primary page controls">
+            <SiteName state={state} />
+            <Toolbar variant="Docked" dockPosition="Top" size="Small" className="ubv-sticky" aria-label="Primary page controls">
                 <RulesetTools state={state} actions={actions} side="start" />
                 <PowerControl state={state} actions={actions} />
                 <RulesetTools state={state} actions={actions} side="end" />
-            </div>
+            </Toolbar>
         </div>
     );
 
@@ -120,7 +127,7 @@ export function App() {
                 <SiteSwitches state={state} actions={actions} />
                 <QuickTools state={state} actions={actions} />
                 <UnprocessedWarning state={state} actions={actions} />
-                <hr data-more="f" />
+                <Divider data-more="f" />
                 <div className="itemRibbon ubv-version" data-more="f">
                     <span>{t('popupVersion')}</span>
                     <span id="version">{state.data?.appVersion ?? ''}</span>
@@ -128,6 +135,7 @@ export function App() {
             </div>
             <Firewall state={state} actions={actions} />
             <div id="firewall-vspacer"></div>
+            <Tooltips />
         </div>
     );
 }

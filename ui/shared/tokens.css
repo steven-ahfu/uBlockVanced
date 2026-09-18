@@ -9,6 +9,24 @@
     --md-ref-typeface-brand: Geist, Inter, "Segoe UI", system-ui, sans-serif;
     --md-ref-typeface-plain: Geist, Inter, "Segoe UI", system-ui, sans-serif;
 
+    /* @material/web reads the per-role typescale tokens, not the typeface
+       refs, so every role has to be pointed at Geist explicitly. */
+    --md-sys-typescale-display-large-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-display-medium-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-display-small-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-headline-large-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-headline-medium-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-headline-small-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-title-large-font: var(--md-ref-typeface-brand);
+    --md-sys-typescale-title-medium-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-title-small-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-body-large-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-body-medium-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-body-small-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-label-large-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-label-medium-font: var(--md-ref-typeface-plain);
+    --md-sys-typescale-label-small-font: var(--md-ref-typeface-plain);
+
     --md-sys-color-primary: rgb(var(--primary-70));
     --md-sys-color-on-primary: rgb(var(--ctp-mantle));
     --md-sys-color-primary-container: rgb(var(--primary-20));
@@ -60,10 +78,76 @@
     --md-sys-shape-corner-extra-large: 28px;
     --md-sys-shape-corner-full: 9999px;
 
+    /* The fork's radius scale. Every page uses exactly these three so
+       neighbouring controls never disagree: cards 24, controls 16, chips 12.
+       Nested radius = outer radius - padding (24 - 8 = 16, 16 - 4 = 12). */
+    --ubv-radius-card: 24px;
+    --ubv-radius-control: 16px;
+    --ubv-radius-chip: 12px;
+    --ubv-gap: 8px;
+    --ubv-pad: 14px;
+
+    /* The fork's size scale. A control's box is always its hover/state
+       layer, so every Material host is sized by exactly one of these.
+       ui/shared/metrics.ts points the library's inline size variables at
+       the same tokens; controls.css sizes the plain-button tiles. */
+    --ubv-control: 40px;   /* icon buttons and any compact control */
+    --ubv-control-sm: 28px; /* icon buttons inside a dense row (the matrix) */
+    --ubv-button: 48px;    /* page action buttons */
+    --ubv-power: 56px;     /* popup power control */
+    --ubv-tile: 72px;      /* ribbon tiles: icon over caption */
+    --ubv-icon: 20px;      /* glyph inside a control or tile */
+    --ubv-icon-lg: 28px;   /* glyph inside the power control */
+
+    /* Selection: M3E fills with primary-container and tightens the radius;
+       this is the hairline around a selected control. */
+    --ubv-selected-outline: rgb(var(--primary-30));
+
+    /* Hover surface for neutral controls: one clear step up from
+       surface-container-high, so a hover is visible in every palette. */
+    --ubv-hover-surface: rgb(var(--ctp-surface1));
+
+    /* Hover motion: one global duration and curve for every control's
+       mouse-in and mouse-out. Hover changes colour and shadow only; the
+       radius keeps its own (selection) timing. */
+    --ubv-hover-duration: 500ms;
+    --ubv-hover-ease: ease-in-out;
+    --ubv-hover-transition:
+        background-color var(--ubv-hover-duration) var(--ubv-hover-ease),
+        border-color var(--ubv-hover-duration) var(--ubv-hover-ease),
+        box-shadow var(--ubv-hover-duration) var(--ubv-hover-ease),
+        color var(--ubv-hover-duration) var(--ubv-hover-ease),
+        fill var(--ubv-hover-duration) var(--ubv-hover-ease),
+        opacity var(--ubv-hover-duration) var(--ubv-hover-ease);
+
+    /* Point every Material shape token at the same scale. */
+    --md-filled-tonal-button-container-shape: var(--ubv-radius-control);
+    --md-filled-button-container-shape: var(--ubv-radius-control);
+    --md-outlined-button-container-shape: var(--ubv-radius-control);
+    --md-text-button-container-shape: var(--ubv-radius-control);
+    --md-icon-button-container-shape: var(--ubv-radius-chip);
+    --md-filled-icon-button-container-shape: var(--ubv-radius-chip);
+    --md-filled-tonal-icon-button-container-shape: var(--ubv-radius-chip);
+    --md-outlined-icon-button-container-shape: var(--ubv-radius-chip);
+    --md-filter-chip-container-shape: var(--ubv-radius-chip);
+    --md-assist-chip-container-shape: var(--ubv-radius-chip);
+    --md-input-chip-container-shape: var(--ubv-radius-chip);
+    --md-suggestion-chip-container-shape: var(--ubv-radius-chip);
+    --md-filled-text-field-container-shape: var(--ubv-radius-control);
+    --md-outlined-text-field-container-shape: var(--ubv-radius-control);
+    --md-dialog-container-shape: var(--ubv-radius-card);
+    --md-menu-container-shape: var(--ubv-radius-control);
+    --md-elevated-card-container-shape: var(--ubv-radius-card);
+    --md-filled-card-container-shape: var(--ubv-radius-card);
+    --md-outlined-card-container-shape: var(--ubv-radius-card);
+
     /* Motion: the same spring-ish curve the CSS layer uses. */
     --md-sys-motion-easing-standard: cubic-bezier(0.32, 0.72, 0.28, 1);
     --md-sys-motion-easing-emphasized: cubic-bezier(0.32, 0.72, 0.28, 1);
 }
+
+:root.ubv-m3,
+:root.ubv-m3 body { font-family: var(--md-ref-typeface-plain); }
 
 :root.ubv-m3 md-icon {
     --md-icon-size: 24px;

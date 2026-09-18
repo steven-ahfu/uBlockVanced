@@ -1,0 +1,246 @@
+/*
+ * uBlockVanced - logger page (React + Material 3 Expressive).
+ *
+ * The pane geometry (#inspectors, .inspector, .vscrollable, #vwRenderer and
+ * the .logEntry cells) still comes from src/css/logger-ui.css, which the page
+ * loads before this file. Everything here is the Material chrome around it.
+ */
+
+:root.ubv-m3 body {
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    min-width: 560px;
+}
+
+/* Toolbars ---------------------------------------------------------------- */
+
+:root.ubv-m3 .permatoolbar.ubv-logger-bar {
+    align-items: center;
+    background: var(--md-sys-color-surface-container);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-shrink: 0;
+    font-size: inherit;
+    gap: var(--ubv-gap);
+    justify-content: space-between;
+    margin: 0;
+    padding: 6px var(--ubv-pad);
+    position: relative;
+    width: 100%;
+}
+.ubv-logger-bar-main,
+.ubv-logger-bar-end {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    min-width: 0;
+}
+.ubv-logger-bar-main { flex: 1 1 auto; }
+.ubv-logger-bar-end { flex: 0 0 auto; }
+
+:root.ubv-m3 .ubv-logger-pages {
+    flex: 0 1 26em;
+    min-width: 12em;
+}
+:root.ubv-m3 .ubv-logger-filter {
+    flex: 0 1 22em;
+    min-width: 10em;
+}
+:root.ubv-m3 .ubv-field {
+    --md-outlined-field-top-space: 6px;
+    --md-outlined-field-bottom-space: 6px;
+}
+.ubv-logger-count {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* The upstream module adds/removes `disabled` on the inspector's buttons. */
+:root.ubv-m3 .ubv-icon-button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Built-in row-filter expressions ---------------------------------------- */
+
+.ubv-filtex-group-host {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    position: relative;
+}
+.ubv-filtex-anchor {
+    display: flex;
+    left: var(--ubv-pad);
+    position: absolute;
+    right: var(--ubv-pad);
+    top: calc(100% + 2px);
+    z-index: 120;
+}
+:root.ubv-m3 .ubv-filtex-menu {
+    box-sizing: border-box;
+    margin-inline-start: auto;
+    max-width: 100%;
+    padding: var(--ubv-pad);
+    width: max-content;
+}
+.ubv-filtex-group + .ubv-filtex-group { margin-top: 10px; }
+.ubv-filtex-label {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+:root.ubv-m3 .ubv-filtex-chips { --md-chip-set-gap: 6px; }
+:root.ubv-m3 .ubv-filtex-not {
+    --md-filter-chip-selected-container-color: var(--md-sys-color-error-container);
+}
+.ubv-filtex-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* Rows -------------------------------------------------------------------- */
+
+#columnResizeHandles {
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+.column-resize-handle {
+    cursor: col-resize;
+    height: 100%;
+    pointer-events: auto;
+    position: absolute;
+    top: 0;
+    width: 6px;
+}
+.column-resize-handle:hover,
+.column-resize-handle:active {
+    background: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+}
+
+/* Console ----------------------------------------------------------------- */
+
+#inspectors #infoInspector .vscrollable > div {
+    border-bottom: 1px dotted var(--md-sys-color-outline-variant);
+}
+
+/* Dialogs ----------------------------------------------------------------- */
+
+:root.ubv-m3 .ubv-logger-dialog {
+    --md-dialog-container-color: var(--md-sys-color-surface-container);
+    max-width: min(840px, 94vw);
+    width: min(840px, 94vw);
+}
+.ubv-dialog-actions { display: flex; gap: var(--ubv-gap); }
+.ubv-logger-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ubv-gap);
+}
+.ubv-logger-dialog-head {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+    justify-content: space-between;
+}
+.ubv-logger-dialog-tools { display: flex; gap: 4px; }
+
+.ubv-logger-setting {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 0;
+}
+.ubv-logger-toggle { justify-content: space-between; }
+:root.ubv-m3 .ubv-logger-number {
+    flex: 0 0 8em;
+    width: 8em;
+}
+:root.ubv-m3 .ubv-logger-output {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    width: 100%;
+}
+.ubv-logger-export-options {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+}
+
+.ubv-logger-detail {
+    align-items: baseline;
+    border-bottom: 1px dotted var(--md-sys-color-outline-variant);
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(6em, 10em) minmax(0, 1fr) auto;
+    padding: 5px 4px;
+    word-break: break-word;
+}
+.ubv-logger-detail > span:first-child {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12px;
+}
+/* The upstream row tints, re-expressed for the React details pane. */
+.ubv-logger-detail[data-status="1"] { background: rgb(var(--popup-cell-block-surface-rgb) / 50%); }
+.ubv-logger-detail[data-status="2"] { background: rgb(var(--popup-cell-allow-surface-rgb) / 50%); }
+.ubv-logger-detail[data-status="3"] { background: var(--logger-noop-surface); }
+.ubv-logger-detail[data-status="1"][data-modifier] { background: var(--logger-modified-surface); }
+.ubv-logger-detail .listEntry { display: inline-block; margin-right: 8px; }
+.ubv-logger-detail a { color: var(--md-sys-color-primary); }
+.ubv-logger-preview { padding: 4px 0; }
+.ubv-logger-preview img { max-height: 200px; max-width: 100%; }
+
+.ubv-logger-dynamic-head {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+}
+.netFilteringDialog .entries {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: var(--ubv-gap);
+}
+.netFilteringDialog .entry.row {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+}
+.netFilteringDialog .entry.row .url {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ubv-logger-sentence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+}
+:root.ubv-m3 .staticFilter {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    width: 100%;
+}
+
+/* The popup preview pane keeps upstream's geometry. */
+#popupContainer { border: 1px solid var(--md-sys-color-outline-variant); }
+
+@media (max-width: 720px) {
+    .ubv-logger-bar-main { flex-wrap: wrap; }
+    :root.ubv-m3 .ubv-logger-pages,
+    :root.ubv-m3 .ubv-logger-filter { flex-basis: 100%; }
+}

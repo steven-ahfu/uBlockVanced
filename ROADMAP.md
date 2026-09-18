@@ -4,6 +4,10 @@ Actionable work only. Historical and completed roadmap material is archived in C
 
 ## Actionable Items
 
+- [x] React + Material 3 Expressive port (`ui/pages/<page>/`, see `ui/README.md`)
+  Done: popup, dashboard shell, Settings, Filter lists, My filters, My rules, Trusted sites, Advanced settings, About, Support, Asset viewer, Document blocked, No-dashboard, Logger, Element Probe DevTools panel, and cloud storage.
+  Rule: every control is a `material-expressive-react` component; shared radius/spacing come from `ui/shared/tokens.css`.
+
 - [ ] Export user filters as a shareable JSON with per-rule notes
 
 - [ ] Per-site enable/disable of user filters

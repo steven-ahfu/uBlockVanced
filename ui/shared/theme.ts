@@ -1,6 +1,7 @@
 import { applyMaterialTypography } from 'material-expressive-react/theme';
 import '../../node_modules/material-expressive-react/dist/material-expressive-react.css';
 import './tokens.css';
+import './controls.css';
 
 let applied = false;
 

@@ -1,0 +1,204 @@
+/*
+ * uBlockVanced Document blocked (React + Material 3 Expressive).
+ * A full page, not a dashboard pane: one centered card. Frame, cards, pills
+ * and settings rows come from ui/shared/page.css. Every control here is a
+ * Material component, so the rules below only set geometry from the
+ * --ubv-* tokens and paint the component's own tokens.
+ */
+:root.ubv-m3 body {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100svh;
+}
+.ubv-blocked {
+    max-width: 720px;
+    padding: 24px var(--ubv-pad);
+}
+.ubv-blocked-card {
+    display: grid;
+    gap: var(--ubv-pad);
+    padding: 28px;
+}
+/* The strict-blocking sign is an IconButton (link) at its own size: the
+   shared control tokens are redefined on the host, so the inline geometry
+   the wrapper writes resolves to this box. */
+.ubv-blocked-sign {
+    --ubv-control: 56px;
+    --ubv-icon: 32px;
+    --ubv-radius-chip: var(--ubv-radius-control);
+    justify-self: start;
+}
+:root.ubv-m3 md-filled-tonal-icon-button.ubv-blocked-sign {
+    --md-filled-tonal-icon-button-icon-color: var(--md-sys-color-error);
+    --md-filled-tonal-icon-button-hover-icon-color: var(--md-sys-color-error);
+    background: var(--md-sys-color-error-container);
+}
+:root.ubv-m3 md-filled-tonal-icon-button.ubv-blocked-sign:not([disabled]):hover {
+    background: color-mix(in srgb, var(--md-sys-color-error-container) 82%, var(--md-sys-color-error));
+}
+.ubv-blocked-card .ubv-title { margin: 0; }
+.ubv-blocked-card .ubv-eyebrow { margin-top: 4px; }
+
+.ubv-code {
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+    overflow-wrap: anywhere;
+    padding: 12px 14px;
+}
+.ubv-code b { color: var(--md-sys-color-primary); font-weight: 700; }
+
+.ubv-url { display: grid; gap: var(--ubv-gap); }
+.ubv-url > .ubv-code {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+}
+.ubv-url > .ubv-code > span:first-child { flex: 1 1 auto; min-width: 0; }
+.ubv-url-toggle { flex-shrink: 0; }
+
+/* Parsed parameters: md-list / md-list-item rows, nested lists indented. */
+.ubv-params {
+    display: grid;
+    gap: 2px;
+}
+.ubv-params-nested {
+    display: grid;
+    gap: 2px;
+    padding-inline-start: 18px;
+}
+.ubv-param {
+    --md-list-item-leading-space: 12px;
+    --md-list-item-trailing-space: 12px;
+    --md-list-item-one-line-container-height: 36px;
+    --md-list-item-two-line-container-height: 44px;
+    --md-list-item-top-space: 6px;
+    --md-list-item-bottom-space: 6px;
+    background: var(--md-sys-color-surface-container-high);
+}
+.ubv-param-name,
+.ubv-param-value {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.ubv-param-name { color: var(--md-sys-color-on-surface-variant); }
+
+/* Links rendered as Material buttons: the label wraps instead of scrolling
+   the card, and the control shrinks to the density of running text. */
+.ubv-param-link,
+.ubv-list-link,
+.ubv-redirect-link {
+    --md-text-button-container-height: 26px;
+    --md-text-button-leading-space: 8px;
+    --md-text-button-trailing-space: 8px;
+    --md-text-button-label-text-size: 12px;
+    --md-text-button-label-text-weight: 500;
+    --md-text-button-container-shape: var(--ubv-radius-chip);
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-chip);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-wrap: wrap;
+    transition: var(--ubv-hover-transition);
+    vertical-align: baseline;
+}
+:root .ubv-param-link:not([disabled]):hover,
+:root .ubv-list-link:not([disabled]):hover,
+:root .ubv-redirect-link:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-param-link,
+.ubv-redirect-link {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    margin-inline-start: -8px;
+}
+.ubv-redirect-link { --md-text-button-label-text-color: var(--md-sys-color-on-tertiary-container); }
+.ubv-redirect-link b { font-weight: 700; }
+
+/* Why the page was blocked */
+.ubv-why { display: grid; gap: var(--ubv-gap); }
+.ubv-reason {
+    --md-outlined-card-container-color: var(--md-sys-color-surface-container-high);
+    box-shadow: none;
+    display: grid;
+    gap: var(--ubv-gap);
+    padding: 8px;
+}
+.ubv-reason-toggle {
+    --md-text-button-container-height: 40px;
+    --md-text-button-container-shape: var(--ubv-radius-control);
+    --md-text-button-label-text-size: 12.5px;
+    --md-text-button-label-text-weight: 600;
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-control);
+    justify-self: start;
+    max-width: 100%;
+    text-wrap: wrap;
+    transition: var(--ubv-hover-transition);
+}
+:root .ubv-reason-toggle:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-reason-body { display: grid; gap: var(--ubv-gap); padding: 0 8px 4px; }
+
+.ubv-found-in {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    gap: 2px;
+}
+.ubv-filter-list { align-items: center; display: inline-flex; gap: 2px; }
+.ubv-list-support {
+    --ubv-control: 28px;
+    --ubv-icon: 16px;
+}
+.ubv-found-in .countryFlag { height: 0.9em; margin-inline-end: 2px; vertical-align: -0.08em; }
+
+/* Don't-warn-again row: md-list-item with the Checkbox in slot="end". */
+.ubv-warning-row md-checkbox {
+    --md-checkbox-container-shape: 4px;
+    --md-checkbox-state-layer-size: 24px;
+    height: 24px;
+    width: 24px;
+}
+
+#proceedPanel {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+    justify-content: space-between;
+}
+.ubv-proceed-mode {
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-surface-container-highest);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-surface);
+}
+/* The proceed mode is an md-badge floating over the top edge of the button;
+   the anchor's top padding is the strip it sits in. */
+.ubv-proceed-anchor {
+    display: inline-flex;
+    padding-top: 14px;
+    position: relative;
+}
+.ubv-proceed-action {
+    --md-badge-large-color: var(--md-sys-color-secondary-container);
+    --md-badge-large-label-text-color: var(--md-sys-color-on-secondary-container);
+    --md-badge-large-label-text-size: 10.5px;
+    --md-badge-large-label-text-weight: 700;
+    --md-badge-large-size: 18px;
+}
+.ubv-proceed-action.isPermanent {
+    --md-badge-large-color: var(--md-sys-color-tertiary-container);
+    --md-badge-large-label-text-color: var(--md-sys-color-on-tertiary-container);
+}
+.ubv-blocked-actions { align-items: flex-end; justify-content: flex-end; }
+@media (max-width: 520px) {
+    .ubv-blocked-card { padding: 20px 16px; }
+    .ubv-blocked-actions md-outlined-button,
+    .ubv-blocked-actions .ubv-proceed-anchor { flex: 1 1 100%; }
+    .ubv-blocked-actions .ubv-proceed-anchor md-filled-button { width: 100%; }
+}

@@ -1,0 +1,142 @@
+/*
+ * uBlockVanced: shared control geometry and hover motion. Loaded by
+ * theme.ts on every page. Sizes and radii come from tokens.css so a control
+ * never disagrees with its neighbour; a host box is always the same box as
+ * its hover layer; and every hover fades with --ubv-hover-transition.
+ *
+ * Material components paint their container inside shadow DOM, where no
+ * page transition can reach. So the container is made transparent through
+ * the component's own tokens and the HOST carries the colour, which lets
+ * one global transition animate mouse-in and mouse-out everywhere.
+ */
+
+/* Icon buttons (ui/shared/IconButton.tsx): the host is exactly the
+   state layer / container square, so hover, ripple and focus ring all
+   match the box the user sees. */
+:root.ubv-m3 .ubv-icon-button {
+    --md-icon-button-hover-state-layer-opacity: 0;
+    --md-filled-tonal-icon-button-container-color: transparent;
+    --md-filled-tonal-icon-button-hover-state-layer-opacity: 0;
+    --md-filled-icon-button-container-color: transparent;
+    --md-filled-icon-button-hover-state-layer-opacity: 0;
+    --md-outlined-icon-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-chip);
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: var(--ubv-control);
+    transition: var(--ubv-hover-transition);
+    width: var(--ubv-control);
+}
+:root.ubv-m3 .ubv-icon-button-sm {
+    height: var(--ubv-control-sm);
+    width: var(--ubv-control-sm);
+}
+:root.ubv-m3 md-filled-tonal-icon-button.ubv-icon-button { background: var(--md-sys-color-secondary-container); }
+:root.ubv-m3 md-filled-icon-button.ubv-icon-button { background: var(--md-sys-color-primary); }
+:root.ubv-m3 md-icon-button.ubv-icon-button:not([disabled]):hover,
+:root.ubv-m3 md-outlined-icon-button.ubv-icon-button:not([disabled]):hover { background: var(--ubv-hover-surface); }
+:root.ubv-m3 md-filled-tonal-icon-button.ubv-icon-button:not([disabled]):hover { background: var(--ubv-hover-surface); }
+:root.ubv-m3 md-filled-icon-button.ubv-icon-button:not([disabled]):hover { background: color-mix(in srgb, var(--md-sys-color-primary) 86%, var(--md-sys-color-on-primary)); }
+
+/* Tiles (ui/shared/Tile.tsx): icon over caption, --ubv-tile tall. */
+.ubv-tile-body {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    min-width: 0;
+    width: 100%;
+}
+.ubv-tile-icon { display: inline-flex; position: relative; }
+:root.ubv-m3 .ubv-tile-icon md-icon { --md-icon-size: var(--ubv-icon); }
+.ubv-tile .caption {
+    color: var(--md-sys-color-on-surface);
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-wrap: balance;
+    white-space: normal;
+    width: 100%;
+}
+/* Tile count badge: md-badge (large variant), anchored to .ubv-tile-icon. */
+:root.ubv-m3 .ubv-badge {
+    --md-badge-large-color: var(--md-sys-color-primary);
+    --md-badge-large-label-text-color: var(--md-sys-color-on-primary);
+    --md-badge-large-label-text-font: var(--md-ref-typeface-plain);
+    --md-badge-large-label-text-size: 9.5px;
+    --md-badge-large-label-text-weight: 700;
+    --md-badge-large-size: 15px;
+}
+
+/* Toggle tile: a ToggleButton (variant tonal) whose inline colours are
+   var(--md-sys-color-secondary*) references. Remapping those tokens on the
+   host gives rest / hover / selected colours from the palette without
+   touching the component. */
+:root.ubv-m3 .ubv-tile-toggle {
+    --md-sys-color-secondary-container: var(--md-sys-color-surface-container-high);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface-variant);
+    --md-sys-color-secondary: var(--md-sys-color-primary-container);
+    --md-sys-color-on-secondary: var(--md-sys-color-on-primary-container);
+    box-shadow: var(--el-1);
+    box-sizing: border-box;
+    gap: 4px;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+}
+:root.ubv-m3 .ubv-tile-toggle:not(:disabled):hover {
+    --md-sys-color-secondary-container: var(--ubv-hover-surface);
+    --md-sys-color-secondary: rgb(var(--primary-30));
+    box-shadow: var(--el-2);
+}
+:root.ubv-m3 .ubv-tile-toggle[aria-pressed="true"] .caption { color: var(--md-sys-color-on-primary-container); }
+:root.ubv-m3 .ubv-tile-toggle:disabled { filter: none; margin: 0; }
+:root.ubv-m3 .ubv-tile-toggle:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+
+/* Action tile: a FilledTonalButton host sized and coloured by tokens. The
+   container is transparent so the host's background can transition. */
+:root.ubv-m3 .ubv-tile-action {
+    --md-filled-tonal-button-container-color: transparent;
+    --md-filled-tonal-button-container-height: var(--ubv-tile);
+    --md-filled-tonal-button-container-shape: var(--ubv-radius-control);
+    --md-filled-tonal-button-hover-state-layer-opacity: 0;
+    --md-filled-tonal-button-icon-color: var(--md-sys-color-primary);
+    --md-filled-tonal-button-hover-icon-color: var(--md-sys-color-primary);
+    --md-filled-tonal-button-label-text-color: var(--md-sys-color-on-surface);
+    --md-filled-tonal-button-hover-label-text-color: var(--md-sys-color-on-surface);
+    --md-filled-tonal-button-leading-space: 3px;
+    --md-filled-tonal-button-trailing-space: 3px;
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant), var(--el-1);
+    color: var(--md-sys-color-primary);
+    transition: var(--ubv-hover-transition);
+    width: 100%;
+}
+:root.ubv-m3 .ubv-tile-action:not([disabled]):hover {
+    background: var(--ubv-hover-surface);
+    box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant), var(--el-2);
+}
+:root.ubv-m3 .ubv-tile-action[disabled] { opacity: 0.5; }
+
+/* Toolbars (material-expressive-react Toolbar) always sit inside a card,
+   so the card is the surface: no container colour, padding or shadow of
+   their own. Pages set the layout (flex row, grid) on their own class. */
+:root.ubv-m3 .mer-toolbar {
+    --mer-toolbar-container-color: transparent;
+    --mer-toolbar-docked-shadow: none;
+    --mer-toolbar-floating-shadow: none;
+    --mer-toolbar-gap: var(--ubv-gap);
+    --mer-toolbar-padding: 0;
+    --mer-toolbar-thickness: 0px;
+    border-radius: 0;
+    color: inherit;
+    width: 100%;
+}

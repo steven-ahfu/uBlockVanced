@@ -1,0 +1,126 @@
+/*
+ * uBlockVanced My rules (React + Material 3 Expressive).
+ * Page frame, cards, pills and action rows come from ui/shared/page.css.
+ * The CodeMirror MergeView keeps its upstream classes so css/codemirror.css
+ * and the merge addon stylesheet apply; only its surface is themed here.
+ */
+html {
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    width: 100vw;
+}
+:root.ubv-m3 body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden auto;
+    width: 100%;
+}
+.ubv-editor-page {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-bottom: var(--ubv-pad);
+}
+.ubv-rules-page {
+    grid-template-rows: auto auto auto minmax(max(16rem, 40vh), 1fr);
+}
+
+/* Permanent / temporary action groups */
+.ubv-rules-groups {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ubv-rules-group {
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    display: grid;
+    gap: 10px;
+    padding: 12px 14px 14px;
+}
+.ubv-rules-group .ubv-card-title { padding: 0 2px; }
+@media (max-width: 720px) {
+    .ubv-rules-groups { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Filter row: search field, sort select, collapse toggle */
+.ubv-rules-filter {
+    align-items: center;
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+.ubv-rules-sort {
+    --md-outlined-select-text-field-container-shape: var(--ubv-radius-control);
+    --md-outlined-field-top-space: 12px;
+    --md-outlined-field-bottom-space: 12px;
+    min-width: 12rem;
+}
+@media (max-width: 640px) {
+    .ubv-rules-filter { grid-template-columns: minmax(0, 1fr) auto; }
+    .ubv-rules-sort { grid-column: 1 / -1; }
+}
+
+/* Merge view card */
+.ubv-editor-card {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.ubv-editor-card .codeMirrorContainer {
+    display: block;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+.CodeMirror-merge,
+.CodeMirror-merge-pane,
+.CodeMirror-merge .CodeMirror {
+    box-sizing: border-box;
+    height: 100%;
+}
+.CodeMirror-merge {
+    border: 0;
+    border-radius: var(--ubv-radius-card);
+    overflow: hidden;
+}
+.ubv-editor-card .CodeMirror {
+    background: var(--md-sys-color-surface-container-lowest);
+}
+.ubv-editor-card .CodeMirror-gutters {
+    background: var(--md-sys-color-surface-container-low);
+    border-color: var(--md-sys-color-outline-variant);
+}
+.CodeMirror-merge-gap {
+    background: var(--md-sys-color-surface-container-high);
+    border-color: var(--md-sys-color-outline-variant);
+}
+.CodeMirror-merge-copy,
+.CodeMirror-merge-copy-reverse {
+    color: var(--md-sys-color-primary);
+}
+.CodeMirror-merge-scrolllock { color: var(--md-sys-color-on-surface-variant); }
+.CodeMirror-merge-r-chunk { background: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent); }
+.CodeMirror-merge-r-chunk-start { border-top-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent); }
+.CodeMirror-merge-r-chunk-end { border-bottom-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent); }
+.CodeMirror-merge-r-connect { fill: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent); stroke: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent); }
+.cm-searching { background: color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent); }
+
+/* While the temporary pane is being edited the per-hunk arrows are hidden
+   and the pane is lifted, as upstream body.editing. */
+body.editing .CodeMirror-merge-copy,
+body.editing .CodeMirror-merge-copy-reverse { display: none; }
+body.editing .CodeMirror-merge-editor .CodeMirror {
+    background: var(--md-sys-color-surface-container-low);
+}
+body[dir="rtl"] .CodeMirror-merge-pane-rightmost {
+    right: unset;
+    left: 0;
+}

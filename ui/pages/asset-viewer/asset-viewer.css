@@ -1,0 +1,124 @@
+/*
+ * uBlockVanced Asset viewer (React + Material 3 Expressive).
+ * Page frame, cards and pills come from ui/shared/page.css; CodeMirror keeps
+ * its upstream ids/classes so css/codemirror.css applies.
+ */
+html {
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    width: 100vw;
+}
+:root.ubv-m3 body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+.ubv-viewer {
+    flex: 1 1 auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    min-height: 0;
+    padding-bottom: var(--ubv-pad);
+}
+.ubv-viewer:has(> .ubv-subscribe) { grid-template-rows: auto auto minmax(0, 1fr); }
+.ubv-viewer:not(:has(> .ubv-subscribe)) { grid-template-rows: auto minmax(0, 1fr); }
+
+.ubv-asset-meta {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    margin-top: 6px;
+    overflow-wrap: anywhere;
+}
+.ubv-status-cluster { align-items: center; }
+.ubv-pill-progress { --md-circular-progress-size: 14px; }
+.ubv-status-cluster md-outlined-button {
+    --md-outlined-button-container-height: 34px;
+    --md-outlined-button-leading-space: 14px;
+    --md-outlined-button-trailing-space: 16px;
+}
+
+/* Subscribe card */
+.ubv-subscribe {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-pad);
+}
+.ubv-subscribe[data-busy="true"] { opacity: 0.8; }
+.ubv-subscribe-logo {
+    align-items: center;
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 56px;
+    justify-content: center;
+    width: 56px;
+}
+.ubv-subscribe-logo img { height: 32px; width: 32px; }
+.ubv-subscribe-copy { display: grid; flex: 1 1 18rem; gap: 4px; min-width: 0; }
+.ubv-subscribe-copy p { margin: 0; }
+.ubv-subscribe-title { font-size: 15px; font-weight: 600; }
+/* The subscribe target is a Material text button at body density: the label
+   wraps instead of scrolling the card. */
+.ubv-subscribe-target {
+    --md-text-button-container-height: 24px;
+    --md-text-button-leading-space: 8px;
+    --md-text-button-trailing-space: 8px;
+    --md-text-button-label-text-size: 12px;
+    --md-text-button-label-text-weight: 500;
+    --md-text-button-container-shape: var(--ubv-radius-chip);
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-chip);
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    justify-self: start;
+    margin-inline-start: -8px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-wrap: wrap;
+    transition: var(--ubv-hover-transition);
+}
+:root .ubv-subscribe-target:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-subscribe-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+    margin-inline-start: auto;
+}
+.ubv-subscribe-actions md-filled-button {
+    --md-filled-button-container-height: 48px;
+    --md-filled-button-leading-space: 20px;
+    --md-filled-button-trailing-space: 24px;
+}
+
+/* Editor card: the CodeMirror instance fills it */
+.ubv-editor-card {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.ubv-editor-card .codeMirrorContainer {
+    display: block;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+.ubv-editor-card .CodeMirror {
+    background: var(--md-sys-color-surface-container-lowest);
+    border-radius: 0 0 var(--ubv-radius-card) var(--ubv-radius-card);
+    height: 100%;
+}
+.ubv-editor-card .CodeMirror-gutters {
+    background: var(--md-sys-color-surface-container-low);
+    border-color: var(--md-sys-color-outline-variant);
+}
+.ubv-editor-card .cm-search-widget {
+    background: var(--md-sys-color-surface-container-low);
+    border-bottom-color: var(--md-sys-color-outline-variant);
+    border-radius: var(--ubv-radius-card) var(--ubv-radius-card) 0 0;
+}

@@ -1,0 +1,151 @@
+/*
+ * uBlockVanced dashboard shell (React + Material 3 Expressive).
+ * Full-viewport column: the nav bar, then the pane iframe growing to fill.
+ * Radii and spacing come from ui/shared/tokens.css (--ubv-*).
+ */
+html, body {
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100svh;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+}
+body.notReady { display: none; }
+#root { display: contents; }
+
+/* Nav bar: a docked Material toolbar pinned to the top of the shell. The
+   --mer-toolbar-* tokens carry the surface; controls.css strips toolbars
+   back to nothing, so every rule here outranks it with :root.ubv-m3. */
+:root.ubv-m3 .ubv-nav {
+    --mer-toolbar-container-color: var(--md-sys-color-surface-container);
+    --mer-toolbar-container-fg: var(--md-sys-color-on-surface);
+    --mer-toolbar-gap: 0;
+    --mer-toolbar-padding: 10px 20px;
+    --mer-toolbar-thickness: 0px;
+    background: var(--mer-toolbar-container-color);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 0;
+    box-shadow: var(--el-1);
+    color: var(--mer-toolbar-container-fg);
+    display: flex;
+    flex-shrink: 0;
+    padding: var(--mer-toolbar-padding);
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+:root.ubv-m3 .ubv-nav[hidden] { display: none; }
+.ubv-nav-main {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    gap: var(--ubv-pad);
+    min-width: 0;
+}
+/* Brand: a Material text button holding the logo and the wordmark. */
+.brandCluster {
+    --md-text-button-container-height: 40px;
+    --md-text-button-container-shape: var(--ubv-radius-control);
+    --md-text-button-leading-space: 6px;
+    --md-text-button-trailing-space: 10px;
+    --md-text-button-hover-state-layer-opacity: 0;
+    --md-text-button-label-text-color: var(--md-sys-color-on-surface-variant);
+    --md-text-button-hover-label-text-color: var(--md-sys-color-on-surface-variant);
+    border-radius: var(--ubv-radius-control);
+    flex-shrink: 0;
+    gap: 10px;
+    transition: var(--ubv-hover-transition);
+}
+:root .brandCluster:hover { background: var(--md-sys-color-surface-container-high); }
+.brandCluster .logo { display: inline-flex; height: 28px; width: 28px; }
+.brandCluster .logo img { height: 100%; width: 100%; }
+.productName {
+    color: var(--md-sys-color-on-surface-variant);
+    display: inline-flex;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+.productName-accent { color: var(--md-sys-color-primary); font-weight: 700; }
+:root.mobile .brandCluster .logo { display: none; }
+
+/* Tab strip: Material tabs as 38px pills, the active one in primary. */
+.ubv-tabs {
+    --md-divider-thickness: 0;
+    --md-secondary-tab-container-height: 38px;
+    --md-secondary-tab-container-shape: var(--ubv-radius-control);
+    --md-secondary-tab-container-color: transparent;
+    --md-secondary-tab-label-text-size: 13.5px;
+    --md-secondary-tab-label-text-weight: 500;
+    --md-secondary-tab-label-text-color: var(--md-sys-color-on-surface-variant);
+    --md-secondary-tab-hover-label-text-color: var(--md-sys-color-on-surface);
+    --md-secondary-tab-focus-label-text-color: var(--md-sys-color-on-surface);
+    --md-secondary-tab-pressed-label-text-color: var(--md-sys-color-on-surface);
+    --md-secondary-tab-hover-state-layer-color: var(--md-sys-color-on-surface);
+    --md-secondary-tab-hover-state-layer-opacity: 0.08;
+    --md-secondary-tab-pressed-state-layer-opacity: 0.12;
+    --md-secondary-tab-active-indicator-height: 0px;
+    --md-secondary-tab-active-label-text-color: var(--md-sys-color-on-primary);
+    --md-secondary-tab-active-hover-label-text-color: var(--md-sys-color-on-primary);
+    --md-secondary-tab-active-focus-label-text-color: var(--md-sys-color-on-primary);
+    --md-secondary-tab-active-pressed-label-text-color: var(--md-sys-color-on-primary);
+    --md-secondary-tab-active-hover-state-layer-color: var(--md-sys-color-on-primary);
+    --md-secondary-tab-active-hover-state-layer-opacity: 0.08;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 3px 0;
+}
+.ubv-tabs .tabButton {
+    border-radius: var(--ubv-radius-control);
+    margin-inline-end: 4px;
+    overflow: hidden;
+    transition: background-color var(--ubv-hover-duration) var(--ubv-hover-ease), color var(--ubv-hover-duration) var(--ubv-hover-ease);
+}
+.ubv-tabs .tabButton[active] {
+    --md-secondary-tab-container-color: var(--md-sys-color-primary);
+    box-shadow: var(--el-1);
+}
+.ubv-tabs .tabButton:focus-visible { box-shadow: var(--focus-ring); }
+@media (max-width: 720px) {
+    :root.ubv-m3 .ubv-nav { --mer-toolbar-padding: 8px 12px; }
+    .ubv-nav-main { align-items: stretch; flex-direction: column; gap: 8px; }
+    .ubv-tabs { width: 100%; }
+}
+
+/* Pane */
+iframe#iframe {
+    background: transparent;
+    border: 0;
+    flex-grow: 1;
+    margin: 0;
+    opacity: 1;
+    padding: 0;
+    transition: opacity 160ms var(--md-sys-motion-easing-standard);
+    width: 100%;
+}
+iframe#iframe.paneLoading { opacity: 0; transition-duration: 60ms; }
+:root.ubv-m3 body.noDashboard .ubv-nav { display: none; }
+
+/* Unsaved-changes dialog */
+.ubv-dialog {
+    --md-dialog-container-color: var(--md-sys-color-surface-container-high);
+    --md-dialog-container-shape: var(--ubv-radius-card);
+    --md-dialog-headline-size: 16px;
+    --md-dialog-headline-weight: 600;
+}
+.ubv-dialog-actions { display: flex; gap: var(--ubv-gap); }
+
+@media (prefers-reduced-motion: reduce) {
+    iframe#iframe, .ubv-tabs .tabButton, .brandCluster { transition: none; }
+}
+@media (forced-colors: active) {
+    .ubv-tabs .tabButton { border: 1px solid ButtonText; }
+    .ubv-tabs .tabButton[active] { outline: 2px solid LinkText; }
+}

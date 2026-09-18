@@ -1,6 +1,7 @@
 import { ToggleTile } from '../../../shared/Tile';
 import { icons } from '../../../shared/icons';
 import { t } from '../../../shared/i18n';
+import { Toolbar } from 'material-expressive-react';
 import type { PopupActions, PopupState } from '../usePopup';
 import type { SwitchName } from '../types';
 
@@ -39,7 +40,7 @@ export function SiteSwitches({ state, actions }: Props) {
         'no-scripting': badgeText(state.scriptCount),
     };
     return (
-        <div id="extraTools" className="ubv-ribbon ubv-ribbon-switches" role="toolbar" aria-label="Per-site controls" data-more="d">
+        <Toolbar variant="Docked" dockPosition="Top" size="Small" id="extraTools" className="ubv-ribbon ubv-ribbon-switches" aria-label="Per-site controls" data-more="d">
             {defs.map(def => {
                 const on = data?.[def.dataKey] === true;
                 const tip = t(def.tip + (on ? '2' : '1'));
@@ -47,7 +48,6 @@ export function SiteSwitches({ state, actions }: Props) {
                     <ToggleTile
                         key={def.name}
                         id={def.name}
-                        className="hnSwitch"
                         selected={on}
                         icon={def.icon}
                         caption={t(def.label)}
@@ -59,6 +59,6 @@ export function SiteSwitches({ state, actions }: Props) {
                     />
                 );
             })}
-        </div>
+        </Toolbar>
     );
 }

@@ -4,6 +4,8 @@
 @font-face { font-family: Geist; font-style: normal; font-weight: 500; src: url('fonts/Geist/Geist-Medium.ttf') format('truetype'); }
 @font-face { font-family: Geist; font-style: normal; font-weight: 600; src: url('fonts/Geist/Geist-SemiBold.ttf') format('truetype'); }
 @font-face { font-family: Geist; font-style: normal; font-weight: 700; src: url('fonts/Geist/Geist-Bold.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: normal; font-weight: 800; src: url('fonts/Geist/Geist-ExtraBold.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: italic; font-weight: 400; src: url('fonts/Geist/Geist-Italic.ttf') format('truetype'); }
 @font-face {
     font-family: Inter;
     font-style: normal;
@@ -593,7 +595,8 @@ html:not(#uBO-popup-panel) textarea:focus-visible {
 
 html:not(#uBO-popup-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="color"])::placeholder,
 html:not(#uBO-popup-panel) textarea::placeholder {
-    color: var(--field-placeholder);
+    color: var(--ink-3);
+    opacity: 1;
 }
 
 html:not(#uBO-popup-panel) select {
@@ -614,7 +617,12 @@ html:not(#uBO-popup-panel) textarea {
 }
 
 html:not(#uBO-popup-panel) .searchfield input {
-    padding-inline-start: 1.7rem;
+    padding-inline-start: 2.6rem;
+}
+html:not(#uBO-popup-panel) .searchfield .fa-icon {
+    inset-inline-start: 0.9rem;
+    left: auto;
+    pointer-events: none;
 }
 
 html:not(#uBO-popup-panel) label {
