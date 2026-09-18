@@ -68,24 +68,24 @@ const toggleTransition = [
     'color var(--transition-fast)',
 ].join(', ');
 
-// A ribbon tile: icon over caption, --ubv-tile tall, full cell width.
+// A ribbon tile: one glyph in a --ubv-tile square. The name lives in the
+// tooltip, so the box is the glyph's box and nothing else.
 export const toggleTileStyle = (selected: boolean): CSSProperties => ({
     borderColor: selected ? 'var(--ubv-selected-outline)' : 'var(--md-sys-color-outline-variant)',
     borderRadius: selected ? 'var(--ubv-radius-chip)' : 'var(--ubv-radius-control)',
-    flexDirection: 'column',
     height: 'var(--ubv-tile)',
-    paddingInline: '3px',
+    paddingInline: '0',
     transition: toggleTransition,
-    width: '100%',
+    width: 'var(--ubv-tile)',
 });
 
-// The popup power control: --ubv-power tall, fills its grid column; the
-// radius loosens when the site is off.
+// The popup power control: --ubv-button tall, fills its grid column, and
+// carries the site name as its label; the radius loosens when off.
 export const powerStyle = (on: boolean): CSSProperties => ({
     borderColor: on ? 'var(--ubv-selected-outline)' : 'var(--md-sys-color-outline-variant)',
     borderRadius: on ? 'var(--ubv-radius-control)' : 'var(--ubv-radius-card)',
-    height: 'var(--ubv-power)',
-    paddingInline: '16px',
+    height: 'var(--ubv-button)',
+    paddingInline: '14px',
     transition: toggleTransition,
     width: '100%',
 });

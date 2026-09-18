@@ -1,3 +1,12 @@
+# uBlockVanced 0.3.6
+
+Popup header and tool rows rebuilt: less than half the vertical height, and every control on one size.
+
+- **The site name is now the power control's label.** `github.com` used to sit in its own heading above the switch, so the header cost two rows and ~118 px before the first tool. The hostname moved inside the button that acts on it — glyph, then the hostname with the registrable domain in emphasis and any subdomain prefix muted ahead of it — and it truncates instead of wrapping, so the header is one fixed 64 px row. The standalone `#hostname` block is gone.
+- **Tool tiles are square icon buttons.** The five per-site switches and the three tools were two grids of 72 px captioned tiles whose columns never lined up (five cells against three), and captions like "Large media elements" wrapped to two lines while "JavaScript" did not. Both groups are now one centred band of 48 px squares split by a hairline, so every cell is the same box. Count badges are unchanged.
+- **Names moved to the tooltips.** A switch's tip leads with its name and then says what a click does — "Cosmetic filtering — Click to disable cosmetic filtering on this site". Tool tips were already whole sentences ("Open the dashboard"), so they read as tips rather than as wrapped captions.
+- **Size scale simplified**: `--ubv-tile` is 48 px (one square glyph) and `--ubv-power` is retired — the power control uses `--ubv-button` (48). The scale is now 40 / 48 / 48 / 20 plus the 28 px dense-row box.
+
 # uBlockVanced 0.3.5
 
 - **One shared file picker.** Importing filters, rules, trusted sites or a settings backup went through a hand-rolled hidden `<input type="file">` repeated on four pages, each with its own ref and change handler. There is now a single `FilePicker` component: the visible control is an ordinary Material button, and the native input it drives is hidden inside the component, next to its own button. Only a native input can open the OS file dialog, so it remains the engine, but it is no longer part of any page's markup. The import buttons look and behave exactly as before, including picking the same file twice in a row.

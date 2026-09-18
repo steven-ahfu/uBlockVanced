@@ -35,47 +35,17 @@
     background: var(--md-sys-color-surface-container);
     border-bottom: 0;
     border-radius: var(--ubv-radius-card) var(--ubv-radius-card) 0 0;
-    padding: var(--ubv-gap) var(--ubv-gap) 4px;
+    padding: var(--ubv-gap);
 }
 /* Portrait: upstream hoists #sticky out of #main, so it becomes its own card. */
 #panes > #sticky {
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--ubv-radius-card);
     box-shadow: var(--el-card);
-    padding-bottom: var(--ubv-gap);
 }
 body.off #sticky,
 body.off #main,
 body.off #firewall { border-color: var(--md-sys-color-outline-variant); }
-
-/* Current site, above the power control */
-.ubv-hostname {
-    background: transparent;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    margin: 0;
-    padding: 6px 4px 10px;
-    text-align: center;
-    white-space: normal;
-}
-.ubv-hostname > span { word-break: break-all; }
-.ubv-hostname-prefix {
-    color: var(--md-sys-color-on-surface-variant);
-    font-size: 11.5px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    order: 2;
-    text-transform: uppercase;
-}
-.ubv-hostname-prefix:empty { display: none; }
-.ubv-hostname-domain {
-    color: var(--md-sys-color-on-surface);
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-}
 
 /* Header row: [more save revert] [power] [reload less]. The clusters take
    their content width; the power control fills what is left. */
@@ -105,6 +75,8 @@ body.off #firewall { border-color: var(--md-sys-color-outline-variant); }
     --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface-variant);
     box-shadow: var(--el-2);
     box-sizing: border-box;
+    gap: 10px;
+    justify-content: flex-start;
     margin: 0;
     min-height: 0;
     min-width: 0;
@@ -119,21 +91,57 @@ body.off #firewall { border-color: var(--md-sys-color-outline-variant); }
 :root.ubv-m3 .ubv-power:focus-visible { box-shadow: var(--focus-ring); outline: none; }
 :root.ubv-m3 .ubv-power:disabled { filter: none; margin: 0; }
 
-/* Ribbons: five per-site switches, then three navigation tools. The id
-   selectors outrank upstream's #extraTools / #basicTools grid rules. */
+/* The site the switch acts on, as the control's own label: glyph, then the
+   hostname with the registrable domain carrying the emphasis. It truncates
+   rather than wraps, so the header keeps one fixed row height. */
+.ubv-power-icon { flex: 0 0 auto; }
+.ubv-power-site {
+    display: block;
+    flex: 1 1 auto;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    min-width: 0;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ubv-power-prefix { font-weight: 400; opacity: 0.65; }
+.ubv-power-domain { font-weight: 600; }
+
+/* Tool strip: five per-site switches, a hairline, then three navigation
+   tools — one centred band of equal squares instead of two grids whose
+   cells never lined up. The id selectors outrank upstream's #extraTools /
+   #basicTools grid rules. */
+.ubv-toolstrip {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+    justify-content: center;
+    padding: var(--ubv-gap);
+}
 #extraTools.ubv-ribbon,
 #basicTools.ubv-ribbon {
     background: transparent;
-    display: grid;
-    gap: var(--ubv-gap);
-    grid-auto-rows: var(--ubv-tile);
-    padding: var(--ubv-gap) var(--ubv-gap) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    padding: 0;
+    width: auto;
 }
-#extraTools.ubv-ribbon { grid-template-columns: repeat(5, minmax(0, 1fr)); padding-top: 12px; }
-#basicTools.ubv-ribbon { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-bottom: var(--ubv-gap); }
-:root.mobile #extraTools.ubv-ribbon { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-:root.mobile body.no-tooltips .ubv-tile .caption,
-:root.mobile body[data-ui~="-captions"] .ubv-tile .caption { display: none; }
+/* A group only earns the separator when something precedes it. */
+#basicTools.ubv-ribbon:not(:first-child) {
+    border-inline-start: 1px solid var(--md-sys-color-outline-variant);
+    padding-inline-start: var(--ubv-gap);
+}
+/* Upstream collapses a hidden section with height:0, which still reserves
+   a flex track (and a separator) here; take it out of flow instead. */
+body:not([data-more*="d"]) #extraTools.ubv-ribbon,
+body:not([data-more*="c"]) #basicTools.ubv-ribbon { display: none; }
+body:not([data-more*="c"]):not([data-more*="d"]) .ubv-toolstrip { display: none; }
 :root.mobile .ubv-tool-logger,
 :root body[data-ui~="-logger"] .ubv-tool-logger { display: none; }
 

@@ -3,7 +3,6 @@ import { Firewall } from './components/Firewall';
 import { PowerControl } from './components/PowerControl';
 import { QuickTools } from './components/QuickTools';
 import { RulesetTools } from './components/RulesetTools';
-import { SiteName } from './components/SiteName';
 import { SiteSwitches } from './components/SiteSwitches';
 import { Tooltips } from '../../shared/Tooltip';
 import { UnprocessedWarning } from './components/UnprocessedWarning';
@@ -107,10 +106,10 @@ export function App() {
     }, [ actions ]);
 
     // Header: [more · save · revert] [power] [reload · less], as in the
-    // design. The power control is the middle column and stretches to it.
+    // design. The power control is the middle column, stretches to it, and
+    // names the site it acts on.
     const sticky = (
         <div id="sticky">
-            <SiteName state={state} />
             <Toolbar variant="Docked" dockPosition="Top" size="Small" className="ubv-sticky" aria-label="Primary page controls">
                 <RulesetTools state={state} actions={actions} side="start" />
                 <PowerControl state={state} actions={actions} />
@@ -124,8 +123,10 @@ export function App() {
             {state.portrait ? sticky : null}
             <div id="main">
                 {state.portrait ? null : sticky}
-                <SiteSwitches state={state} actions={actions} />
-                <QuickTools state={state} actions={actions} />
+                <div className="ubv-toolstrip">
+                    <SiteSwitches state={state} actions={actions} />
+                    <QuickTools state={state} actions={actions} />
+                </div>
                 <UnprocessedWarning state={state} actions={actions} />
                 <Divider data-more="f" />
                 <div className="itemRibbon ubv-version" data-more="f">

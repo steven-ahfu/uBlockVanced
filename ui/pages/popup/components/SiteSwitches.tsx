@@ -26,7 +26,9 @@ const defs: SwitchDef[] = [
 const badgeText = (n: number | undefined | null): string =>
     typeof n === 'number' && n !== 0 ? Math.min(n, 99).toLocaleString() : '';
 
-// Per-site switches as M3E toggle tiles, each with a count badge.
+// Per-site switches as M3E toggle tiles, each with a count badge. The tile
+// shows only its glyph; its name leads the tooltip, which then says what a
+// click will do ("Cosmetic filtering — Click to disable ... on this site").
 export function SiteSwitches({ state, actions }: Props) {
     const { data } = state;
     const noTip = data?.tooltipsDisabled === true;
@@ -43,14 +45,14 @@ export function SiteSwitches({ state, actions }: Props) {
         <Toolbar variant="Docked" dockPosition="Top" size="Small" id="extraTools" className="ubv-ribbon ubv-ribbon-switches" aria-label="Per-site controls" data-more="d">
             {defs.map(def => {
                 const on = data?.[def.dataKey] === true;
-                const tip = t(def.tip + (on ? '2' : '1'));
+                const name = t(def.label);
+                const tip = `${name} — ${t(def.tip + (on ? '2' : '1'))}`;
                 return (
                     <ToggleTile
                         key={def.name}
                         id={def.name}
                         selected={on}
                         icon={def.icon}
-                        caption={t(def.label)}
                         badge={counts[def.name]}
                         title={noTip ? undefined : tip}
                         ariaLabel={tip}

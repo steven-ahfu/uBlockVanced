@@ -42,33 +42,14 @@
 :root.ubv-m3 md-filled-tonal-icon-button.ubv-icon-button:not([disabled]):hover { background: var(--ubv-hover-surface); }
 :root.ubv-m3 md-filled-icon-button.ubv-icon-button:not([disabled]):hover { background: color-mix(in srgb, var(--md-sys-color-primary) 86%, var(--md-sys-color-on-primary)); }
 
-/* Tiles (ui/shared/Tile.tsx): icon over caption, --ubv-tile tall. */
-.ubv-tile-body {
+/* Tiles (ui/shared/Tile.tsx): one glyph in a --ubv-tile square. */
+.ubv-tile-icon {
     align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: inline-flex;
     justify-content: center;
-    min-width: 0;
-    width: 100%;
+    position: relative;
 }
-.ubv-tile-icon { display: inline-flex; position: relative; }
 :root.ubv-m3 .ubv-tile-icon md-icon { --md-icon-size: var(--ubv-icon); }
-.ubv-tile .caption {
-    color: var(--md-sys-color-on-surface);
-    display: block;
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 1.2;
-    max-height: 2.4em;
-    overflow: hidden;
-    overflow-wrap: anywhere;
-    text-align: center;
-    text-wrap: balance;
-    white-space: normal;
-    width: 100%;
-}
 /* Tile count badge: md-badge (large variant), anchored to .ubv-tile-icon. */
 :root.ubv-m3 .ubv-badge {
     --md-badge-large-color: var(--md-sys-color-primary);
@@ -90,7 +71,8 @@
     --md-sys-color-on-secondary: var(--md-sys-color-on-primary-container);
     box-shadow: var(--el-1);
     box-sizing: border-box;
-    gap: 4px;
+    flex: 0 0 auto;
+    gap: 0;
     margin: 0;
     min-height: 0;
     min-width: 0;
@@ -100,7 +82,6 @@
     --md-sys-color-secondary: rgb(var(--primary-30));
     box-shadow: var(--el-2);
 }
-:root.ubv-m3 .ubv-tile-toggle[aria-pressed="true"] .caption { color: var(--md-sys-color-on-primary-container); }
 :root.ubv-m3 .ubv-tile-toggle:disabled { filter: none; margin: 0; }
 :root.ubv-m3 .ubv-tile-toggle:focus-visible { box-shadow: var(--focus-ring); outline: none; }
 
@@ -110,19 +91,21 @@
     --md-filled-tonal-button-container-color: transparent;
     --md-filled-tonal-button-container-height: var(--ubv-tile);
     --md-filled-tonal-button-container-shape: var(--ubv-radius-control);
+    --md-filled-tonal-button-container-width: var(--ubv-tile);
     --md-filled-tonal-button-hover-state-layer-opacity: 0;
     --md-filled-tonal-button-icon-color: var(--md-sys-color-primary);
     --md-filled-tonal-button-hover-icon-color: var(--md-sys-color-primary);
     --md-filled-tonal-button-label-text-color: var(--md-sys-color-on-surface);
     --md-filled-tonal-button-hover-label-text-color: var(--md-sys-color-on-surface);
-    --md-filled-tonal-button-leading-space: 3px;
-    --md-filled-tonal-button-trailing-space: 3px;
+    --md-filled-tonal-button-leading-space: 0px;
+    --md-filled-tonal-button-trailing-space: 0px;
     background: var(--md-sys-color-surface-container-high);
     border-radius: var(--ubv-radius-control);
     box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant), var(--el-1);
     color: var(--md-sys-color-primary);
+    flex: 0 0 auto;
     transition: var(--ubv-hover-transition);
-    width: 100%;
+    width: var(--ubv-tile);
 }
 :root.ubv-m3 .ubv-tile-action:not([disabled]):hover {
     background: var(--ubv-hover-surface);

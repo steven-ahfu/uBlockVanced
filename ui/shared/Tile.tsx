@@ -1,24 +1,23 @@
 import { FilledTonalButton, ToggleButton } from 'material-expressive-react/button';
-import type { MouseEvent, ReactNode } from 'react';
+import type { MouseEvent } from 'react';
 import { Icon } from './Icon';
 import { toggleTileStyle } from './metrics';
 import { Badge } from 'material-expressive-react/badge';
 
 interface TileBodyProps {
     icon: string;
-    caption: ReactNode;
     badge?: string;
 }
 
-// Stacked icon + caption used by every ribbon tile in the app.
-export function TileBody({ icon, caption, badge }: TileBodyProps) {
+// A tile's body is one glyph, optionally badged. The tile's name is carried
+// by its tooltip and its aria-label, never as visible text: captions forced
+// every ribbon cell to the width of its longest word and cost a whole row
+// of popup height for information the tooltip already gives.
+export function TileBody({ icon, badge }: TileBodyProps) {
     return (
-        <span className="ubv-tile-body">
-            <span className="ubv-tile-icon">
-                <Icon svg={icon} />
-                {badge ? <Badge className="ubv-badge" value={badge} /> : null}
-            </span>
-            <span className="caption">{caption}</span>
+        <span className="ubv-tile-icon">
+            <Icon svg={icon} />
+            {badge ? <Badge className="ubv-badge" value={badge} /> : null}
         </span>
     );
 }
@@ -33,7 +32,7 @@ interface CommonTileProps extends TileBodyProps {
     onMouseEnter?: () => void;
 }
 
-// Tiles are --ubv-tile tall and --ubv-radius-control round (tokens.css);
+// Tiles are --ubv-tile squares, --ubv-radius-control round (tokens.css);
 // controls.css remaps the Material colour tokens on the host for rest,
 // hover and selected states so the library components keep their markup.
 

@@ -93,11 +93,10 @@
        the same tokens; controls.css sizes the plain-button tiles. */
     --ubv-control: 40px;   /* icon buttons and any compact control */
     --ubv-control-sm: 28px; /* icon buttons inside a dense row (the matrix) */
-    --ubv-button: 48px;    /* page action buttons */
-    --ubv-power: 56px;     /* popup power control */
-    --ubv-tile: 72px;      /* ribbon tiles: icon over caption */
+    --ubv-button: 48px;    /* page action buttons, popup power control */
+    --ubv-tile: 48px;      /* ribbon tiles: one square glyph, name in the tip */
     --ubv-icon: 20px;      /* glyph inside a control or tile */
-    --ubv-icon-lg: 28px;   /* glyph inside the power control */
+    --ubv-icon-lg: 24px;   /* glyph inside the power control */
 
     /* Selection: M3E fills with primary-container and tightens the radius;
        this is the hairline around a selected control. */
