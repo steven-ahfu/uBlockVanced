@@ -257,21 +257,21 @@ html#ublock0-epicker,
     cursor: not-allowed;
 }
 #ublock0-epicker svg#sea > path:first-child {
-    fill: rgb(var(--ctp-crust) / 0.55);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.55);
     fill-rule: evenodd;
 }
 #ublock0-epicker svg#sea > path + path {
-    stroke: rgb(var(--ctp-red));
+    stroke: rgb(var(--ctp-red, 235 111 146));
     stroke-width: 0.5px;
-    fill: rgb(var(--ctp-red) / 0.18);
+    fill: rgb(var(--ctp-red, 235 111 146) / 0.18);
 }
 #ublock0-epicker.zap svg#sea > path + path {
-    stroke: rgb(var(--ctp-yellow));
+    stroke: rgb(var(--ctp-yellow, 223 142 29));
     stroke-width: 0.5px;
-    fill: rgb(var(--ctp-yellow) / 0.18);
+    fill: rgb(var(--ctp-yellow, 223 142 29) / 0.18);
 }
 #ublock0-epicker.preview svg#sea > path {
-    fill: rgb(var(--ctp-crust) / 0.12);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.12);
 }
 #ublock0-epicker.preview svg#sea > path + path {
     stroke: none;
@@ -439,7 +439,7 @@ html#ublock0-epicker,
 }
 
 #ublock0-epicker svg#sea > path:first-child {
-    fill: rgb(var(--ctp-crust) / 0.58);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.58);
 }
 
 @media (prefers-reduced-motion: reduce) {

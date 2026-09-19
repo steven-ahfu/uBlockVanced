@@ -341,6 +341,15 @@
  * (surfaces, borders, ink, popup cells, logger, CodeMirror) follows automatically.
  * Add class "catppuccin-mocha" on :root to get the previous palette back.
  */
+/* Dark is this fork's default, so the palette is defined on bare :root too.
+   theme.js only adds the `dark` class after a vAPI.messaging round-trip, and
+   a document that paints first would otherwise have no --ctp-* at all. That
+   is not a cosmetic problem: `rgb(var(--ctp-crust) / 0.58)` with the variable
+   missing is invalid at computed-value time, so the property falls back to
+   its initial value -- for the element picker's `fill`, opaque black over the
+   whole page. Defining the palette here means the worst case is "correct
+   colours slightly early", never an unreadable document. */
+:root,
 :root.dark {
     --ctp-base: 31 29 46;        /* #1F1D2E surface */
     --ctp-mantle: 25 23 36;      /* #191724 base    */
@@ -446,6 +455,7 @@
     --ctp-yellow: 223 142 29;
 }
 
+:root,
 :root.dark {
     --elevation-down-surface: rgb(var(--ctp-crust));
     --elevation-down1-opacity: 16%;

@@ -1,3 +1,12 @@
+# uBlockVanced 0.3.8
+
+Opening the element picker no longer covers the page in an opaque sheet.
+
+- **The picker blacked out every site it opened on.** `theme.js` adds the `dark` class only after a `vAPI.messaging` round-trip, so a document paints at least one frame without it — and the Catppuccin palette was defined only under `:root.dark`. With `--ctp-crust` undefined, `fill: rgb(var(--ctp-crust) / 0.58)` on the picker's full-viewport SVG is invalid at computed-value time, so `fill` fell back to its initial value: opaque black. The page being picked from disappeared behind it and nothing was clickable, on any site. The same missing class is why the picker dialog rendered in the light theme while the page dimmed dark.
+- **Dark is now the bare `:root` default.** The palette is declared on `:root` as well as `:root.dark`, so any document has colours from its first paint and the class only confirms them. This removes the whole failure class, not just the picker's instance of it: any `--ctp-*` reference in a document that paints before `theme.js` resolves was liable to the same collapse.
+- **The picker's own paints carry literal fallbacks** (`var(--ctp-crust, 20 18 28)`) as a second line of defence. `fill` and `stroke` are inherited SVG paint properties whose initial value is opaque black, so on the one element that covers the viewport a dropped declaration paints instead of fading.
+- **Regression tests** in `tests/theme-palette.test.js`: the palette resolves at bare `:root`, and no `fill`/`stroke` in `epicker-ui.css` references a variable that can go unresolved without a fallback.
+
 # uBlockVanced 0.3.7
 
 Element Probe no longer freezes the page it is inspecting, and the context menu is down to one entry.
