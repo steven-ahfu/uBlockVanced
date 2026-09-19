@@ -1,11 +1,16 @@
-import { describe, it } from 'node:test';
 import {
+    GENERATED_ID_PATTERNS,
     classifyClasses,
     escCSS,
     escFilterText,
+    isGeneratedId,
     suggestProceduralFilters,
 } from '../src/js/element-probe/procedural-suggest.js';
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /******************************************************************************/
 
@@ -46,6 +51,61 @@ describe('classifyClasses', ( ) => {
     it('treats any very long class name as generated', ( ) => {
         const long = 'a'.repeat(41);
         assert.deepEqual(classifyClasses([ long ]).dynamic, [ long ]);
+    });
+});
+
+/******************************************************************************/
+
+describe('isGeneratedId', ( ) => {
+    it('rejects ids that name one instance, not one kind of thing', ( ) => {
+        // The picker offered ###\34 9758736 on Hacker News: a valid filter for
+        // exactly one comment, dead the moment that comment scrolls off.
+        for ( const id of [
+            '49758736',
+            'comment-49758736',
+            'post123456',
+            'a1b2c3d4-1111-2222-3333-444455556666',
+            'deadbeefdeadbeef12',
+        ] ) {
+            assert.equal(isGeneratedId(id), true, `${id} should be rejected`);
+        }
+    });
+
+    it('keeps ids a human wrote', ( ) => {
+        for ( const id of [ 'hnmain', 'bigbox', 'repo-content', 'footer2', 'main-nav', 'nav2' ] ) {
+            assert.equal(isGeneratedId(id), false, `${id} should be kept`);
+        }
+    });
+
+    it('ignores an absent id', ( ) => {
+        assert.equal(isGeneratedId(''), false);
+        assert.equal(isGeneratedId(undefined), false);
+    });
+
+    it('stays in step with the copy inside the element picker', ( ) => {
+        // epicker.js runs in page context as a classic script, so it cannot
+        // import this module and carries its own copy of the rule. Compare the
+        // two by behaviour rather than by text: the picker is free to spell the
+        // alternation differently, it just may not decide differently.
+        const here = path.dirname(fileURLToPath(import.meta.url));
+        const src = fs.readFileSync(path.join(here, '..', 'src/js/scriptlets/epicker.js'), 'utf8');
+        const line = src.split('\n').find(l => l.startsWith('const reGeneratedId'));
+        assert.ok(line !== undefined, 'epicker.js no longer declares reGeneratedId');
+
+        const body = line.slice(line.indexOf('/'), line.lastIndexOf('/i') + 2);
+        const pickerRe = new RegExp(body.slice(1, -2), 'i');
+        const moduleRe = id => GENERATED_ID_PATTERNS.some(p => new RegExp(p, 'i').test(id));
+
+        for ( const id of [
+            '49758736', 'comment-49758736', 'post123456', 'hnmain', 'bigbox',
+            'repo-content', 'footer2', 'main-nav', 'ember:42',
+            'a1b2c3d4-1111-2222-3333-444455556666', 'deadbeefdeadbeef12',
+        ] ) {
+            assert.equal(
+                pickerRe.test(id), moduleRe(id),
+                `picker and module disagree about "${id}"`
+            );
+        }
     });
 });
 

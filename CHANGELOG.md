@@ -1,3 +1,10 @@
+# uBlockVanced 0.3.10
+
+The element picker stops offering filters that can only ever match one element.
+
+- **Per-instance ids are no longer used as candidates.** Picking a Hacker News comment produced `###\34 9758736` — valid, correct, and worthless: id `49758736` is that one comment, so the filter dies the moment it scrolls away, and the CSS escape for a leading digit makes it unreadable besides. An id is still the best anchor a page offers, so only ids that name an instance rather than a kind are skipped: all-digits, a six-or-more digit run (`comment-49758736`, `post123456`), uuids, long hex digests, and anything over 40 characters. `hnmain`, `bigbox`, `repo-content`, `footer2` and `main-nav` are untouched. When an id is skipped the existing class, attribute and tag fallbacks produce something reusable instead.
+- **The rule lives in one tested place.** `isGeneratedId()` in `src/js/element-probe/procedural-suggest.js` is the canonical version. `src/js/scriptlets/epicker.js` is injected into page context as a classic script and cannot import it, so it carries a mirrored regex — and `tests/procedural-suggest.test.js` compares the two by behaviour across a fixed set of ids, failing if they ever disagree.
+
 # uBlockVanced 0.3.9
 
 The element picker gains a Probe tab: procedural filter suggestions for the element you just picked.

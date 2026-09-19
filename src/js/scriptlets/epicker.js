@@ -390,6 +390,11 @@ const filterTypes = {
 //   Also take into account the `src` attribute for `img` elements -- and limit
 //   the value to the 1024 first characters.
 
+// uBlockVanced: ids that name one instance rather than one kind of thing.
+// Kept in step with GENERATED_ID_PATTERNS in
+// js/element-probe/procedural-suggest.js (see tests/procedural-suggest.test.js).
+const reGeneratedId = /^\d+$|^[A-Za-z_-]*\d{6,}$|^[0-9a-f]{8}-[0-9a-f]{4}-|^[0-9a-f]{16,}$|:/i;
+
 const cosmeticFilterFromElement = function(elem) {
     if ( elem === null ) { return 0; }
     if ( elem.nodeType !== 1 ) { return 0; }
@@ -402,7 +407,18 @@ const cosmeticFilterFromElement = function(elem) {
     let selector = '';
 
     // Id
-    let v = typeof elem.id === 'string' && CSS.escape(elem.id);
+    // uBlockVanced: an id normally makes the best cosmetic filter, but some
+    // identify one instance rather than one kind of thing -- a comment number,
+    // a row key, a uuid. Those match exactly one element, once, so the filter
+    // is dead as soon as the page moves on, and the escaped form is unreadable
+    // (Hacker News id "49758736" becomes ###\34 9758736). Skip them and let the
+    // class / attribute / tag fallbacks below produce something reusable.
+    //
+    // MIRRORS GENERATED_ID_PATTERNS in js/element-probe/procedural-suggest.js.
+    // This file is injected into page context as a classic script and cannot
+    // import that module; a test fails if the two lists drift apart.
+    let v = typeof elem.id === 'string' && elem.id !== '' && reGeneratedId.test(elem.id) === false
+        && CSS.escape(elem.id);
     if ( v ) {
         selector = '#' + v;
     }

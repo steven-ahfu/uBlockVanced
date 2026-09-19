@@ -30,6 +30,29 @@ const DEFAULT_CLASS_PATTERNS = [
     '^[a-z0-9]{8,}$',                   // bare hash
 ];
 
+// Ids that identify one instance rather than one kind of thing: a comment
+// number, a row key, a uuid. An id is normally the best anchor a page offers,
+// which is why the element picker reaches for it first -- but these match
+// exactly one element, once, and the filter is dead the moment the page moves
+// on. Hacker News ids like "49758736" are the canonical example.
+//
+// MIRRORED in src/js/scriptlets/epicker.js (reGeneratedId). That file is a
+// classic script injected into page context and cannot import this module;
+// tests/procedural-suggest.test.js fails if the two drift apart.
+const GENERATED_ID_PATTERNS = [
+    '^\\d+$',                         // 49758736
+    '^[A-Za-z_-]*\\d{6,}$',           // comment-49758736, post123456
+    '^[0-9a-f]{8}-[0-9a-f]{4}-',      // uuid
+    '^[0-9a-f]{16,}$',                // long hex digest
+    ':',                              // generated ids sometimes carry colons
+];
+
+const isGeneratedId = function(id) {
+    if ( typeof id !== 'string' || id === '' ) { return false; }
+    if ( id.length > 40 ) { return true; }
+    return GENERATED_ID_PATTERNS.some(p => new RegExp(p, 'i').test(id));
+};
+
 // Split class names into the ones worth building a filter on and the ones that
 // look generated. A name longer than 40 characters is treated as generated
 // whatever it matches: nothing hand-written runs that long.
@@ -272,9 +295,11 @@ const suggestProceduralFilters = function(facts) {
 
 export {
     DEFAULT_CLASS_PATTERNS,
+    GENERATED_ID_PATTERNS,
     classifyClasses,
     escCSS,
     escFilterText,
     escRegex,
+    isGeneratedId,
     suggestProceduralFilters,
 };
