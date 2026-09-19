@@ -903,6 +903,57 @@ const onOptimizeCandidates = function(details) {
 
 /******************************************************************************/
 
+// uBlockVanced: the facts the dialog's Probe tab needs to suggest procedural
+// filters. The dialog runs in its own frame with no access to this page, and
+// the suggester (js/element-probe/procedural-suggest.js) is deliberately
+// DOM-free, so everything it reasons about is gathered here and sent across.
+const classListOf = function(elem) {
+    const raw = elem instanceof Element ? elem.getAttribute('class') : null;
+    if ( typeof raw !== 'string' ) { return []; }
+    return raw.split(/\s+/).filter(s => s !== '');
+};
+
+// The element's own text, ignoring what its children contribute. A wrapper's
+// textContent is every label inside it, which makes a useless :has-text().
+const ownText = function(elem) {
+    let text = '';
+    for ( const node of elem.childNodes ) {
+        if ( node.nodeType === 3 ) { text += node.nodeValue; }
+    }
+    return text.trim().replace(/\s+/g, ' ');
+};
+
+const PROBE_TEXT_CAP = 200;
+const PROBE_ANCESTOR_DEPTH = 4;
+
+const probeFactsFromElement = function(elem) {
+    if ( elem instanceof Element === false ) { return null; }
+    const ancestors = [];
+    let node = elem.parentElement;
+    while (
+        node !== null &&
+        node !== document.body &&
+        node !== document.documentElement &&
+        ancestors.length < PROBE_ANCESTOR_DEPTH
+    ) {
+        ancestors.push({
+            tag: node.localName,
+            id: node.id || '',
+            classes: classListOf(node),
+        });
+        node = node.parentElement;
+    }
+    return {
+        tag: elem.localName,
+        id: elem.id || '',
+        classes: classListOf(elem),
+        text: ownText(elem).slice(0, PROBE_TEXT_CAP),
+        textContent: (elem.textContent || '').trim().replace(/\s+/g, ' ').slice(0, PROBE_TEXT_CAP),
+        path: self.location.pathname,
+        ancestors,
+    };
+};
+
 const showDialog = function(options) {
     pickerFramePort.postMessage({
         what: 'showDialog',
@@ -910,6 +961,7 @@ const showDialog = function(options) {
         netFilters: netFilterCandidates,
         cosmeticFilters: cosmeticFilterCandidates,
         filter: bestCandidateFilter,
+        probeFacts: probeFactsFromElement(targetElements[0] || null),
         options,
     });
 };

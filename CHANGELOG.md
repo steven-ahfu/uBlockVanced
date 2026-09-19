@@ -1,3 +1,14 @@
+# uBlockVanced 0.3.9
+
+The element picker gains a Probe tab: procedural filter suggestions for the element you just picked.
+
+- **Two tabs over one picked element.** **Selectors** is the list that was always there — the CSS candidates with the depth and specificity sliders. **Probe** answers a different question: not "what selects this element" but "what about it will still be true after the next deploy". Both write into the same editor, so Preview and Create need no special case; a procedural filter is filter text, and the static filtering parser already understands it. Picking a new element resets to Selectors, because the mode is about the element, not a sticky preference.
+- **Text becomes the anchor when nothing else is stable.** Pick a label inside an ad or promo block on a site that ships CSS-module hashes and the classic list can only offer `##.CommitHeader-module__commitBranchContainer__zc_XS`, which breaks on the next release. The Probe tab offers `##span:has-text(Subscribe):upward(2)` instead — anchored on the one thing that does not change, then walked up to the wrapper actually worth hiding. Neither half works alone: the text is on the wrong element, and `:upward()` has nothing stable to start from.
+- **Suggestions are ranked, not dumped.** Generated class names (emotion, styled-components, styled-jsx, CSS modules, bare hashes) are excluded from every suggestion rather than merely deprioritised, a filter anchored on a bare tag name is scored down, and an id is scored up. `:has-text()`, `:has-text(/regex/i)`, `:upward(N)`, `:upward(selector)`, `:matches-path()` and `:min-text-length()` are all offered where they apply, best first, in an order that does not jitter between picks of the same element.
+- **The ranking is a pure module.** `src/js/element-probe/procedural-suggest.js` takes a DOM-free description of the element and returns suggestions, so the rules are unit-tested (`tests/procedural-suggest.test.js`, 15 tests) rather than only observable by picking things by hand. The picker's page-side script collects the facts; the dialog, which has no access to the page, does the reasoning.
+
+Known gap: the picker dialog is still the one page not yet on React + Material 3 Expressive, so the new tabs are styled with the dialog's existing tokens rather than M3E components. Converting it is tracked separately.
+
 # uBlockVanced 0.3.8
 
 Opening the element picker no longer covers the page in an opaque sheet.

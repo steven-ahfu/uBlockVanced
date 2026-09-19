@@ -1,11 +1,11 @@
 {
   "name": "ublockvanced",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "uBlock Origin fork with Catppuccin Mocha dark theme and Element Probe DevTools panel (dev tooling).",
   "type": "module",
   "scripts": {
     "lint": "eslint --no-warn-ignored --ignore-pattern \"**/lib/\" --ignore-pattern \"**/npm/\" -- \"./src/js/*.js\" \"./src/js/**/*.js\" \"./**/*.json\" \"./platform/**/*.js\"",
-    "test": "node --test --test-name-pattern=. tests/classify-classes.test.js tests/element-probe-page-scripts.test.js tests/theme-palette.test.js tests/selector-validation.test.js tests/filter-export.test.js tests/filter-list-diff.test.js tests/user-filters.test.js tests/user-filter-stats.test.js",
+    "test": "node --test --test-name-pattern=. tests/classify-classes.test.js tests/element-probe-page-scripts.test.js tests/procedural-suggest.test.js tests/theme-palette.test.js tests/selector-validation.test.js tests/filter-export.test.js tests/filter-list-diff.test.js tests/user-filters.test.js tests/user-filter-stats.test.js",
     "build:ui": "node ui/build.mjs --release",
     "dev:ui": "node ui/build.mjs --watch --sync=dist/build/uBlock0.firefox",
     "typecheck": "tsc -p ui/tsconfig.json"

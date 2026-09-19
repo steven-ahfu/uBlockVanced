@@ -2494,5 +2494,17 @@
   "dummy": {
     "message": "This entry must be the last one",
     "description": "so we dont need to deal with comma for last entry"
+  },
+  "pickerModeClassic": {
+    "message": "Selectors",
+    "description": "Element picker: the classic CSS selector candidate list"
+  },
+  "pickerModeProbe": {
+    "message": "Probe",
+    "description": "Element picker: procedural filter suggestions"
+  },
+  "pickerProbeNone": {
+    "message": "Nothing to suggest for this element.",
+    "description": "Element picker: empty state for the Probe tab"
   }
 }
