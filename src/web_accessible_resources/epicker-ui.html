@@ -42,11 +42,7 @@
         <button id="create" type="button" class="preferred" disabled data-i18n="pickerCreate">_<span class="hover"></span></button>
     </div>
 </section>
-<div id="pickerModes" role="tablist">
-    <button id="modeClassic" type="button" role="tab" aria-selected="true" aria-controls="candidateFilters" data-i18n="pickerModeClassic">_</button>
-    <button id="modeProbe" type="button" role="tab" aria-selected="false" aria-controls="probeFilters" data-i18n="pickerModeProbe">_</button>
-</div>
-<ul id="candidateFilters" role="tabpanel" aria-labelledby="modeClassic">
+<ul id="candidateFilters">
     <li id="netFilters">
         <span data-i18n="pickerNetFilters"></span>
         <ul lang="en" class="changeFilter"></ul>
@@ -56,7 +52,6 @@
         <ul lang="en" class="changeFilter"></ul>
     </li>
 </ul>
-<ul id="probeFilters" role="tabpanel" aria-labelledby="modeProbe" hidden></ul>
 </aside>
 <svg id="sea"><path d></path><path d></path></svg>
 

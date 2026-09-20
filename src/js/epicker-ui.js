@@ -27,9 +27,7 @@ import * as sfp from './static-filtering-parser.js';
 
 import { dom } from './dom.js';
 import { hostnameFromURI } from './uri-utils.js';
-import { i18n$ } from './i18n.js';
 import punycode from '../lib/punycode.js';
-import { suggestProceduralFilters } from './element-probe/procedural-suggest.js';
 
 /******************************************************************************/
 /******************************************************************************/
@@ -69,11 +67,6 @@ let resultsetOpt;
 let cosmeticFilterCandidates = [];
 let computedCandidate = '';
 let needBody = false;
-// uBlockVanced: the Probe tab. `probeFacts` is the DOM-free description of the
-// picked element sent by the page-side picker; `probeSuggestions` is what the
-// suggester made of it.
-let probeFacts = null;
-let probeSuggestions = [];
 
 /******************************************************************************/
 
@@ -724,96 +717,6 @@ const svgListening = (( ) => {
 
 /******************************************************************************/
 
-// uBlockVanced: the Probe tab.
-//
-// The classic list answers "what CSS selects this element"; the probe list
-// answers "what about this element will still be true next week". Both write
-// into the same editor, so preview and Create need no special case: a
-// procedural filter is just filter text, and the static filtering parser
-// already understands it.
-
-const setPickerMode = function(mode) {
-    const probe = mode === 'probe';
-    dom.cl.toggle(pickerRoot, 'probeMode', probe);
-    $id('candidateFilters').hidden = probe;
-    $id('probeFilters').hidden = probe === false;
-    dom.attr($id('modeClassic'), 'aria-selected', `${probe === false}`);
-    dom.attr($id('modeProbe'), 'aria-selected', `${probe}`);
-    // The depth/specificity sliders rewrite the editor from the classic
-    // candidate list, so they have no meaning next to a procedural filter.
-    $id('resultsetModifiers').classList.toggle('hide', probe);
-};
-
-const renderProbeSuggestions = function() {
-    const ul = $id('probeFilters');
-    while ( ul.firstChild !== null ) { ul.firstChild.remove(); }
-
-    if ( probeSuggestions.length === 0 ) {
-        const li = document.createElement('li');
-        li.className = 'probeEmpty';
-        li.textContent = i18n$('pickerProbeNone');
-        ul.appendChild(li);
-        return;
-    }
-
-    for ( let i = 0; i < probeSuggestions.length; i++ ) {
-        const suggestion = probeSuggestions[i];
-        const li = document.createElement('li');
-        li.className = 'probeSuggestion';
-        li.setAttribute('data-index', `${i}`);
-        li.setAttribute('tabindex', '0');
-        li.setAttribute('role', 'button');
-
-        const label = document.createElement('span');
-        label.className = 'probeLabel';
-        label.textContent = suggestion.label;
-        li.appendChild(label);
-
-        const filter = document.createElement('span');
-        filter.className = 'probeFilter';
-        filter.lang = 'en';
-        filter.textContent = suggestion.filter;
-        li.appendChild(filter);
-
-        const description = document.createElement('span');
-        description.className = 'probeDescription';
-        description.textContent = suggestion.description;
-        li.appendChild(description);
-
-        ul.appendChild(li);
-    }
-};
-
-const applyProbeSuggestion = function(index) {
-    const suggestion = probeSuggestions[index];
-    if ( suggestion === undefined ) { return; }
-    for ( const li of $storAll('#probeFilters li') ) {
-        dom.cl.toggle(li, 'active', li.getAttribute('data-index') === `${index}`);
-    }
-    // Procedural filters are cosmetic filters, so they carry the ## anchor and
-    // pick up the hostname in userFilterFromCandidate() like any other.
-    computedCandidate = '';
-    cmEditor.setValue(`##${suggestion.filter}`);
-    cmEditor.clearHistory();
-    onCandidateChanged();
-};
-
-const onProbeClicked = function(ev) {
-    const li = ev.target instanceof Element && ev.target.closest('li[data-index]');
-    if ( li === null || li === false ) { return; }
-    applyProbeSuggestion(parseInt(li.getAttribute('data-index'), 10));
-};
-
-const onProbeKeyPressed = function(ev) {
-    if ( ev.key !== 'Enter' && ev.key !== ' ' ) { return; }
-    const li = ev.target instanceof Element && ev.target.closest('li[data-index]');
-    if ( li === null || li === false ) { return; }
-    ev.preventDefault();
-    applyProbeSuggestion(parseInt(li.getAttribute('data-index'), 10));
-};
-
-/******************************************************************************/
-
 // Create lists of candidate filters. This takes into account whether the
 // current mode is narrow or broad.
 
@@ -841,13 +744,6 @@ const showDialog = function(details) {
     pausePicker();
 
     const { netFilters, cosmeticFilters, filter } = details;
-
-    // uBlockVanced: a fresh pick means fresh suggestions, and back to the
-    // classic tab -- the mode is about this element, not a sticky preference.
-    probeFacts = details.probeFacts || null;
-    probeSuggestions = probeFacts !== null ? suggestProceduralFilters(probeFacts) : [];
-    renderProbeSuggestions();
-    setPickerMode('classic');
 
     needBody  =
         cosmeticFilters.length !== 0 &&
@@ -946,10 +842,6 @@ const startPicker = function() {
     $id('move').addEventListener('mousedown', onStartMoving);
     $id('move').addEventListener('touchstart', onStartMoving);
     $id('candidateFilters').addEventListener('click', onCandidateClicked);
-    $id('probeFilters').addEventListener('click', onProbeClicked);
-    $id('probeFilters').addEventListener('keydown', onProbeKeyPressed);
-    $id('modeClassic').addEventListener('click', ( ) => setPickerMode('classic'));
-    $id('modeProbe').addEventListener('click', ( ) => setPickerMode('probe'));
     $stor('#resultsetDepth input').addEventListener('input', onDepthChanged);
     $stor('#resultsetSpecificity input').addEventListener('input', onSpecificityChanged);
     staticFilteringParser = new sfp.AstFilterParser({

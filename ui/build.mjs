@@ -48,6 +48,17 @@ const copyHtml = () => {
             cpSync(path.join(dir, file), path.join(outdir, file));
             ownHtml.add(file);
         }
+        // A page whose document is not served from the package root ships it
+        // under the directory it belongs in. The element picker is the case:
+        // its dialog is loaded into an iframe on the inspected page, so the
+        // URL has to stay inside web_accessible_resources/ to match both the
+        // manifest and the src the page-side script builds.
+        for ( const dirName of [ 'web_accessible_resources' ] ) {
+            const sub = path.join(dir, dirName);
+            if ( existsSync(sub) === false ) { continue; }
+            cpSync(sub, path.join(outdir, dirName), { recursive: true });
+            for ( const file of readdirSync(sub) ) { ownHtml.add(file); }
+        }
     }
     for ( const [ page, [ html, scripts ] ] of legacyPages ) {
         if ( pages.includes(page) === false ) { continue; }

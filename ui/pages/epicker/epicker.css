@@ -1,0 +1,202 @@
+/*
+ * uBlockVanced element picker (React + Material 3 Expressive).
+ *
+ * Everything Material has a component for is one, so this file styles only
+ * the three things it does not: the floating panel shell, the drag grip, and
+ * the sea -- the SVG that dims the page around the highlighted element.
+ *
+ * Every var() carries a literal fallback. This document is loaded into an
+ * iframe on someone else's page and has burned us once already: an
+ * unresolved variable in `fill` is not a wrong shade, it is an opaque sheet
+ * over the whole site (see CHANGELOG 0.3.8).
+ */
+
+html, body {
+    background: transparent;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
+#root { display: contents; }
+
+/* The sea: one even-odd path that darkens everything, and a second that
+   outlines what is under the cursor. */
+svg#sea {
+    cursor: crosshair;
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+}
+:root.paused svg#sea { cursor: not-allowed; }
+svg#sea > path:first-child {
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.55);
+    fill-rule: evenodd;
+}
+svg#sea > path + path {
+    fill: rgb(var(--ctp-red, 235 111 146) / 0.18);
+    stroke: rgb(var(--ctp-red, 235 111 146));
+    stroke-width: 0.5px;
+}
+:root.zap svg#sea > path + path {
+    fill: rgb(var(--ctp-yellow, 223 142 29) / 0.18);
+    stroke: rgb(var(--ctp-yellow, 223 142 29));
+}
+/* Previewing means looking at the page, so the dim all but lifts. */
+:root.preview svg#sea > path { fill: rgb(var(--ctp-crust, 20 18 28) / 0.12); }
+:root.preview svg#sea > path + path { stroke: none; }
+
+/* The floating panel. Anchored bottom-right; App.tsx moves it by offset. */
+.ubv-dialog-layer {
+    position: absolute;
+    max-width: min(36em, calc(100vw - 8px));
+    width: 34em;
+}
+:root.minimized .ubv-dialog-layer { display: none; }
+:root.hide .ubv-dialog-layer { display: none; }
+
+aside {
+    background: var(--md-sys-color-surface-container, rgb(31 29 46));
+    border: 1px solid var(--md-sys-color-outline-variant, rgb(56 52 82));
+    border-radius: var(--ubv-radius-card, 24px);
+    box-shadow: var(--el-card, 0 14px 34px rgb(0 0 0 / 0.4));
+    color: var(--md-sys-color-on-surface, rgb(224 222 244));
+    display: flex;
+    flex-direction: column;
+    gap: var(--ubv-gap, 8px);
+    margin: 0;
+    max-height: calc(100vh - 8px);
+    padding: var(--ubv-gap, 8px);
+}
+aside.invalidFilter .ubv-editor {
+    border-color: var(--md-sys-color-error, rgb(235 111 146));
+}
+
+/* Window bar: two icon buttons with the drag grip between them. The grip is
+   not a control -- it is the surface you grab -- so it is not a component. */
+.ubv-windowbar {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap, 8px);
+}
+.ubv-grip {
+    align-self: stretch;
+    background-image: radial-gradient(
+        circle at 1px 1px,
+        var(--md-sys-color-outline, rgb(110 105 150)) 1px,
+        transparent 1px
+    );
+    background-size: 6px 6px;
+    border-radius: var(--ubv-radius-chip, 12px);
+    cursor: move;
+    flex: 1 1 auto;
+    min-height: var(--ubv-control, 40px);
+    opacity: 0.5;
+    touch-action: none;
+    transition: opacity var(--transition-fast, 120ms);
+}
+.ubv-grip:hover { opacity: 0.9; }
+
+/* The editor host. Block and full width: a flex row here makes CodeMirror
+   resize as the user scrolls (see ui/README.md). */
+.ubv-editor {
+    align-items: flex-start;
+    background: var(--field-surface, rgb(25 23 36));
+    border: 1px solid var(--md-sys-color-outline-variant, rgb(56 52 82));
+    border-radius: var(--ubv-radius-control, 16px);
+    display: flex;
+    gap: var(--ubv-gap, 8px);
+    padding: var(--ubv-gap, 8px);
+}
+.ubv-editor-host {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.ubv-editor-host .CodeMirror {
+    background: transparent;
+    font: 12px/1.4 var(--font-mono, monospace);
+    height: auto;
+    max-height: 8em;
+    width: 100%;
+}
+.ubv-count {
+    background: var(--md-sys-color-primary-container, rgb(56 52 82));
+    border-radius: var(--ubv-radius-chip, 12px);
+    color: var(--md-sys-color-on-primary-container, rgb(196 167 231));
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 2.5em;
+    padding: 4px 8px;
+    text-align: center;
+}
+
+/* Sliders and actions: the controls are Material, the rows are layout. */
+.ubv-modifiers { display: grid; gap: 2px; }
+.ubv-modifier {
+    align-items: center;
+    color: var(--md-sys-color-on-surface-variant, rgb(166 173 200));
+    display: grid;
+    font-size: 11.5px;
+    gap: var(--ubv-gap, 8px);
+    grid-template-columns: 7em minmax(0, 1fr);
+}
+.ubv-actions {
+    display: flex;
+    gap: var(--ubv-gap, 8px);
+    justify-content: flex-end;
+}
+.ubv-actions > * { flex: 0 1 auto; }
+
+/* The two candidate panels share one scroll box. */
+.ubv-panel {
+    flex: 1 1 auto;
+    max-height: min(16em, 22vh);
+    min-height: 0;
+    overflow-y: auto;
+}
+.ubv-candidates {
+    display: grid;
+    gap: var(--ubv-gap, 8px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.ubv-candidate-label {
+    color: var(--md-sys-color-on-surface-variant, rgb(166 173 200));
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding-inline: 4px;
+    text-transform: uppercase;
+}
+:root.ubv-m3 .ubv-list { --md-list-container-color: transparent; padding: 0; }
+:root.ubv-m3 .ubv-candidate {
+    --md-list-item-top-space: 2px;
+    --md-list-item-bottom-space: 2px;
+    --md-list-item-headline-font: var(--font-mono, monospace);
+    --md-list-item-headline-size: 12px;
+    border-radius: var(--ubv-radius-chip, 12px);
+}
+:root.ubv-m3 .ubv-candidate.active,
+:root.ubv-m3 .ubv-probe-row.active {
+    --md-list-item-container-color: var(--md-sys-color-primary-container, rgb(56 52 82));
+}
+:root.ubv-m3 .ubv-probe-row {
+    --md-list-item-headline-font: var(--font-mono, monospace);
+    --md-list-item-headline-size: 12px;
+    --md-list-item-overline-size: 10.5px;
+    --md-list-item-supporting-text-size: 11px;
+    border-radius: var(--ubv-radius-chip, 12px);
+}
+.ubv-probe-label { color: var(--md-sys-color-primary, rgb(196 167 231)); }
+.ubv-probe-empty {
+    color: var(--md-sys-color-on-surface-variant, rgb(166 173 200));
+    font-size: 12px;
+    padding: var(--ubv-pad, 14px);
+    text-align: center;
+}

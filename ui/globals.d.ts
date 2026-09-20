@@ -90,3 +90,51 @@ declare module '*/src/js/filter-export.js' {
 declare module '*/src/js/user-filters.js' {
     export function normalizeHostname(value: string): string | undefined;
 }
+declare module '*/src/js/epicker-model.js' {
+    export const SPECIFICITIES: readonly number[];
+    export const reCosmeticAnchor: RegExp;
+    export function candidatePathsForSlot(
+        filters: string[], slot: number, needBody: boolean
+    ): string[][];
+    export function userFilterFromCandidate(
+        filter: string, hostname: string, resultsetOpt: string | undefined
+    ): string | undefined;
+    export function splitBodyMarker(
+        cosmeticFilters: string[]
+    ): { filters: string[]; needBody: boolean };
+}
+declare module '*/src/js/element-probe/procedural-suggest.js' {
+    export interface ProceduralSuggestion {
+        type: string;
+        label: string;
+        filter: string;
+        description: string;
+        score: number;
+    }
+    export interface ProbeFacts {
+        tag: string;
+        id?: string;
+        classes?: string[];
+        text?: string;
+        textContent?: string;
+        path?: string;
+        ancestors?: Array<{ tag: string; id?: string; classes?: string[] }>;
+    }
+    export function suggestProceduralFilters(facts: ProbeFacts | null): ProceduralSuggestion[];
+    export function isGeneratedId(id: string): boolean;
+}
+declare module '*/src/js/uri-utils.js' {
+    export function hostnameFromURI(uri: string): string;
+}
+declare module '*/src/js/static-filtering-parser.js' {
+    export class AstFilterParser {
+        constructor(options: Record<string, unknown>);
+        parse(raw: string): void;
+        isFilter(): boolean;
+        isExtendedFilter(): boolean;
+        isCosmeticFilter(): boolean;
+        isNetworkFilter(): boolean;
+        hasError(): boolean;
+        result: { exception: boolean; raw: string; compiled: string };
+    }
+}
