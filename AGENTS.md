@@ -113,6 +113,11 @@ Hidden setting `cspCompatibleMode` (Advanced Settings) flows `messaging.js` → 
 - Upstream (Raymond Hill) code keeps its license header; fork files use a short `uBlockVanced - ...` header. Mark fork changes inside upstream files with a `// uBlockVanced:` comment so upstream merges are easier.
 - User-facing strings go in `src/_locales/en/messages.json`; Element Probe uses `data-i18n` attributes resolved by `renderI18n()`.
 - `CHANGELOG.md` is updated per release; `ROADMAP.md` holds only actionable items. Keep them in sync when finishing roadmap work.
+- **Release notes: 60 words maximum per version, 4 bullets maximum, one or two sentences each.** This is a hard cap, not a target. Count before committing:
+  ```
+  node -e "const p=require('fs').readFileSync('CHANGELOG.md','utf8').split(/^# uBlockVanced /m)[1];console.log(p.trim().split(/\s+/).length+' words')"
+  ```
+  A bullet says what changed and, where it is not obvious, the one fact that explains why. Root-cause narration, the investigation, what was tried, test counts and file inventories belong in the commit message, not here. If a fix needs a paragraph to justify, the paragraph goes in the code comment where the next person will hit it.
 - Issues: this repo's tracker is for the fork only. Filter list problems go to uAssets, core uBO bugs to uBlock-issues (see `CONTRIBUTING.md`).
 
 ## Working with the reader (ADHD)

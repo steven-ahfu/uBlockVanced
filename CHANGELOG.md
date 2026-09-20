@@ -1,82 +1,51 @@
 # uBlockVanced 0.4.1
 
-- **A light desktop gave a half-themed UI.** `uiTheme` ships as `auto`, and `auto` followed the operating system — so on a light desktop `.light` went on the document. That flips `--surface-*` and `--field-surface` white but never redefines the `--ctp-*` palette, so everything driven by Material tokens stayed dark. The element picker showed it plainly: a dark panel around a white editor. This fork is dark by default and says so in its own code, so `auto` now means dark, and only an explicit Light choice gives a light UI. It also explains the light picker dialog reported against 0.3.7 — the class was being applied all along, just the wrong one, which 0.3.11 mistook for no class at all.
-- **Explicit light mode is coherent now.** `:root.light` takes the Latte palette, so choosing Light gives a light `--ctp-*` as well as light surfaces instead of half of each. Light mode and the Latte palette are the same thing.
-- **Candidate rows and the scroll box are styled.** Each candidate is one line of filter text, so the rows are sized to the text rather than to Material's three-line touch target, and the host carries the surface, radius and hover so selection is one box — the rule the rest of the UI already follows. The scrollbar is themed rather than left as the platform's: this dialog sits over someone else's page, where a stock light scrollbar reads as a rendering fault.
-- **ROADMAP.md reconciled against the code.** Ten items were still unticked that had shipped — the filter export, per-site user filters, stale-filter cleanup, the palette switcher, CSP-compatible mode, Element Probe i18n and its modularisation, the filter-list diff view, and resizable logger columns. Each was re-checked against the files it names rather than taken from the changelog. What remains is five items, led by verifying the React picker in Firefox.
+- `auto` theme followed the OS, so a light desktop gave a dark panel around a white editor. `auto` now means dark.
+- Light mode takes the Latte palette, so it is light throughout.
+- Candidate rows and the picker's scroll box are themed.
+- ROADMAP.md reconciled: ten shipped items were still unticked.
 
 # uBlockVanced 0.4.0
 
-The element picker is a React + Material 3 Expressive page. It was the last one that was not.
-
-- **Every control in the picker is now a Material component.** Pick / Preview / Create are `TextButton` / `FilledTonalButton` / `FilledButton`; the Selectors and Probe tabs are `SecondaryTab` in `Tabs`; both candidate lists and the probe suggestions are `md-list` rows through the shared `ListItem`; the depth and specificity controls are `Slider` instead of the hand-built range widget that drew its own thumb and track. About 160 of the stylesheet's 300 declarations went away with the markup they were propping up.
-- **What is left in CSS is what Material has no component for**, restyled to the same tokens rather than kept as it was: the floating panel shell, the grip you drag it by, the editor host, and the sea -- the SVG that dims the page around the highlighted element. CodeMirror stays a bespoke widget, as on every other ported page.
-- **The picker's arithmetic moved into a tested module.** `src/js/epicker-model.js` holds the specificity ladder, the `##body` marker handling and the user-filter assembly. These decide which filter the two sliders actually offer, and while they lived inside DOM handlers they had no coverage at all; `tests/epicker-model.test.js` adds 17 tests over them. Two of those tests started red against fixtures I had written by hand, and were wrong about what the page-side picker emits -- the real generator never produces `div#sidebar`, only `#sidebar`.
-- **The message protocol is unchanged.** The dialog still receives `showDialog`, `candidatesOptimized`, `resultsetDetails` and `svgPaths` over the same `MessageChannel`, and still sends `start`, `optimizeCandidates`, `dialogSetFilter`, `dialogCreate`, `togglePreview`, `filterElementAtPoint`, `zapElementAtPoint`, `highlightElementAtPoint` and `quitPicker`. `js/scriptlets/epicker.js` did not change. The layout classes upstream CSS keys on (`paused`, `preview`, `minimized`, `zap`, `show`, `hide`) are still mirrored onto the root element.
-- **A page can now ship its document somewhere other than the package root.** `ui/build.mjs` copies a page's `web_accessible_resources/` subdirectory through, because the picker's dialog is loaded into an iframe on the inspected page and its URL has to keep matching both the manifest and the src the page-side script builds.
-- **The Probe tab's duplicate implementation is gone.** It was added to `src/js/epicker-ui.js` and the upstream markup in 0.3.9, which was the wrong place: React pages live under `ui/pages/`. Those files are back to their 0.3.8 state, so there is one implementation again. The `var()` fallbacks 0.3.8 added to `epicker-ui.css` stay, since that page is still the fallback when `src/` is loaded unpacked.
-
-Not yet verified in a browser: this rewrites the dialog wholesale and the packaged build is the only thing that runs it. Worth a careful first look.
+- The element picker is a React + Material 3 Expressive page, the last one that was not.
+- Buttons, tabs, both candidate lists and the sliders are Material components. 160 of 300 CSS declarations went with them.
+- Picker arithmetic moved to `src/js/epicker-model.js`; the specificity ladder now has 17 tests.
+- The message protocol is unchanged.
 
 # uBlockVanced 0.3.12
 
-- **Updating filter lists shows the Material 3 Expressive loading indicator.** A filter-list update takes an unknown length of time, so it now gets the morphing indicator rather than a bar that implies it is measuring something. It sits in the flow inside the controls card at 32 px with its container pill, next to the existing "Updating…" string, with room to read as itself. The linear bar stays for applying changes, which is short and bounded. The spinner that sat in the Update button's icon slot is gone: the button is disabled while an update runs, so a second indicator on it was noise.
+- Updating filter lists shows the Material 3 Expressive loading indicator. An update has no known length, so a bar implying it measures something was the wrong shape. The linear bar stays for applying changes.
 
 # uBlockVanced 0.3.11
 
-The element picker is dark again, and Element Probe's Pick mode can actually pick.
-
-- **The picker dialog rendered light on a dark-by-default fork.** `js/theme.js` puts `.dark` on the document only from inside the `vAPI.messaging` promise callbacks -- every line of its bootstrap runs in a `.then()` or a `.catch()`. In the picker's iframe that round-trip never settles, so neither callback ran and the class was never applied: the dialog kept the unstyled light appearance while the page behind it dimmed dark. The default theme is now applied synchronously before anything is asked of the background; the response still refines it, it just no longer decides whether the document is styled at all. This is the same lesson as 0.3.8 -- baseline appearance must not depend on a round-trip -- applied one layer up, and it fixes the flash on every non-React page as well as the picker.
-
-- **The picker's overlay was answering its own question.** Pick mode covers the viewport with an overlay that takes pointer events, which is how the click that picks is kept from reaching the page. That also made the overlay the topmost hit, so `document.elementFromPoint()` returned the overlay itself: hovering highlighted nothing, because the move handler bailed on recognising its own div, and clicking handed `inspect()` that div instead of the element under the cursor. Hit-testing now lifts the overlay out of pointer events for the length of the question and puts it straight back, so the click is still swallowed and the answer is the page.
-- **The test proves a pick, not just a set-up.** `tests/element-probe-page-scripts.test.js` gained a stub page that honours `pointer-events` when answering `elementFromPoint`, the way a browser does, and fires the picker's own handlers: hover must highlight, the overlay must still be swallowing clicks afterwards, and `inspect()` must receive the page element. Reverting the fix fails it.
-
-Note on 0.3.8: defining the Catppuccin palette on bare `:root` was described there as removing the whole class of unresolved-variable failures. Seven tokens are still declared only under a `.dark` selector (`--scrollbar-track` and the popup's firewall cell colours). All are cosmetic, and all live on extension pages where the theme class always arrives, so they are left as they are.
+- The picker dialog rendered light: `theme.js` applied the theme only from a promise callback that never settles in that iframe. The default now applies synchronously.
+- Element Probe's Pick mode could not pick. Its viewport-covering overlay was the topmost hit, so `elementFromPoint` returned the overlay itself.
 
 # uBlockVanced 0.3.10
 
-The element picker stops offering filters that can only ever match one element.
-
-- **Per-instance ids are no longer used as candidates.** Picking a Hacker News comment produced `###\34 9758736` — valid, correct, and worthless: id `49758736` is that one comment, so the filter dies the moment it scrolls away, and the CSS escape for a leading digit makes it unreadable besides. An id is still the best anchor a page offers, so only ids that name an instance rather than a kind are skipped: all-digits, a six-or-more digit run (`comment-49758736`, `post123456`), uuids, long hex digests, and anything over 40 characters. `hnmain`, `bigbox`, `repo-content`, `footer2` and `main-nav` are untouched. When an id is skipped the existing class, attribute and tag fallbacks produce something reusable instead.
-- **The rule lives in one tested place.** `isGeneratedId()` in `src/js/element-probe/procedural-suggest.js` is the canonical version. `src/js/scriptlets/epicker.js` is injected into page context as a classic script and cannot import it, so it carries a mirrored regex — and `tests/procedural-suggest.test.js` compares the two by behaviour across a fixed set of ids, failing if they ever disagree.
+- The picker offered per-instance ids as candidates: a Hacker News comment gave `###\34 9758736`, valid but dead the moment it scrolls away. Ids that name an instance -- all digits, long digit runs, uuids, hex digests -- are skipped. `hnmain` and `footer2` are untouched.
 
 # uBlockVanced 0.3.9
 
-The element picker gains a Probe tab: procedural filter suggestions for the element you just picked.
-
-- **Two tabs over one picked element.** **Selectors** is the list that was always there — the CSS candidates with the depth and specificity sliders. **Probe** answers a different question: not "what selects this element" but "what about it will still be true after the next deploy". Both write into the same editor, so Preview and Create need no special case; a procedural filter is filter text, and the static filtering parser already understands it. Picking a new element resets to Selectors, because the mode is about the element, not a sticky preference.
-- **Text becomes the anchor when nothing else is stable.** Pick a label inside an ad or promo block on a site that ships CSS-module hashes and the classic list can only offer `##.CommitHeader-module__commitBranchContainer__zc_XS`, which breaks on the next release. The Probe tab offers `##span:has-text(Subscribe):upward(2)` instead — anchored on the one thing that does not change, then walked up to the wrapper actually worth hiding. Neither half works alone: the text is on the wrong element, and `:upward()` has nothing stable to start from.
-- **Suggestions are ranked, not dumped.** Generated class names (emotion, styled-components, styled-jsx, CSS modules, bare hashes) are excluded from every suggestion rather than merely deprioritised, a filter anchored on a bare tag name is scored down, and an id is scored up. `:has-text()`, `:has-text(/regex/i)`, `:upward(N)`, `:upward(selector)`, `:matches-path()` and `:min-text-length()` are all offered where they apply, best first, in an order that does not jitter between picks of the same element.
-- **The ranking is a pure module.** `src/js/element-probe/procedural-suggest.js` takes a DOM-free description of the element and returns suggestions, so the rules are unit-tested (`tests/procedural-suggest.test.js`, 15 tests) rather than only observable by picking things by hand. The picker's page-side script collects the facts; the dialog, which has no access to the page, does the reasoning.
-
-Known gap: the picker dialog is still the one page not yet on React + Material 3 Expressive, so the new tabs are styled with the dialog's existing tokens rather than M3E components. Converting it is tracked separately.
+- The element picker gains a Probe tab beside the selector list: `:has-text()`, `:upward()`, `:matches-path()` and friends, ranked.
+- Where the classic list can only offer a CSS-module hash, Probe offers `##span:has-text(Subscribe):upward(2)` -- anchored on the text, walked up to the wrapper.
+- Generated class names are excluded from every suggestion, not just ranked lower.
 
 # uBlockVanced 0.3.8
 
-Opening the element picker no longer covers the page in an opaque sheet.
-
-- **The picker blacked out every site it opened on.** `theme.js` adds the `dark` class only after a `vAPI.messaging` round-trip, so a document paints at least one frame without it — and the Catppuccin palette was defined only under `:root.dark`. With `--ctp-crust` undefined, `fill: rgb(var(--ctp-crust) / 0.58)` on the picker's full-viewport SVG is invalid at computed-value time, so `fill` fell back to its initial value: opaque black. The page being picked from disappeared behind it and nothing was clickable, on any site. The same missing class is why the picker dialog rendered in the light theme while the page dimmed dark.
-- **Dark is now the bare `:root` default.** The palette is declared on `:root` as well as `:root.dark`, so any document has colours from its first paint and the class only confirms them. This removes the whole failure class, not just the picker's instance of it: any `--ctp-*` reference in a document that paints before `theme.js` resolves was liable to the same collapse.
-- **The picker's own paints carry literal fallbacks** (`var(--ctp-crust, 20 18 28)`) as a second line of defence. `fill` and `stroke` are inherited SVG paint properties whose initial value is opaque black, so on the one element that covers the viewport a dropped declaration paints instead of fading.
-- **Regression tests** in `tests/theme-palette.test.js`: the palette resolves at bare `:root`, and no `fill`/`stroke` in `epicker-ui.css` references a variable that can go unresolved without a fallback.
+- Opening the element picker covered the page in an opaque sheet. `--ctp-*` was defined only under `:root.dark`, so the picker's SVG `fill` was invalid at computed-value time and fell back to its initial value: opaque black.
+- The palette is now on bare `:root`, and the picker's paints carry literal fallbacks.
 
 # uBlockVanced 0.3.7
 
-Element Probe no longer freezes the page it is inspecting, and the context menu is down to one entry.
-
-- **Pick mode froze the page instead of picking.** The picker replaces `window.setTimeout`, `setInterval` and `requestAnimationFrame` so dynamic elements hold still while you aim — then armed its own listeners with a bare `setTimeout(..., 100)`, which resolved to the replacement it had just installed. At 100 ms it exceeded the 50 ms freeze threshold, so the picker queued its own arming call into the frozen list and never ran it: no hover highlight, no click to pick, no Escape binding, and the page's timer APIs hijacked with nothing left able to restore them. The page stayed dead until it was reloaded. The arming call now goes through the captured original, Escape is bound before anything else can fail, and a 60-second watchdog unfreezes the page unconditionally.
-- **Highlighting the page root painted the whole screen purple.** Overlays are drawn at an element's viewport rect, so a selector that resolved to `<html>` or `<body>` — an `:upward(N)` climbing past the element's ancestry does it easily — covered the viewport in one mauve sheet. Neither highlight script paints the page root now; a match that lands there is reported as "Matches the page root (html/body) — not previewable" instead. Overlays also drop themselves on the next scroll or resize, so a fixed box can no longer drift away from the element it describes.
-- **One right-click entry.** "Inspect with Element Probe" only stamped a `data-uv-ctx` attribute onto the page and showed a toast telling you to press F12 — and it stamped nothing at all in the common case, because the listener that did it was installed after an early return that fires on every same-state navigation. The entry, the listener, the toast and the dead `[data-uv-ctx]` fallback are gone, along with the page-DOM writes on every right-click. An ordinary page now shows exactly one uBlockVanced entry: Block element. Use the panel's own Pick button to select an element.
-- **The page-context scripts have tests.** `tests/element-probe-page-scripts.test.js` runs them in a `node:vm` context whose global object is the stub window, so a bare `setTimeout` resolves the way a page resolves it. Against the previous code it reproduces the freeze exactly.
+- Element Probe's pick mode froze the page: it armed its listeners with the `setTimeout` it had just frozen, so nothing was bound and the page's timers stayed hijacked.
+- Highlighting a selector that resolved to `html` or `body` painted the whole screen purple.
+- Dropped the dead "Inspect with Element Probe" context-menu entry.
 
 # uBlockVanced 0.3.6
 
-Popup header and tool rows rebuilt: less than half the vertical height, and every control on one size.
-
-- **The site name is now the power control's label.** `github.com` used to sit in its own heading above the switch, so the header cost two rows and ~118 px before the first tool. The hostname moved inside the button that acts on it — glyph, then the hostname with the registrable domain in emphasis and any subdomain prefix muted ahead of it — and it truncates instead of wrapping, so the header is one fixed 64 px row. The standalone `#hostname` block is gone.
-- **Tool tiles are square icon buttons.** The five per-site switches and the three tools were two grids of 72 px captioned tiles whose columns never lined up (five cells against three), and captions like "Large media elements" wrapped to two lines while "JavaScript" did not. Both groups are now one centred band of 48 px squares split by a hairline, so every cell is the same box. Count badges are unchanged.
-- **Names moved to the tooltips.** A switch's tip leads with its name and then says what a click does — "Cosmetic filtering — Click to disable cosmetic filtering on this site". Tool tips were already whole sentences ("Open the dashboard"), so they read as tips rather than as wrapped captions.
-- **Size scale simplified**: `--ubv-tile` is 48 px (one square glyph) and `--ubv-power` is retired — the power control uses `--ubv-button` (48). The scale is now 40 / 48 / 48 / 20 plus the 28 px dense-row box.
+- The popup header is one row: the site name moved into the power button it acts on. Height halved.
+- The five switches and three tools are one centred band of 48 px icon buttons. Names moved to the tooltips, which now lead with them.
 
 # uBlockVanced 0.3.5
 
