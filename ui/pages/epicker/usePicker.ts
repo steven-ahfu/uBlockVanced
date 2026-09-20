@@ -57,6 +57,7 @@ export interface PickerActions {
     quit(): void;
     toggleMinimize(): void;
     onSvgClick(ev: { clientX: number; clientY: number; ctrlKey?: boolean; onIslands: boolean; touch?: boolean }): void;
+    onSwipe(direction: 'left' | 'right'): void;
     onEditorChanged(text: string): void;
     registerEditor(handle: { setText(text: string): void; getText(): string }): void;
 }
@@ -296,6 +297,25 @@ export function usePicker(): [ PickerState, PickerActions ] {
         });
     }, [ patch, post, unpausePicker ]);
 
+    // Touch has no hover, so the dialog is swiped in and out of the way
+    // instead. Left brings it back; right puts it away, or quits when there is
+    // nothing left to put away.
+    const onSwipe = useCallback((direction: 'left' | 'right') => {
+        if ( direction === 'left' ) {
+            if ( live.current.paused ) { patch({ hidden: false, shown: true }); }
+            return;
+        }
+        if ( live.current.zap && live.current.islands !== NO_PATHS ) {
+            post({ what: 'unhighlight' });
+            return;
+        }
+        if ( live.current.paused && live.current.shown ) {
+            patch({ shown: false, hidden: true });
+            return;
+        }
+        quit();
+    }, [ patch, post, quit ]);
+
     /* Incoming messages -------------------------------------------------- */
 
     const showDialog = useCallback((msg: {
@@ -464,11 +484,13 @@ export function usePicker(): [ PickerState, PickerActions ] {
         quit,
         toggleMinimize,
         onSvgClick,
+        onSwipe,
         onEditorChanged,
         registerEditor: handle => { editor.current = handle; },
     }), [
         chooseCosmetic, chooseNet, chooseProbe, create, onEditorChanged, onSvgClick,
-        patch, quit, setDepth, setSpecificity, toggleMinimize, togglePreview, unpausePicker,
+        onSwipe, patch, quit, setDepth, setSpecificity, toggleMinimize, togglePreview,
+        unpausePicker,
     ]);
 
     return [ state, actions ];

@@ -1,3 +1,9 @@
+# uBlockVanced 0.4.2
+
+- The React picker lost tap-to-pick and swipe in 0.4.0. Restored: tap picks, swipe left recalls the dialog, swipe right dismisses or quits.
+- Touch targets meet Material's 48 px minimum on a coarse pointer; matrix cells go 28 to 36 px.
+- On phone viewports the picker spans the width and the candidate list gets the room back.
+
 # uBlockVanced 0.4.1
 
 - `auto` theme followed the OS, so a light desktop gave a dark panel around a white editor. `auto` now means dark.

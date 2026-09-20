@@ -237,3 +237,25 @@ aside.invalidFilter .ubv-editor {
     padding: var(--ubv-pad, 14px);
     text-align: center;
 }
+
+/* Phone-sized viewports: the dialog spans the width rather than floating in a
+   corner, and the candidate panel gets the room the missing corner gave back.
+   Dragging is pointless at this size, so the grip becomes a plain title bar. */
+@media (max-width: 560px), (max-height: 560px) {
+    .ubv-dialog-layer {
+        inset-inline: 4px;
+        max-width: none;
+        width: auto;
+    }
+    .ubv-panel { max-height: min(20em, 42vh); }
+    .ubv-grip { cursor: default; }
+    /* Stacked, full width and in reading order: Create is the one you want
+       under your thumb, so it goes last and widest. */
+    .ubv-actions { flex-wrap: wrap; }
+    .ubv-actions > * { flex: 1 1 8em; }
+}
+/* A coarse pointer cannot hover, so the sliders' labels are the only way to
+   read them; keep them on. */
+@media (pointer: coarse) {
+    .ubv-modifier { grid-template-columns: 6em minmax(0, 1fr); }
+}

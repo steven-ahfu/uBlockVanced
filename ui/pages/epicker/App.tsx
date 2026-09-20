@@ -65,9 +65,50 @@ export function App() {
         });
     }, [ actions ]);
 
+    // Touch: a short, still contact is a tap and picks; a long horizontal
+    // drag is a swipe and moves the dialog out of the way. Ported from the
+    // pre-React dialog, which had this and which the first port dropped.
+    const touchStart = useRef({ x: 0, y: 0, t: 0 });
+    const onTouchStart = useCallback((ev: React.TouchEvent) => {
+        touchStart.current = {
+            x: ev.touches[0].screenX,
+            y: ev.touches[0].screenY,
+            t: ev.timeStamp,
+        };
+    }, []);
+
+    const onTouchEnd = useCallback((ev: React.TouchEvent) => {
+        const touch = ev.changedTouches[0];
+        const dx = touch.screenX - touchStart.current.x;
+        const dy = touch.screenY - touchStart.current.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const duration = ev.timeStamp - touchStart.current.t;
+
+        if ( distance < 32 && duration < 200 ) {
+            actions.onSvgClick({
+                clientX: touch.pageX,
+                clientY: touch.pageY,
+                onIslands: ev.target === islandsRef.current,
+                touch: true,
+            });
+            ev.preventDefault();
+            return;
+        }
+        if ( distance < 64 ) { return; }
+
+        // Only a roughly horizontal drag counts, so scrolling a long page
+        // inside the picker does not read as a swipe.
+        const angle = Math.abs(Math.atan2(dy, dx));
+        const bound = Math.PI * 0.25 * 0.5;
+        const right = angle < bound;
+        if ( right === false && angle < Math.PI - bound ) { return; }
+        if ( ev.cancelable ) { ev.preventDefault(); }
+        actions.onSwipe(right ? 'right' : 'left');
+    }, [ actions ]);
+
     return (
         <>
-            <svg id="sea" onClick={onSvgClick}>
+            <svg id="sea" onClick={onSvgClick} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
                 <path d={state.ocean} />
                 <path ref={islandsRef} d={state.islands} />
             </svg>

@@ -159,3 +159,17 @@
     height: var(--md-icon-size);
     width: var(--md-icon-size);
 }
+
+/* A finger is not a mouse pointer. Material's minimum touch target is 48px,
+   and this scale is built so a control's box IS its hit area, so raising the
+   tokens raises the targets with nothing else to change. Keyed on the pointer
+   rather than on viewport width: a touch laptop needs this and a narrow
+   desktop window does not. Must repeat the .ubv-m3 class, or it loses to the
+   block above on specificity. */
+@media (pointer: coarse) {
+    :root.ubv-m3 {
+        --ubv-control: 48px;
+        --ubv-control-sm: 36px;
+        --ubv-icon: 22px;
+    }
+}

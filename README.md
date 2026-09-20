@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Manifest-V2-blue" alt="MV2">
-  <img src="https://img.shields.io/badge/Version-0.4.1-89b4fa" alt="Version 0.4.1">
+  <img src="https://img.shields.io/badge/Version-0.4.2-89b4fa" alt="Version 0.4.2">
   <img src="https://img.shields.io/badge/Theme-Catppuccin%20Mocha-cba6f7" alt="Catppuccin Mocha">
   <img src="https://img.shields.io/badge/License-GPLv3-green" alt="GPLv3">
 </p>
