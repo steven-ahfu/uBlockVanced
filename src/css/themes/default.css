@@ -434,6 +434,12 @@
     --ctp-yellow: 238 212 159;
 }
 
+/* An explicit light theme means the palette goes light too. Without this,
+   :root.light flipped the surface and ink tokens while --ctp-* stayed dark,
+   so anything driven by Material tokens kept its dark colours and the UI came
+   out half-themed. Latte is the light Catppuccin palette, so light mode and
+   the Latte palette are the same thing. */
+:root.light,
 :root.catppuccin-latte {
     --ctp-base: 239 241 245;
     --ctp-mantle: 230 233 239;

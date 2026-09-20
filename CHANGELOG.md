@@ -1,3 +1,10 @@
+# uBlockVanced 0.4.1
+
+- **A light desktop gave a half-themed UI.** `uiTheme` ships as `auto`, and `auto` followed the operating system — so on a light desktop `.light` went on the document. That flips `--surface-*` and `--field-surface` white but never redefines the `--ctp-*` palette, so everything driven by Material tokens stayed dark. The element picker showed it plainly: a dark panel around a white editor. This fork is dark by default and says so in its own code, so `auto` now means dark, and only an explicit Light choice gives a light UI. It also explains the light picker dialog reported against 0.3.7 — the class was being applied all along, just the wrong one, which 0.3.11 mistook for no class at all.
+- **Explicit light mode is coherent now.** `:root.light` takes the Latte palette, so choosing Light gives a light `--ctp-*` as well as light surfaces instead of half of each. Light mode and the Latte palette are the same thing.
+- **Candidate rows and the scroll box are styled.** Each candidate is one line of filter text, so the rows are sized to the text rather than to Material's three-line touch target, and the host carries the surface, radius and hover so selection is one box — the rule the rest of the UI already follows. The scrollbar is themed rather than left as the platform's: this dialog sits over someone else's page, where a stock light scrollbar reads as a rendering fault.
+- **ROADMAP.md reconciled against the code.** Ten items were still unticked that had shipped — the filter export, per-site user filters, stale-filter cleanup, the palette switcher, CSP-compatible mode, Element Probe i18n and its modularisation, the filter-list diff view, and resizable logger columns. Each was re-checked against the files it names rather than taken from the changelog. What remains is five items, led by verifying the React picker in Firefox.
+
 # uBlockVanced 0.4.0
 
 The element picker is a React + Material 3 Expressive page. It was the last one that was not.

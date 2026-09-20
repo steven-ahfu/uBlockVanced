@@ -20,19 +20,17 @@
 */
 
 function getActualTheme(nominalTheme) {
-    // uBlockVanced: dark theme is always the default
-    let theme = nominalTheme || 'dark';
-    if ( nominalTheme === 'auto' ) {
-        if ( typeof self.matchMedia === 'function' ) {
-            const mql = self.matchMedia('(prefers-color-scheme: light)');
-            theme = mql instanceof Object && mql.matches === true
-                ? 'light'
-                : 'dark';
-        } else {
-            theme = 'dark';
-        }
-    }
-    return theme;
+    // uBlockVanced: this fork is dark by default, and `auto` is the stored
+    // default, so `auto` means dark here rather than "follow the OS". Only an
+    // explicit `light` gives a light UI.
+    //
+    // Following the OS used to produce a half-themed UI on a light desktop:
+    // :root.light flips --surface-* and --field-surface white, but it never
+    // redefines the --ctp-* palette, so everything driven by Material tokens
+    // stayed dark. The element picker showed it most plainly -- a dark panel
+    // around a white editor.
+    if ( nominalTheme === 'light' ) { return 'light'; }
+    return 'dark';
 }
 
 function setTheme(theme, propagate = false) {
