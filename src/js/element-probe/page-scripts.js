@@ -1116,8 +1116,22 @@ export const PICK_ELEMENT_SCRIPT = `
     label.style.cssText = 'position:fixed;pointer-events:none;z-index:2147483647;background:#1e1e2e;color:#cdd6f4;font:11px/1.4 monospace;padding:4px 8px;border-radius:4px;border:1px solid #45475a;display:none;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
     document.documentElement.appendChild(label);
 
+    // The overlay covers the viewport and takes pointer events so the click
+    // that picks never reaches the page. That also makes it the topmost hit,
+    // so asking the document what is under the cursor answers "the overlay"
+    // -- hover would never highlight anything and a click would hand
+    // inspect() our own div. Lift the overlay out of hit-testing for the
+    // duration of the question, then put it back.
+    function elementUnder(x, y) {
+        var prev = overlay.style.pointerEvents;
+        overlay.style.pointerEvents = 'none';
+        var target = document.elementFromPoint(x, y);
+        overlay.style.pointerEvents = prev;
+        return target;
+    }
+
     function onMove(e) {
-        var target = document.elementFromPoint(e.clientX, e.clientY);
+        var target = elementUnder(e.clientX, e.clientY);
         if (!target || target === overlay || target === highlight || target === label) return;
         var rect = target.getBoundingClientRect();
         highlight.style.display = 'block';
@@ -1143,7 +1157,7 @@ export const PICK_ELEMENT_SCRIPT = `
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        var target = document.elementFromPoint(e.clientX, e.clientY);
+        var target = elementUnder(e.clientX, e.clientY);
         cleanup();
 
         if (target) {

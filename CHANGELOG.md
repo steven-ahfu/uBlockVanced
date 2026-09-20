@@ -1,3 +1,14 @@
+# uBlockVanced 0.3.11
+
+The element picker is dark again, and Element Probe's Pick mode can actually pick.
+
+- **The picker dialog rendered light on a dark-by-default fork.** `js/theme.js` puts `.dark` on the document only from inside the `vAPI.messaging` promise callbacks -- every line of its bootstrap runs in a `.then()` or a `.catch()`. In the picker's iframe that round-trip never settles, so neither callback ran and the class was never applied: the dialog kept the unstyled light appearance while the page behind it dimmed dark. The default theme is now applied synchronously before anything is asked of the background; the response still refines it, it just no longer decides whether the document is styled at all. This is the same lesson as 0.3.8 -- baseline appearance must not depend on a round-trip -- applied one layer up, and it fixes the flash on every non-React page as well as the picker.
+
+- **The picker's overlay was answering its own question.** Pick mode covers the viewport with an overlay that takes pointer events, which is how the click that picks is kept from reaching the page. That also made the overlay the topmost hit, so `document.elementFromPoint()` returned the overlay itself: hovering highlighted nothing, because the move handler bailed on recognising its own div, and clicking handed `inspect()` that div instead of the element under the cursor. Hit-testing now lifts the overlay out of pointer events for the length of the question and puts it straight back, so the click is still swallowed and the answer is the page.
+- **The test proves a pick, not just a set-up.** `tests/element-probe-page-scripts.test.js` gained a stub page that honours `pointer-events` when answering `elementFromPoint`, the way a browser does, and fires the picker's own handlers: hover must highlight, the overlay must still be swallowing clicks afterwards, and `inspect()` must receive the page element. Reverting the fix fails it.
+
+Note on 0.3.8: defining the Catppuccin palette on bare `:root` was described there as removing the whole class of unresolved-variable failures. Seven tokens are still declared only under a `.dark` selector (`--scrollbar-track` and the popup's firewall cell colours). All are cosmetic, and all live on extension pages where the theme class always arrives, so they are left as they are.
+
 # uBlockVanced 0.3.10
 
 The element picker stops offering filters that can only ever match one element.

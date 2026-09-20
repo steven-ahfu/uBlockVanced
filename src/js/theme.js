@@ -131,6 +131,15 @@ function setAccentColor(
 }
 
 {
+    // uBlockVanced: apply the default theme synchronously, before asking the
+    // background anything. Every line below runs in a promise callback, so a
+    // document used to render with no palette at all until the round-trip
+    // came back -- and in the element picker's iframe it never came back,
+    // leaving that dialog permanently light on a dark-by-default fork. The
+    // response still refines this; it just no longer decides whether the
+    // document is styled in the first place.
+    setTheme();
+
     // https://github.com/uBlockOrigin/uBlock-issues/issues/1044
     //   Offer the possibility to bypass uBO's default styling
     vAPI.messaging.send('dom', { what: 'uiStyles' }).then(response => {

@@ -37,6 +37,8 @@ const stubElement = (rect = { top: 0, left: 0, width: 10, height: 10 }) => ({
 // querySelectorAll, and records of what was appended and listened to.
 const stubPage = ({ matches = [], viewport = { width: 1280, height: 800 } } = {}) => {
     const appended = [];
+    const handlers = {};
+    const pageTarget = { ...stubElement(), id: 'the-thing-you-clicked', tagName: 'SPAN' };
     const docListeners = [];
     const winListeners = [];
     const realTimers = [];
@@ -49,10 +51,19 @@ const stubPage = ({ matches = [], viewport = { width: 1280, height: 800 } } = {}
         documentElement,
         body,
         createElement: ( ) => stubElement(),
-        getElementById: ( ) => null,
-        addEventListener: type => docListeners.push(type),
+        getElementById: id => appended.find(n => n.id === id) || null,
+        addEventListener: (type, fn) => { docListeners.push(type); handlers[type] = fn; },
         removeEventListener() {},
-        elementFromPoint: ( ) => null,
+        // A real page returns the topmost element that accepts pointer events.
+        // The picker's overlay covers the viewport, so if it is still taking
+        // them it IS the answer -- which is exactly the bug worth pinning.
+        elementFromPoint( ) {
+            const overlay = appended.find(n => n.id === '__ubp_picker_overlay__');
+            if ( overlay !== undefined && overlay.style.pointerEvents === 'auto' ) {
+                return overlay;
+            }
+            return pageTarget;
+        },
         querySelectorAll(selector) {
             if ( selector === '.__ubp_highlight__' ) {
                 return appended.filter(n => n.className === '__ubp_highlight__');
@@ -69,7 +80,7 @@ const stubPage = ({ matches = [], viewport = { width: 1280, height: 800 } } = {}
         removeEventListener() {},
         getComputedStyle: ( ) => ({ getPropertyValue: ( ) => '' }),
         location: { pathname: '/', search: '' },
-        inspect() {},
+        inspect(el) { win.__inspected = el; },
         // The scripts branch on `r instanceof Element` to decide whether an
         // operator returned a new target (:upward) or a verdict (:has-text).
         // Stub nodes are plain objects, so identify them structurally.
@@ -86,7 +97,10 @@ const stubPage = ({ matches = [], viewport = { width: 1280, height: 800 } } = {}
     vm.createContext(win);
     const run = script => vm.runInContext('(' + script + ')', win);
     const overlays = ( ) => appended.filter(n => n.className === '__ubp_highlight__');
-    return { run, win, document, body, documentElement, appended, overlays, docListeners, winListeners, realTimers };
+    return {
+        run, win, document, body, documentElement, appended, overlays,
+        docListeners, winListeners, realTimers, handlers, pageTarget,
+    };
 };
 
 /******************************************************************************/
@@ -104,6 +118,29 @@ describe('element picker (page context)', ( ) => {
         assert.ok(arming, 'arming timer never reached the real setTimeout');
         arming.fn();
         assert.deepEqual(page.docListeners, [ 'keydown', 'mousemove', 'click' ]);
+    });
+
+    it('hit-tests the page, not its own overlay', ( ) => {
+        // The overlay must keep taking pointer events -- that is what stops the
+        // click from reaching the page -- so it has to be lifted out of
+        // hit-testing for the length of the question instead.
+        const page = stubPage();
+        page.run(PICK_ELEMENT_SCRIPT);
+        page.realTimers.find(t => t.ms === 100).fn();
+
+        const overlay = page.appended.find(n => n.id === '__ubp_picker_overlay__');
+        const highlight = page.appended.find(n => n.id === '__ubp_picker_highlight__');
+        assert.equal(overlay.style.pointerEvents, 'auto', 'overlay stopped swallowing the click');
+
+        page.handlers.mousemove({ clientX: 40, clientY: 40 });
+        assert.equal(highlight.style.display, 'block', 'hover never highlighted anything');
+        assert.equal(overlay.style.pointerEvents, 'auto', 'overlay was left inert after hit-testing');
+
+        page.handlers.click({
+            clientX: 40, clientY: 40,
+            preventDefault( ) {}, stopPropagation( ) {}, stopImmediatePropagation( ) {},
+        });
+        assert.equal(page.win.__inspected, page.pageTarget, 'inspect() got the wrong element');
     });
 
     it('binds Escape before arming, so a pick can always be cancelled', ( ) => {
