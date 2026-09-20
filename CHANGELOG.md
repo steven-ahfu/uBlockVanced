@@ -1,3 +1,7 @@
+# uBlockVanced 0.3.12
+
+- **Updating filter lists shows the Material 3 Expressive loading indicator.** A filter-list update takes an unknown length of time, so it now gets the morphing indicator rather than a bar that implies it is measuring something. It sits in the flow inside the controls card at 32 px with its container pill, next to the existing "Updating…" string, with room to read as itself. The linear bar stays for applying changes, which is short and bounded. The spinner that sat in the Update button's icon slot is gone: the button is disabled while an update runs, so a second indicator on it was noise.
+
 # uBlockVanced 0.3.11
 
 The element picker is dark again, and Element Probe's Pick mode can actually pick.

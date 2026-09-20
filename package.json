@@ -1,6 +1,6 @@
 {
   "name": "ublockvanced",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "uBlock Origin fork with Catppuccin Mocha dark theme and Element Probe DevTools panel (dev tooling).",
   "type": "module",
   "scripts": {

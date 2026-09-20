@@ -1,5 +1,4 @@
 import { FilledButton, FilledTonalButton } from 'material-expressive-react/button';
-import { CircularProgress } from 'material-expressive-react/progress';
 import { Textfield } from 'material-expressive-react/textfield';
 import { Icon } from '../../../shared/Icon';
 import { icons } from '../../../shared/icons';
@@ -37,9 +36,7 @@ export function Toolbar({ state, actions }: Props) {
                     data-tip={t('3pUpdateNow')}
                     onClick={() => { actions.update(); }}
                 >
-                    {state.updating
-                        ? <CircularProgress slot="icon" indeterminate className="ubv-button-progress" />
-                        : <Icon slot="icon" svg={icons.refresh} />}
+                    <Icon slot="icon" svg={icons.refresh} />
                     {t('3pUpdateNow')}
                 </FilledTonalButton>
             </div>

@@ -10,6 +10,26 @@
     position: absolute;
     right: var(--ubv-pad);
 }
+/* Updating the lists is a wait with no known length, so it gets the M3E
+   loading indicator rather than a bar pretending to measure something. It
+   sits in the flow, not pinned to the card edge like .ubv-progress, because
+   the morphing shape needs room to read as itself. */
+.ubv-updating {
+    align-items: center;
+    color: var(--md-sys-color-on-surface-variant);
+    display: flex;
+    font-size: 13px;
+    font-weight: 500;
+    gap: var(--ubv-gap);
+    padding-block: 4px;
+}
+/* The component already defaults its indicator to --md-sys-color-primary,
+   which tokens.css feeds from the active palette. Only the container needs
+   saying: it ships transparent, so the contained variant would otherwise
+   have no pill behind the morphing shape. */
+:root.ubv-m3 .ubv-updating .mer-loading {
+    --mer-loading-container-color: var(--md-sys-color-primary-container);
+}
 .ubv-toolbar {
     align-items: center;
     display: grid;

@@ -1,4 +1,4 @@
-import { LinearProgress } from 'material-expressive-react/progress';
+import { LinearProgress, LoadingIndicator } from 'material-expressive-react/progress';
 import { GroupCard } from './components/ListRows';
 import { ImportCard } from './components/ImportCard';
 import { SettingsCard } from './components/SettingsCard';
@@ -36,7 +36,16 @@ export function App() {
             <Card className="ubv-controls" aria-label={t('3pPageName')}>
                 <Toolbar state={state} actions={actions} />
                 <SettingsCard state={state} actions={actions} />
-                {state.updating || state.working ? <LinearProgress indeterminate className="ubv-progress" /> : null}
+                {state.updating
+                    ? (
+                        <div className="ubv-updating" role="status" aria-live="polite">
+                            <LoadingIndicator variant="contained" indicatorSize={32} containerWidth={44} containerHeight={44} />
+                            <span>{t('3pUpdating')}</span>
+                        </div>
+                    )
+                    : state.working
+                        ? <LinearProgress indeterminate className="ubv-progress" />
+                        : null}
             </Card>
 
             <div id="lists" className={state.searchMatches !== null ? 'searchMode' : undefined}>
