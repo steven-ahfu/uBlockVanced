@@ -11,8 +11,23 @@
  * over the whole site (see CHANGELOG 0.3.8).
  */
 
+/* THE PICKER'S DOCUMENT MUST NEVER PAINT ITS OWN BACKGROUND.
+   This page is an iframe pinned over the whole inspected page
+   (position: fixed, 100vw x 100vh, see pickerCSSStyle in
+   js/scriptlets/epicker.js). Anything opaque on html or body is therefore a
+   sheet of colour over the entire site, with the page invisible behind it.
+   The page frame this shares with the dashboard pages sets
+   `:root.ubv-m3 body { background: var(--md-sys-color-background) }`, which
+   outranks a bare `html, body` rule -- that is exactly how 0.4.0 shipped a
+   purple screen. Match its specificity and then some, and keep
+   tests/epicker-transparent.test.js honest. */
+html,
+body,
+:root body,
+:root.ubv-m3 body {
+    background: transparent !important;
+}
 html, body {
-    background: transparent;
     height: 100%;
     margin: 0;
     overflow: hidden;

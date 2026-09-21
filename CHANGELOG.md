@@ -1,3 +1,8 @@
+# uBlockVanced 0.4.3
+
+- The element picker covered every page in purple. The shared page frame paints `:root.ubv-m3 body`, which outranked the picker's `html, body { background: transparent }` -- and that iframe is pinned over the whole site.
+- `tests/epicker-transparent.test.js` resolves the real cascade across both stylesheets and fails if anything ever makes that document opaque again.
+
 # uBlockVanced 0.4.2
 
 - The React picker lost tap-to-pick and swipe in 0.4.0. Restored: tap picks, swipe left recalls the dialog, swipe right dismisses or quits.
