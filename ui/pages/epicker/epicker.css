@@ -149,6 +149,18 @@ aside.invalidFilter .ubv-editor {
     text-align: center;
 }
 
+/* Refinement chips: one tap appends an operator to whatever is in the editor.
+   They wrap rather than scroll, because a chip you cannot see is a chip you
+   will not use. */
+:root.ubv-m3 .ubv-refine {
+    --md-assist-chip-container-shape: var(--ubv-radius-chip, 12px);
+    --md-assist-chip-label-text-font: var(--font-mono, monospace);
+    --md-assist-chip-label-text-size: 11.5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
 /* Sliders and actions: the controls are Material, the rows are layout. */
 .ubv-modifiers { display: grid; gap: 2px; }
 .ubv-modifier {

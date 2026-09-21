@@ -171,9 +171,35 @@ const splitBodyMarker = function(cosmeticFilters) {
 
 /******************************************************************************/
 
+/**
+ * The two candidate shapes are not the same, and conflating them is how the
+ * editor stopped updating in 0.4.0.
+ *
+ *   OUT, to the page: string[][] -- candidatePathsForSlot() returns one array
+ *        of path fragments per specificity rung, because the page needs the
+ *        pieces to try shortening each one.
+ *   IN, from the page: string[] -- it answers with one finished selector per
+ *        rung, already `##`-anchored and sorted by match count.
+ *
+ * So the incoming entry is a selector, never something to join.
+ *
+ * @param {string[]} candidates what the page sent back
+ * @param {number} index the specificity rung the slider is on
+ * @returns {string} the selector to put in the editor, '' if there is none
+ */
+const optimizedCandidate = function(candidates, index) {
+    if ( Array.isArray(candidates) === false || candidates.length === 0 ) { return ''; }
+    const i = Math.max(0, Math.min(index, candidates.length - 1));
+    const candidate = candidates[i];
+    return typeof candidate === 'string' ? candidate : '';
+};
+
+/******************************************************************************/
+
 export {
     SPECIFICITIES,
     candidatePathsForSlot,
+    optimizedCandidate,
     reCosmeticAnchor,
     splitBodyMarker,
     userFilterFromCandidate,

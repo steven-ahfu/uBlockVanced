@@ -99,6 +99,7 @@ declare module '*/src/js/epicker-model.js' {
     export function userFilterFromCandidate(
         filter: string, hostname: string, resultsetOpt: string | undefined
     ): string | undefined;
+    export function optimizedCandidate(candidates: string[], index: number): string;
     export function splitBodyMarker(
         cosmeticFilters: string[]
     ): { filters: string[]; needBody: boolean };
@@ -122,6 +123,13 @@ declare module '*/src/js/element-probe/procedural-suggest.js' {
     }
     export function suggestProceduralFilters(facts: ProbeFacts | null): ProceduralSuggestion[];
     export function isGeneratedId(id: string): boolean;
+}
+declare module '*/src/js/epicker-refine.js' {
+    export interface Refinement { label: string; suffix: string; description: string }
+    export function refinementsFor(
+        filter: string, facts?: unknown, matchCount?: number
+    ): Refinement[];
+    export function applyRefinement(filter: string, suffix: string): string;
 }
 declare module '*/src/js/uri-utils.js' {
     export function hostnameFromURI(uri: string): string;

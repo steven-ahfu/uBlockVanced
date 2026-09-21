@@ -1,3 +1,8 @@
+# uBlockVanced 0.4.4
+
+- Clicking a candidate did not fill the editor. The page answers with finished selector strings; the port treated them as the path arrays it had sent and called `.join()` on a string, so the handler threw.
+- New chips under the editor append `:upward(n)`, `:has-text()`, `:nth-of-type()`, `:min-text-length()` or `:matches-path()` to the filter, offering only what applies.
+
 # uBlockVanced 0.4.3
 
 - The element picker covered every page in purple. The shared page frame paints `:root.ubv-m3 body`, which outranked the picker's `html, body { background: transparent }` -- and that iframe is pinned over the whole site.

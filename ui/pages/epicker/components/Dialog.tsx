@@ -1,6 +1,7 @@
 import { CandidateLists, ResultsetSliders } from './FilterLists';
 import { FilledButton, FilledTonalButton, TextButton } from 'material-expressive-react/button';
 import { SecondaryTab, Tabs } from 'material-expressive-react/tabs';
+import { AssistChip, ChipSet } from 'material-expressive-react/chips';
 import { Icon } from '../../../shared/Icon';
 import { IconButton } from '../../../shared/IconButton';
 import { ProbeList } from './ProbeList';
@@ -44,6 +45,20 @@ export function Dialog({ state, actions, onGrab }: Props) {
                     <div className="ubv-editor-host" ref={editorHost} />
                     <span className="ubv-count" aria-live="polite">{state.resultsetCount}</span>
                 </div>
+
+                {state.refinements.length === 0 ? null : (
+                    <ChipSet className="ubv-refine" aria-label={t('pickerRefine')}>
+                        {state.refinements.map(refinement => (
+                            <AssistChip
+                                key={refinement.suffix}
+                                label={refinement.label}
+                                data-tip={refinement.description}
+                                aria-label={`${refinement.label} — ${refinement.description}`}
+                                onClick={( ) => actions.refine(refinement.suffix)}
+                            />
+                        ))}
+                    </ChipSet>
+                )}
 
                 <ResultsetSliders state={state} actions={actions} />
 

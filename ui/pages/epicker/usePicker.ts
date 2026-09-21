@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     candidatePathsForSlot,
+    optimizedCandidate,
     reCosmeticAnchor,
     splitBodyMarker,
     userFilterFromCandidate,
@@ -8,6 +9,7 @@ import {
 import type { ProbeFacts, ProceduralSuggestion } from '../../../src/js/element-probe/procedural-suggest.js';
 import { AstFilterParser } from '../../../src/js/static-filtering-parser.js';
 import { hostnameFromURI } from '../../../src/js/uri-utils.js';
+import { applyRefinement, refinementsFor } from '../../../src/js/epicker-refine.js';
 import { suggestProceduralFilters } from '../../../src/js/element-probe/procedural-suggest.js';
 import punycode from '../../../src/lib/punycode.js';
 
@@ -42,6 +44,14 @@ export interface PickerState {
     selectedProbe: number;
     ocean: string;
     islands: string;
+    filterText: string;
+    refinements: Refinement[];
+}
+
+export interface Refinement {
+    label: string;
+    suffix: string;
+    description: string;
 }
 
 export interface PickerActions {
@@ -59,6 +69,7 @@ export interface PickerActions {
     onSvgClick(ev: { clientX: number; clientY: number; ctrlKey?: boolean; onIslands: boolean; touch?: boolean }): void;
     onSwipe(direction: 'left' | 'right'): void;
     onEditorChanged(text: string): void;
+    refine(suffix: string): void;
     registerEditor(handle: { setText(text: string): void; getText(): string }): void;
 }
 
@@ -93,6 +104,8 @@ export function usePicker(): [ PickerState, PickerActions ] {
         selectedProbe: -1,
         ocean: NO_PATHS,
         islands: NO_PATHS,
+        filterText: '',
+        refinements: [],
     });
 
     const patch = useCallback((next: Partial<PickerState>) => {
@@ -106,7 +119,7 @@ export function usePicker(): [ PickerState, PickerActions ] {
     const docURL = useRef(new URL(self.location.href));
     const resultsetOpt = useRef<string | undefined>(undefined);
     const computedCandidate = useRef('');
-    const computedBySlot = useRef(new Map<number, string[][]>());
+    const computedBySlot = useRef(new Map<number, string[]>());
     const cosmetic = useRef<{ filters: string[]; needBody: boolean }>({ filters: [], needBody: false });
     const probeFacts = useRef<ProbeFacts | null>(null);
     const live = useRef(state);
@@ -146,6 +159,12 @@ export function usePicker(): [ PickerState, PickerActions ] {
         const bad = filter === '!';
         setState(prev => ({
             ...prev,
+            filterText: text,
+            // Refinements describe the filter in the box, so they follow the
+            // text whether it was clicked, computed or typed.
+            refinements: bad
+                ? []
+                : refinementsFor(filter, probeFacts.current, Number(prev.resultsetCount) || 0),
             invalidFilter: bad,
             resultsetCount: bad ? 'E' : prev.resultsetCount,
             createDisabled: bad ? true : prev.createDisabled,
@@ -166,8 +185,7 @@ export function usePicker(): [ PickerState, PickerActions ] {
     const requestCosmetic = useCallback((slot: number) => {
         const cached = computedBySlot.current.get(slot);
         if ( cached !== undefined ) {
-            const i = live.current.specificity;
-            computedCandidate.current = cached[i].join('');
+            computedCandidate.current = optimizedCandidate(cached, live.current.specificity);
             setEditorText(computedCandidate.current);
             patch({ showModifiers: true });
             return;
@@ -216,7 +234,7 @@ export function usePicker(): [ PickerState, PickerActions ] {
         const slot = live.current.selectedCosmetic;
         const cached = computedBySlot.current.get(slot);
         if ( cached === undefined ) { return; }
-        computedCandidate.current = cached[value].join('');
+        computedCandidate.current = optimizedCandidate(cached, value);
         setEditorText(computedCandidate.current);
         patch({ showModifiers: true });
     }, [ patch, setEditorText ]);
@@ -374,8 +392,7 @@ export function usePicker(): [ PickerState, PickerActions ] {
             }
             const paths = computedBySlot.current.get(msg.slot);
             if ( paths === undefined ) { return; }
-            const i = live.current.specificity;
-            computedCandidate.current = paths[i].join('');
+            computedCandidate.current = optimizedCandidate(paths, live.current.specificity);
             setEditorText(computedCandidate.current);
             patch({ showModifiers: true });
             break;
@@ -383,10 +400,21 @@ export function usePicker(): [ PickerState, PickerActions ] {
         case 'showDialog':
             showDialog(msg as Parameters<typeof showDialog>[0]);
             break;
-        case 'resultsetDetails':
+        case 'resultsetDetails': {
             resultsetOpt.current = msg.opt;
-            patch({ resultsetCount: `${msg.count}`, createDisabled: msg.count === 0 });
+            const count = Number(msg.count) || 0;
+            setState(prev => ({
+                ...prev,
+                resultsetCount: `${msg.count}`,
+                createDisabled: msg.count === 0,
+                // :nth-of-type only earns a chip once more than one element
+                // matches, and that is only known now.
+                refinements: prev.invalidFilter
+                    ? []
+                    : refinementsFor(prev.filterText, probeFacts.current, count),
+            }));
             break;
+        }
         case 'svgPaths': {
             const islands: string = msg.islands || '';
             patch({
@@ -486,11 +514,16 @@ export function usePicker(): [ PickerState, PickerActions ] {
         onSvgClick,
         onSwipe,
         onEditorChanged,
+        refine: suffix => {
+            const next = applyRefinement(editor.current?.getText() ?? '', suffix);
+            computedCandidate.current = '';
+            setEditorText(next);
+        },
         registerEditor: handle => { editor.current = handle; },
     }), [
         chooseCosmetic, chooseNet, chooseProbe, create, onEditorChanged, onSvgClick,
-        onSwipe, patch, quit, setDepth, setSpecificity, toggleMinimize, togglePreview,
-        unpausePicker,
+        onSwipe, patch, quit, setDepth, setEditorText, setSpecificity, toggleMinimize,
+        togglePreview, unpausePicker,
     ]);
 
     return [ state, actions ];

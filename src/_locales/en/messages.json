@@ -2506,5 +2506,9 @@
   "pickerProbeNone": {
     "message": "Nothing to suggest for this element.",
     "description": "Element picker: empty state for the Probe tab"
+  },
+  "pickerRefine": {
+    "message": "Narrow this filter",
+    "description": "Element picker: the row of refinement chips under the editor"
   }
 }
