@@ -1,0 +1,117 @@
+name: CI and release
+
+# Every push to main runs lint + tests. When dist/version changes to a
+# version that has no tag yet, the build job packages every browser
+# format, tags the commit, and publishes a GitHub release with the files.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  build:
+    name: Build and release
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        run: |
+          VERSION="$(tr -d '[:space:]' < dist/version)"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::dist/version '$VERSION' is not X.Y.Z or X.Y.Z.W"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" > /dev/null; then
+            echo "Tag $VERSION already exists; building artifacts only."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "No tag $VERSION yet; this run will publish a release."
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+          # Four-part versions (X.Y.Z.W) are dev builds -> prerelease.
+          if [[ "$VERSION" == *.*.*.* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+
+      - name: Clone uAssets
+        run: tools/pull-assets.sh
+
+      # Optional: store the CRX signing key (PEM) in the CRX_PRIVATE_KEY secret
+      # so the extension ID stays the same across releases. Without it a fresh
+      # key is generated per run and the ID changes every release.
+      - name: Restore CRX signing key
+        env:
+          CRX_PRIVATE_KEY: ${{ secrets.CRX_PRIVATE_KEY }}
+        run: |
+          if [ -n "$CRX_PRIVATE_KEY" ]; then
+            printf '%s\n' "$CRX_PRIVATE_KEY" > uBlockVanced.pem
+          else
+            echo "::warning::CRX_PRIVATE_KEY secret not set; generating a throwaway key (extension ID will change)"
+          fi
+
+      - name: Build all packages
+        run: make packages
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uBlockVanced-${{ steps.version.outputs.version }}
+          path: dist/build/uBlockVanced-${{ steps.version.outputs.version }}.*
+
+      - name: Assemble release notes
+        if: steps.version.outputs.release == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # First CHANGELOG section (up to the next top-level heading), then install notes.
+          awk 'NR==1{print; next} /^# /{exit} {print}' CHANGELOG.md > release.body.txt
+          sed -e "s/%version%/${VERSION}/g" .github/RELEASE.HEAD.md >> release.body.txt
+
+      # Creating the release also creates the tag at this commit.
+      - name: Tag and publish release
+        if: steps.version.outputs.release == 'true'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: uBlockVanced ${{ steps.version.outputs.version }}
+          prerelease: ${{ steps.version.outputs.prerelease }}
+          body_path: release.body.txt
+          files: dist/build/uBlockVanced-${{ steps.version.outputs.version }}.*

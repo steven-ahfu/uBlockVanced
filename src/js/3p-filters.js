@@ -251,7 +251,7 @@ const syncListControls = (root = qs$('#lists')) => {
 const i18nGroupName = name => {
     const groupname = i18n$('3pGroup' + name.charAt(0).toUpperCase() + name.slice(1));
     if ( groupname !== '' ) { return groupname; }
-    return `${name.charAt(0).toLocaleUpperCase}${name.slice(1)}`;
+    return `${name.charAt(0).toLocaleUpperCase()}${name.slice(1)}`;
 };
 
 const getListGroupKey = listDetails => listDetails.group2 || listDetails.group || '';

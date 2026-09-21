@@ -1,0 +1,289 @@
+/*
+ * uBlockVanced dashboard pages (React + Material 3 Expressive): the shared
+ * page frame, header, cards, pills and settings rows. Radii and spacing come
+ * from tokens.css (--ubv-*), so every page agrees with the popup.
+ */
+:root.ubv-m3 body {
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    margin: 0;
+}
+#root { display: contents; }
+
+@keyframes ubv-page-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+}
+.ubv-page {
+    animation: ubv-page-in 180ms var(--md-sys-motion-easing-standard) both;
+    display: grid;
+    gap: var(--ubv-pad);
+    margin: 0 auto;
+    max-width: 1100px;
+    padding: var(--ubv-pad) var(--ubv-pad) 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+@media (prefers-reduced-motion: reduce) {
+    .ubv-page { animation: none; }
+}
+
+/* Header */
+.ubv-page-header {
+    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px var(--ubv-pad);
+    justify-content: space-between;
+    padding: 6px 4px 0;
+}
+.ubv-eyebrow {
+    color: var(--md-sys-color-primary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.ubv-title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin: 4px 0 6px;
+}
+.ubv-lead {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+    margin: 0;
+    opacity: 0.85;
+}
+/* Pills: md-chip-set of disabled elevated md-assist-chips (ui/shared/Pill.tsx).
+   The disabled opacities go back to 1 so the chip reads as a label, and
+   each tone paints the container and text from the palette. */
+.ubv-pills { --md-chip-set-gap: var(--ubv-gap); }
+.ubv-pill {
+    --md-assist-chip-container-height: 30px;
+    --md-assist-chip-container-shape: var(--ubv-radius-chip);
+    --md-assist-chip-label-text-size: 12.5px;
+    --md-assist-chip-label-text-weight: 600;
+    --md-assist-chip-leading-space: 12px;
+    --md-assist-chip-trailing-space: 12px;
+    --md-assist-chip-with-leading-icon-leading-space: 10px;
+    --md-assist-chip-icon-label-space: 6px;
+    --md-assist-chip-icon-size: 16px;
+    --md-assist-chip-elevated-container-elevation: 0;
+    --md-assist-chip-elevated-disabled-container-elevation: 0;
+    --md-assist-chip-elevated-disabled-container-opacity: 1;
+    --md-assist-chip-disabled-label-text-opacity: 1;
+    --md-assist-chip-disabled-leading-icon-opacity: 1;
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-surface-container-high);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-surface-variant);
+    --md-assist-chip-disabled-leading-icon-color: var(--md-sys-color-on-surface-variant);
+    white-space: nowrap;
+}
+.ubv-pill-accent {
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-primary-container);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-primary-container);
+    --md-assist-chip-disabled-leading-icon-color: var(--md-sys-color-on-primary-container);
+}
+.ubv-pill-warning {
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-tertiary-container);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-tertiary-container);
+    --md-assist-chip-disabled-leading-icon-color: var(--md-sys-color-on-tertiary-container);
+}
+.ubv-pill-error {
+    --md-assist-chip-elevated-disabled-container-color: var(--md-sys-color-error-container);
+    --md-assist-chip-disabled-label-text-color: var(--md-sys-color-on-error-container);
+    --md-assist-chip-disabled-leading-icon-color: var(--md-sys-color-on-error-container);
+}
+.ubv-pill-icon { display: inline-flex; }
+.ubv-pill-progress { --md-circular-progress-size: 16px; }
+
+/* Cards */
+.ubv-card {
+    /* md-outlined-card: the container, shape and outline are its tokens;
+       the elevation and padding are the fork's. */
+    --md-outlined-card-container-color: var(--md-sys-color-surface-container);
+    --md-outlined-card-container-shape: var(--ubv-radius-card);
+    --md-outlined-card-outline-color: var(--md-sys-color-outline-variant);
+    --md-outlined-card-outline-width: 1px;
+    box-shadow: var(--el-card);
+    padding: var(--ubv-pad);
+}
+.ubv-card-title {
+    color: var(--md-sys-color-on-surface);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    margin: 0;
+    text-transform: uppercase;
+}
+.ubv-card-header {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+    justify-content: space-between;
+    padding: 2px 6px 6px;
+}
+
+/* Action rows: Material buttons at one height */
+.ubv-actions { display: flex; flex-wrap: wrap; gap: var(--ubv-gap); }
+.ubv-actions md-filled-button,
+.ubv-actions md-filled-tonal-button,
+.ubv-actions md-outlined-button,
+.ubv-actions md-text-button {
+    --md-filled-button-container-height: 48px;
+    --md-filled-tonal-button-container-height: 48px;
+    --md-outlined-button-container-height: 48px;
+    --md-text-button-container-height: 48px;
+    --md-filled-button-leading-space: 20px;
+    --md-filled-button-trailing-space: 24px;
+    --md-filled-tonal-button-leading-space: 20px;
+    --md-filled-tonal-button-trailing-space: 24px;
+    --md-outlined-button-leading-space: 20px;
+    --md-outlined-button-trailing-space: 24px;
+}
+/* Hover paints the host (the container is transparent through tokens) so
+   the global hover motion applies to Material buttons too. */
+.ubv-actions md-filled-button,
+.ubv-actions md-filled-tonal-button,
+.ubv-actions md-outlined-button,
+.ubv-actions md-text-button {
+    --md-filled-button-container-color: transparent;
+    --md-filled-button-hover-state-layer-opacity: 0;
+    --md-filled-tonal-button-container-color: transparent;
+    --md-filled-tonal-button-hover-state-layer-opacity: 0;
+    --md-outlined-button-hover-state-layer-opacity: 0;
+    --md-text-button-hover-state-layer-opacity: 0;
+    border-radius: var(--ubv-radius-control);
+    transition: var(--ubv-hover-transition);
+}
+.ubv-actions md-filled-button { background: var(--md-sys-color-primary); }
+.ubv-actions md-filled-tonal-button { background: var(--md-sys-color-secondary-container); }
+:root .ubv-actions md-filled-button:not([disabled]):hover { background: color-mix(in srgb, var(--md-sys-color-primary) 86%, var(--md-sys-color-on-primary)); }
+:root .ubv-actions md-filled-tonal-button:not([disabled]):hover { background: var(--ubv-hover-surface); }
+:root .ubv-actions md-outlined-button:not([disabled]):hover,
+:root .ubv-actions md-text-button:not([disabled]):hover { background: var(--md-sys-color-surface-container-high); }
+.ubv-actions md-filled-button[disabled],
+.ubv-actions md-filled-tonal-button[disabled] { background: var(--md-sys-color-surface-container-high); opacity: 0.6; }
+.ubv-button-progress { --md-circular-progress-size: 20px; }
+
+/* Text fields */
+.ubv-field {
+    --md-outlined-text-field-container-shape: var(--ubv-radius-control);
+    --md-outlined-text-field-top-space: 12px;
+    --md-outlined-text-field-bottom-space: 12px;
+    --md-outlined-text-field-leading-space: 14px;
+    width: 100%;
+}
+
+/* Settings rows: the row is the hover surface; the box has no state layer
+   and never shrinks when the label wraps. */
+.ubv-settings {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.ubv-setting {
+    align-items: center;
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    min-height: 56px;
+    padding: 12px 14px;
+    transition: background-color var(--ubv-hover-duration) var(--ubv-hover-ease), opacity var(--ubv-hover-duration) var(--ubv-hover-ease);
+}
+:root .ubv-setting:hover { background: var(--ubv-hover-surface); }
+.ubv-setting.is-disabled { cursor: default; opacity: 0.5; }
+.ubv-setting md-checkbox,
+.ubv-row md-checkbox {
+    --md-checkbox-container-shape: 4px;
+    --md-checkbox-hover-state-layer-opacity: 0;
+    --md-checkbox-pressed-state-layer-opacity: 0;
+    --md-checkbox-selected-hover-state-layer-opacity: 0;
+    --md-checkbox-selected-pressed-state-layer-opacity: 0;
+    --md-checkbox-state-layer-size: 24px;
+    flex: 0 0 auto;
+    height: 24px;
+    width: 24px;
+}
+.ubv-setting-label { flex: 1 1 auto; font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+.ubv-info {
+    --md-icon-size: 20px;
+    color: var(--md-sys-color-on-surface-variant);
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+/* Inline notices */
+.ubv-notice {
+    border-radius: var(--ubv-radius-control);
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin: 0;
+    padding: 12px 14px;
+}
+.ubv-notice-warning {
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+}
+.ubv-notice-info {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+.ubv-muted {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* CodeMirror hosts (every editor page). CodeMirror's addPanel wraps the
+   editor in a div; that wrapper and the editor are pinned to the host's
+   full width so the widest rendered line scrolls instead of resizing the
+   editor as the viewport changes. Hosts are block, never flex rows. */
+.codeMirrorContainer > div:not([class^="CodeMirror"]) {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+}
+.codeMirrorContainer .CodeMirror {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+}
+.codeMirrorContainer .CodeMirror-scroll { min-width: 0; }
+
+/* Lists: md-list / md-list-item (ui/shared/ListItem.tsx). Rows are the
+   hover surface; the control sits in slot="end". */
+.ubv-list {
+    --md-list-container-color: transparent;
+    display: block;
+    padding: 0;
+}
+.ubv-list-item {
+    --md-list-item-container-color: transparent;
+    --md-list-item-container-shape: var(--ubv-radius-control);
+    --md-list-item-label-text-font: var(--md-ref-typeface-plain);
+    --md-list-item-label-text-size: 12.5px;
+    --md-list-item-label-text-weight: 500;
+    --md-list-item-label-text-line-height: 1.35;
+    --md-list-item-supporting-text-font: var(--md-ref-typeface-plain);
+    --md-list-item-supporting-text-size: 11.5px;
+    --md-list-item-leading-space: 14px;
+    --md-list-item-trailing-space: 14px;
+    --md-list-item-one-line-container-height: 48px;
+    --md-list-item-two-line-container-height: 60px;
+    --md-list-item-hover-state-layer-opacity: 0;
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--ubv-radius-control);
+    transition: var(--ubv-hover-transition);
+}
+:root .ubv-list-item[type="button"]:not([disabled]):hover,
+:root .ubv-list-item[type="link"]:not([disabled]):hover { background: var(--ubv-hover-surface); }
+.ubv-list-item[disabled] { opacity: 0.5; }

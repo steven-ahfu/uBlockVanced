@@ -22,16 +22,23 @@ html#ublock0-epicker,
     cursor: default;
     display: flex;
     flex-direction: column;
-    max-width: min(32rem, 100vw - 4px);
-    min-width: min(24rem, 100vw - 4px);
-    overflow-y: auto;
+    /* uBlockVanced: compact default, user-resizable from the corner */
+    max-height: calc(100vh - 4px);
+    max-width: calc(100vw - 4px);
+    min-height: 12rem;
+    min-width: min(18rem, 100vw - 4px);
+    overflow: auto;
     position: fixed;
-    width: min(32rem, 100vw - 4px);
+    resize: both;
+    width: min(27rem, 100vw - 4px);
     z-index: 100;
 }
 #ublock0-epicker.zap aside {
     bottom: unset !important;
+    height: auto !important;
+    min-height: unset !important;
     min-width: unset !important;
+    resize: none;
     top: 50%;
     transform: translateY(-50%);
     width: unset !important;
@@ -47,9 +54,13 @@ html#ublock0-epicker,
 }
 #ublock0-epicker:not(.paused) aside,
 #ublock0-epicker.minimized aside {
-    min-width: min(16rem, 100vw - 4px);
+    /* !important so a user-resized (inline) size does not leak into the minimized bar */
+    height: auto !important;
+    min-height: unset !important;
+    min-width: min(16rem, 100vw - 4px) !important;
     overflow: hidden;
-    width: min(16rem, 100vw - 4px);
+    resize: none;
+    width: min(16rem, 100vw - 4px) !important;
 }
 #ublock0-epicker:not(.paused) aside > *:not(#windowbar),
 #ublock0-epicker.minimized aside > *:not(#windowbar) {
@@ -90,8 +101,8 @@ html#ublock0-epicker,
 #ublock0-epicker section .codeMirrorContainer {
     border: none;
     box-sizing: border-box;
-    height: 10em;
-    max-height: min(10em, 10vh);
+    height: 7em;
+    max-height: min(7em, 10vh);
     min-height: 1em;
     padding: 2px;
     width: 100%;
@@ -194,8 +205,14 @@ html#ublock0-epicker,
     overflow: hidden;
 }
 #ublock0-epicker #candidateFilters {
-    max-height: min(18em, 18vh);
+    flex: 1 1 auto;
+    max-height: min(14em, 18vh);
+    min-height: 0;
     overflow-y: auto;
+}
+/* Once the user resizes the dialog, let the candidate list use the extra room. */
+#ublock0-epicker aside[style*="height"] #candidateFilters {
+    max-height: none;
 }
 #ublock0-epicker .changeFilter > li > span:nth-of-type(1) {
     font-weight: bold;
@@ -240,21 +257,21 @@ html#ublock0-epicker,
     cursor: not-allowed;
 }
 #ublock0-epicker svg#sea > path:first-child {
-    fill: rgba(17,17,27,0.55);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.55);
     fill-rule: evenodd;
 }
 #ublock0-epicker svg#sea > path + path {
-    stroke: #f38ba8;
+    stroke: rgb(var(--ctp-red, 235 111 146));
     stroke-width: 0.5px;
-    fill: rgba(243,139,168,0.18);
+    fill: rgb(var(--ctp-red, 235 111 146) / 0.18);
 }
 #ublock0-epicker.zap svg#sea > path + path {
-    stroke: #f9e2af;
+    stroke: rgb(var(--ctp-yellow, 223 142 29));
     stroke-width: 0.5px;
-    fill: rgba(249,226,175,0.18);
+    fill: rgb(var(--ctp-yellow, 223 142 29) / 0.18);
 }
 #ublock0-epicker.preview svg#sea > path {
-    fill: rgba(17,17,27,0.12);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.12);
 }
 #ublock0-epicker.preview svg#sea > path + path {
     stroke: none;
@@ -297,24 +314,19 @@ html#ublock0-epicker,
 }
 
 /*
- * uBlockForge premium element picker polish
+ * uBlockVanced: Material 3 Expressive overlay (element picker)
  */
 #ublock0-epicker aside {
-    backdrop-filter: blur(18px);
-    background:
-        linear-gradient(145deg, rgb(255 255 255 / 0.08), transparent 55%),
-        rgb(var(--surface-0-rgb) / 92%);
-    border: 1px solid rgb(255 255 255 / 0.08);
+    background: var(--surface-0);
+    border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow:
-        0 20px 50px rgb(17 17 27 / 0.35),
-        0 1px 0 rgb(255 255 255 / 0.08);
+    box-shadow: var(--el-3);
     padding: 0.35rem;
 }
 
 #ublock0-epicker #windowbar {
     align-items: center;
-    border-bottom: 1px solid rgb(255 255 255 / 0.06);
+    border-bottom: 1px solid var(--border-1);
     margin: 0 0 0.35rem;
     padding: 0 0 0.2rem;
 }
@@ -328,21 +340,22 @@ html#ublock0-epicker,
 #windowbar #quit,
 #windowbar #minimize {
     align-items: center;
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.1), transparent 55%),
-        rgb(var(--surface-0-rgb) / 74%);
-    border: 1px solid rgb(255 255 255 / 0.05);
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
     border-radius: 999px;
-    box-shadow: none;
+    box-shadow: var(--el-1);
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     padding: 0;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 #windowbar #quit:hover,
 #windowbar #minimize:hover {
-    background-color: rgb(var(--surface-0-rgb) / 94%);
+    background-color: var(--surface-3);
+    border-radius: 999px;
+    box-shadow: var(--el-2);
 }
 
 #ublock0-epicker aside > *:not(:first-child) {
@@ -360,8 +373,8 @@ html#ublock0-epicker,
 }
 
 #ublock0-epicker section > div:first-child {
-    background-color: rgb(var(--surface-0-rgb) / 48%);
-    border: 1px solid rgb(255 255 255 / 0.06);
+    background-color: var(--surface-1);
+    border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
     padding: 0.35rem;
 }
@@ -379,8 +392,9 @@ html#ublock0-epicker,
 }
 
 #resultsetCount {
-    background-color: rgb(var(--primary-70) / 0.16);
+    background-color: var(--primary-container);
     border-radius: 999px;
+    color: var(--on-primary-container);
     min-width: 2.4rem;
     padding: 0 0.45rem;
 }
@@ -391,8 +405,8 @@ html#ublock0-epicker,
 }
 
 #ublock0-epicker #candidateFilters {
-    background-color: rgb(var(--surface-0-rgb) / 32%);
-    border: 1px solid rgb(255 255 255 / 0.05);
+    background-color: var(--surface-1);
+    border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
     margin-top: 0.55rem;
     padding: 0.4rem 0.25rem;
@@ -404,21 +418,28 @@ html#ublock0-epicker,
     transition:
         background-color var(--transition-fast),
         border-color var(--transition-fast),
-        transform var(--transition-fast);
+        border-radius var(--transition-normal);
 }
 
 #ublock0-epicker #candidateFilters .changeFilter li.active {
-    background-color: rgb(var(--primary-70) / 0.14);
-    border: 1px solid rgb(var(--primary-70) / 0.4);
+    background-color: var(--primary-container);
+    border: 1px solid var(--primary-outline);
+    border-radius: var(--radius-selected);
+    color: var(--on-primary-container);
 }
 
 #ublock0-epicker #candidateFilters .changeFilter li:hover {
-    background-color: rgb(var(--surface-0-rgb) / 58%);
-    transform: translateX(1px);
+    background-color: var(--surface-2);
+    border-radius: 0.6rem;
+}
+
+#ublock0-epicker #candidateFilters .changeFilter li.active:hover {
+    background-color: var(--primary-container);
+    border-radius: var(--radius-selected);
 }
 
 #ublock0-epicker svg#sea > path:first-child {
-    fill: rgb(11 15 24 / 0.58);
+    fill: rgb(var(--ctp-crust, 20 18 28) / 0.58);
 }
 
 @media (prefers-reduced-motion: reduce) {

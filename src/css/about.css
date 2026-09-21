@@ -46,7 +46,7 @@ body {
 }
 
 .about-badge {
-    background: var(--field-surface);
+    background: var(--surface-2);
     border: 1px solid var(--border-1);
     border-radius: 999px;
     color: var(--ink-2);
@@ -70,9 +70,10 @@ body {
 }
 
 .about-pill-link {
-    background: var(--field-surface);
+    background: var(--surface-2);
     border: 1px solid var(--border-1);
     border-radius: 999px;
+    box-shadow: var(--el-1);
     color: var(--ink-1);
     display: inline-flex;
     font-weight: 600;
@@ -81,13 +82,15 @@ body {
     text-decoration: none;
     transition:
         background-color var(--transition-fast),
-        border-color var(--transition-fast);
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .about-pill-link:hover,
 .about-credit-list li:hover {
-    background: var(--field-surface-hover);
-    border-color: var(--border-2);
+    background: var(--surface-3);
+    border-color: var(--border-1);
+    box-shadow: var(--el-2);
 }
 
 .about-pill-link:focus-visible,
@@ -107,15 +110,17 @@ body {
 }
 
 .about-credit-list li {
-    background: var(--field-surface);
+    background: var(--surface-2);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
+    box-shadow: var(--el-1);
     color: var(--ink-2);
     line-height: 1.5;
     padding: 0.55rem 0.72rem;
     transition:
         background-color var(--transition-fast),
-        border-color var(--transition-fast);
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .about-credit-list a,

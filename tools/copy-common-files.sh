@@ -25,3 +25,9 @@ cp src/*.html                      "$DES"/
 cp platform/common/*.js            "$DES"/js/
 cp platform/common/*.json          "$DES"/
 cp LICENSE.txt                     "$DES"/
+
+# uBlockVanced: React UI overlay (see ui/README.md). Built pages replace the
+# upstream page of the same name; nothing under src/ is modified.
+if [ -d dist/ui ]; then
+    cp -R dist/ui/.                "$DES"/
+fi

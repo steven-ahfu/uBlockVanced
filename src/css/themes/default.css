@@ -131,7 +131,7 @@
     --font-size-smaller: calc(var(--font-size) - 1px);
     --font-size-xsmall: calc(var(--font-size) - 3px);
     --font-size-larger: 15px;
-    --font-family: Inter, sans-serif;
+    --font-family: Geist, Inter, sans-serif;
     --monospace-size: 12px;
 }
 
@@ -182,12 +182,12 @@
 }
 @media (prefers-color-scheme: dark) {
     :root {
-        --surface-0-rgb: 30 30 46;
-        --surface-1: rgb(24 24 37);
-        --surface-2: rgb(49 50 68);
-        --surface-3: rgb(69 71 90);
-        --scrollbar-thumb: rgb(88 91 112 / 0.72);
-        --scrollbar-thumb-hover: rgb(137 180 250 / 0.9);
+        --surface-0-rgb: 31 29 46;
+        --surface-1: rgb(25 23 36);
+        --surface-2: rgb(38 35 58);
+        --surface-3: rgb(57 54 82);
+        --scrollbar-thumb: rgb(82 79 103 / 0.72);
+        --scrollbar-thumb-hover: rgb(196 167 231 / 0.9);
     }
 }
 
@@ -335,8 +335,43 @@
  */
 /* https://material.io/design/color/dark-theme.html */
 
-/* Catppuccin palette layer — override these variables to swap palettes */
+/*
+ * uBlockVanced: Rosé Pine (dark) — default palette layer.
+ * Values are mapped onto the existing --ctp-* slots so every downstream token
+ * (surfaces, borders, ink, popup cells, logger, CodeMirror) follows automatically.
+ * Add class "catppuccin-mocha" on :root to get the previous palette back.
+ */
+/* Dark is this fork's default, so the palette is defined on bare :root too.
+   theme.js only adds the `dark` class after a vAPI.messaging round-trip, and
+   a document that paints first would otherwise have no --ctp-* at all. That
+   is not a cosmetic problem: `rgb(var(--ctp-crust) / 0.58)` with the variable
+   missing is invalid at computed-value time, so the property falls back to
+   its initial value -- for the element picker's `fill`, opaque black over the
+   whole page. Defining the palette here means the worst case is "correct
+   colours slightly early", never an unreadable document. */
+:root,
 :root.dark {
+    --ctp-base: 31 29 46;        /* #1F1D2E surface */
+    --ctp-mantle: 25 23 36;      /* #191724 base    */
+    --ctp-crust: 20 18 28;       /* #14121C canvas  */
+    --ctp-surface0: 38 35 58;    /* #26233A */
+    --ctp-surface1: 57 54 82;    /* #393652 */
+    --ctp-surface2: 82 79 103;   /* #524F67 */
+    --ctp-overlay0: 110 106 134; /* #6E6A86 */
+    --ctp-text: 224 222 244;     /* #E0DEF4 */
+    --ctp-subtext0: 144 140 170; /* #908CAA */
+    --ctp-subtext1: 192 188 216; /* #C0BCD8 */
+    --ctp-blue: 196 167 231;     /* iris  #C4A7E7 — primary */
+    --ctp-lavender: 156 207 216; /* foam  #9CCFD8 */
+    --ctp-green: 156 207 216;    /* foam stands in for green */
+    --ctp-red: 235 111 146;      /* love  #EB6F92 */
+    --ctp-peach: 235 188 186;    /* rose  #EBBCBA */
+    --ctp-mauve: 196 167 231;    /* iris */
+    --ctp-teal: 49 116 143;      /* pine  #31748F */
+    --ctp-yellow: 246 193 119;   /* gold  #F6C177 */
+}
+
+:root.dark.catppuccin-mocha {
     --ctp-base: 30 30 46;
     --ctp-mantle: 24 24 37;
     --ctp-crust: 17 17 27;
@@ -399,6 +434,12 @@
     --ctp-yellow: 238 212 159;
 }
 
+/* An explicit light theme means the palette goes light too. Without this,
+   :root.light flipped the surface and ink tokens while --ctp-* stayed dark,
+   so anything driven by Material tokens kept its dark colours and the UI came
+   out half-themed. Latte is the light Catppuccin palette, so light mode and
+   the Latte palette are the same thing. */
+:root.light,
 :root.catppuccin-latte {
     --ctp-base: 239 241 245;
     --ctp-mantle: 230 233 239;
@@ -420,6 +461,7 @@
     --ctp-yellow: 223 142 29;
 }
 
+:root,
 :root.dark {
     --elevation-down-surface: rgb(var(--ctp-crust));
     --elevation-down1-opacity: 16%;
@@ -513,97 +555,104 @@
 }
 
 /*
- * uBlockForge premium system tokens
+ * uBlockVanced: Material 3 Expressive system tokens (replaces the "premium" glass layer).
+ * Solid surfaces, soft ambient elevation, one accent, radius morphs on selection only.
  */
 :root {
-    --font-family-display: Metropolis, Inter, sans-serif;
-    --radius-small: 10px;
-    --radius-medium: 16px;
-    --radius-large: 24px;
-    --radius-xlarge: 30px;
-    --transition-fast: 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    --transition-normal: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    --surface-raised-soft: rgb(var(--surface-0-rgb) / 56%);
-    --surface-raised: rgb(var(--surface-0-rgb) / 72%);
-    --surface-raised-strong: rgb(var(--surface-0-rgb) / 88%);
-    --surface-muted: rgb(var(--surface-0-rgb) / 60%);
-    --field-surface: rgb(var(--surface-0-rgb) / 68%);
-    --field-surface-hover: rgb(var(--surface-0-rgb) / 82%);
-    --field-surface-active: rgb(var(--surface-0-rgb) / 94%);
-    --field-border: var(--border-2);
+    /* iris scale (hsluv-matched to Rosé Pine iris #C4A7E7) */
+    --primary-5:   20  16  32;
+    --primary-10:  32  26  50;
+    --primary-20:  58  47  85;   /* #3A2F55 primary container */
+    --primary-30:  74  62 107;   /* #4A3E6B primary outline   */
+    --primary-40:  96  80 138;
+    --primary-50: 130 108 172;
+    --primary-60: 165 140 205;
+    --primary-70: 196 167 231;   /* #C4A7E7 iris */
+    --primary-80: 214 194 240;
+    --primary-90: 231 219 247;   /* #E7DBF7 on primary container */
+    --primary-95: 242 237 251;
+
+    --font-family: Geist, Inter, sans-serif;
+    --font-family-display: Geist, Inter, sans-serif;
+
+    --radius-small: 14px;
+    --radius-medium: 22px;
+    --radius-large: 28px;
+    --radius-xlarge: 32px;
+    --radius-selected: 12px;
+
+    --m3e-ease: cubic-bezier(0.32, 0.72, 0.28, 1);
+    --transition-fast: 150ms var(--m3e-ease);
+    --transition-normal: 200ms var(--m3e-ease);
+    --transition-slow: 220ms var(--m3e-ease);
+
+    --surface-raised-soft: rgb(var(--surface-0-rgb));
+    --surface-raised: rgb(var(--surface-0-rgb));
+    --surface-raised-strong: rgb(var(--surface-0-rgb));
+    --surface-muted: var(--surface-1);
+    --field-surface: var(--surface-1);
+    --field-surface-hover: var(--surface-1);
+    --field-surface-active: var(--surface-1);
+    --field-border: var(--border-1);
     --field-placeholder: var(--ink-4);
-    --focus-ring: 0 0 0 3px rgb(var(--primary-70) / 28%);
-    --field-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.05),
-        0 0 0 1px rgb(255 255 255 / 0.02);
-    --panel-shadow:
-        0 1px 0 rgb(255 255 255 / 0.05),
-        0 18px 44px rgb(17 17 27 / 0.12);
-    --panel-shadow-strong:
-        0 1px 0 rgb(255 255 255 / 0.06),
-        0 22px 54px rgb(17 17 27 / 0.16);
-    --success-surface: rgb(var(--green-50) / 0.12);
-    --success-border: rgb(var(--green-50) / 0.24);
-    --warning-surface: rgb(var(--yellow-40) / 0.14);
-    --warning-border: rgb(var(--yellow-40) / 0.24);
-    --danger-surface: rgb(var(--red-40) / 0.12);
-    --danger-border: rgb(var(--red-40) / 0.24);
-    --page-accent-glow:
-        radial-gradient(circle at top left, rgb(var(--primary-70) / 0.14), transparent 34%),
-        radial-gradient(circle at top right, rgb(var(--violet-40) / 0.12), transparent 28%);
+    --focus-ring: 0 0 0 2px var(--surface-1), 0 0 0 4px rgb(var(--primary-70));
+    --field-shadow: none;
+
+    --el-1: 0 1px 2px rgb(0 0 0 / 0.26);
+    --el-2: 0 1px 3px rgb(0 0 0 / 0.24), 0 5px 14px rgb(0 0 0 / 0.24);
+    --el-3: 0 2px 5px rgb(0 0 0 / 0.28), 0 12px 28px rgb(0 0 0 / 0.32);
+    --el-card: 0 2px 6px rgb(0 0 0 / 0.30), 0 14px 34px rgb(0 0 0 / 0.40);
+    --panel-shadow: var(--el-2);
+    --panel-shadow-strong: var(--el-3);
+
+    --primary-container: rgb(var(--primary-20));
+    --on-primary-container: rgb(var(--primary-90));
+    --primary-outline: rgb(var(--primary-30));
+
+    --success-surface: rgb(var(--ctp-teal, 49 116 143) / 0.22);
+    --success-border: rgb(var(--ctp-teal, 49 116 143) / 0.45);
+    --warning-surface: rgb(var(--ctp-yellow, 246 193 119) / 0.16);
+    --warning-border: rgb(var(--ctp-yellow, 246 193 119) / 0.40);
+    --danger-surface: rgb(var(--ctp-red, 235 111 146) / 0.16);
+    --danger-border: rgb(var(--ctp-red, 235 111 146) / 0.40);
+    --page-accent-glow: none;
 }
 
 :root.light {
-    --surface-raised-soft: rgb(255 255 255 / 68%);
-    --surface-raised: rgb(255 255 255 / 80%);
-    --surface-raised-strong: rgb(255 255 255 / 94%);
-    --surface-muted: rgb(255 255 255 / 66%);
-    --field-surface: rgb(255 255 255 / 86%);
-    --field-surface-hover: rgb(255 255 255 / 96%);
+    --surface-raised-soft: rgb(255 255 255);
+    --surface-raised: rgb(255 255 255);
+    --surface-raised-strong: rgb(255 255 255);
+    --surface-muted: var(--surface-1);
+    --field-surface: rgb(255 255 255);
+    --field-surface-hover: rgb(255 255 255);
     --field-surface-active: rgb(255 255 255);
     --field-border: rgb(var(--gray-80));
-    --field-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.86),
-        0 0 0 1px rgb(17 17 27 / 0.02);
-    --panel-shadow:
-        0 1px 0 rgb(255 255 255 / 0.8),
-        0 18px 44px rgb(17 17 27 / 0.08);
-    --panel-shadow-strong:
-        0 1px 0 rgb(255 255 255 / 0.86),
-        0 24px 58px rgb(17 17 27 / 0.12);
-    --page-accent-glow:
-        radial-gradient(circle at top left, rgb(var(--primary-80) / 0.26), transparent 34%),
-        radial-gradient(circle at top right, rgb(var(--violet-20) / 0.22), transparent 30%);
-    --scrollbar-track: rgb(var(--gray-90) / 0.7);
+    --field-shadow: none;
+    --el-1: 0 1px 2px rgb(17 17 27 / 0.10);
+    --el-2: 0 1px 3px rgb(17 17 27 / 0.08), 0 5px 14px rgb(17 17 27 / 0.08);
+    --el-3: 0 2px 5px rgb(17 17 27 / 0.10), 0 12px 28px rgb(17 17 27 / 0.12);
+    --el-card: 0 2px 6px rgb(17 17 27 / 0.08), 0 14px 34px rgb(17 17 27 / 0.12);
+    --page-accent-glow: none;
+    --scrollbar-track: transparent;
     --scrollbar-thumb: rgb(var(--gray-70) / 0.6);
     --scrollbar-thumb-hover: rgb(var(--primary-50) / 0.7);
 }
 
 :root.dark {
-    --surface-raised-soft: rgb(var(--ctp-crust) / 62%);
-    --surface-raised: rgb(var(--ctp-mantle) / 82%);
-    --surface-raised-strong: rgb(var(--ctp-crust) / 92%);
-    --surface-muted: rgb(var(--ctp-crust) / 72%);
-    --field-surface: rgb(var(--ctp-mantle) / 88%);
-    --field-surface-hover: rgb(var(--ctp-base) / 96%);
-    --field-surface-active: rgb(34 34 56);
-    --field-border: rgb(var(--ctp-surface2));
-    --focus-ring: 0 0 0 3px rgb(var(--ctp-blue) / 32%);
-    --field-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.04),
-        0 0 0 1px rgb(255 255 255 / 0.02);
-    --panel-shadow:
-        0 1px 0 rgb(255 255 255 / 0.04),
-        0 22px 52px rgb(0 0 0 / 0.32);
-    --panel-shadow-strong:
-        0 1px 0 rgb(255 255 255 / 0.05),
-        0 28px 64px rgb(0 0 0 / 0.4);
-    --page-accent-glow:
-        radial-gradient(circle at top left, rgb(var(--ctp-blue) / 16%), transparent 36%),
-        radial-gradient(circle at top right, rgb(var(--ctp-mauve) / 14%), transparent 30%);
-    --scrollbar-track: rgb(var(--ctp-crust) / 50%);
-    --scrollbar-thumb: rgb(var(--ctp-surface2) / 72%);
-    --scrollbar-thumb-hover: rgb(var(--ctp-blue) / 90%);
+    --surface-raised-soft: rgb(var(--ctp-base));
+    --surface-raised: rgb(var(--ctp-base));
+    --surface-raised-strong: rgb(var(--ctp-base));
+    --surface-muted: rgb(var(--ctp-mantle));
+    --field-surface: rgb(var(--ctp-mantle));
+    --field-surface-hover: rgb(var(--ctp-mantle));
+    --field-surface-active: rgb(var(--ctp-mantle));
+    --field-border: rgb(var(--ctp-surface1));
+    --focus-ring: 0 0 0 2px rgb(var(--ctp-mantle)), 0 0 0 4px rgb(var(--ctp-blue));
+    --field-shadow: none;
+    --page-accent-glow: none;
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgb(var(--ctp-surface2) / 0.72);
+    --scrollbar-thumb-hover: rgb(var(--ctp-blue) / 0.9);
 }
 
 /*
@@ -635,6 +684,7 @@
     --button-surface: rgb(var(--button-surface-rgb));
     --button-border-size: 0;
     --button-border-radius: var(--radius-small);
+    --button-border-radius-selected: var(--radius-selected);
     --button-preferred-ink: var(--accent-ink-1);
     --button-preferred-surface: var(--accent-surface-1);
     --button-disabled-surface: var(--surface-3);
@@ -692,8 +742,8 @@
         --border-1: rgb(var(--ink-rgb) / 38%);
     }
     :root.dark {
-        --focus-ring: 0 0 0 3px rgb(137 180 250 / 58%);
-        --border-1: rgb(205 214 244 / 28%);
+        --focus-ring: 0 0 0 2px rgb(var(--ctp-mantle)), 0 0 0 4px rgb(var(--ctp-blue));
+        --border-1: rgb(224 222 244 / 28%);
     }
 }
 
@@ -719,9 +769,9 @@
 
 :root.dark:not(.colorBlind) {
     --popup-cell-allow-own-surface-rgb: var(--ctp-green);
-    --popup-cell-allow-surface-rgb:      64 100  62;
+    --popup-cell-allow-surface-rgb:      44  78  92;
     --popup-cell-block-own-surface-rgb: var(--ctp-red);
-    --popup-cell-block-surface-rgb:     120  60  75;
+    --popup-cell-block-surface-rgb:      96  48  66;
     --popup-cell-noop-own-surface-rgb:  var(--ctp-overlay0);
     --popup-cell-noop-surface-rgb:       var(--ctp-surface1);
 }

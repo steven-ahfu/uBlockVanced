@@ -1,0 +1,52 @@
+/*
+ * Cloud sync widget: an outlined card holding a connected button group for
+ * the three cloud actions, a Material menu surface for the device-name
+ * option, and a snackbar for the last error.
+ *
+ * This file is pulled in through CloudWidget.tsx, so it lands before the
+ * library stylesheet in every page bundle: any rule that retunes a
+ * material-expressive-react class is written with :root.ubv-m3 so it wins
+ * on specificity rather than on order.
+ */
+/* The card outranks the cards below it so the options popover, which opens
+   downwards out of the card box, is never painted under the next card. */
+.ubv-cloud-widget { display: grid; gap: var(--ubv-gap); z-index: 3; }
+.ubv-cloud-widget .ubv-card-header { align-items: center; }
+.ubv-cloud-widget .ubv-card-header p { margin: 4px 0 0; }
+.ubv-cloud-capacity { --md-linear-progress-active-indicator-height: 8px; --md-linear-progress-track-height: 8px; }
+
+/* Action group: the component writes its own inline geometry, so only
+   wrapping and the disabled affordance are left to the page. */
+.ubv-cloud-actions { justify-self: start; max-width: 100%; }
+.ubv-cloud-actions > div { flex-wrap: wrap; max-width: 100%; }
+.ubv-cloud-actions button > span { white-space: nowrap; }
+.ubv-cloud-actions button:disabled { cursor: default; opacity: 0.45; }
+:root .ubv-cloud-actions button:not(:disabled):hover { filter: brightness(1.08); }
+
+/* Options popover: a menu surface anchored under the settings icon button.
+   The surface keeps its own padding and elevation; the row inside it is
+   laid out on the surface's content wrapper. */
+.ubv-cloud-menu { position: relative; }
+:root.ubv-m3 .ubv-cloud-options {
+    --mer-menu-radius: var(--ubv-radius-card);
+    --mer-menu-bg: var(--md-sys-color-surface-container-high);
+    inset-inline-end: 0;
+    min-width: min(22rem, 80vw);
+    position: absolute;
+    top: calc(100% + 6px);
+    z-index: 20;
+}
+:root.ubv-m3 .ubv-cloud-options .mer-menu-surface__scroll {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+}
+.ubv-cloud-options .ubv-field { flex: 1 1 12rem; }
+:root.ubv-m3 .ubv-cloud-error {
+    --mer-snackbar-container-shape: var(--ubv-radius-control);
+    justify-self: stretch;
+    max-width: 100%;
+}
+@media (max-width: 560px) {
+    :root.ubv-m3 .ubv-cloud-options .mer-menu-surface__scroll { align-items: stretch; flex-direction: column; }
+}

@@ -1,0 +1,71 @@
+/*
+ * uBlockVanced Trusted sites (React + Material 3 Expressive).
+ * Page frame, cards, pills and buttons come from ui/shared/page.css.
+ * CodeMirror keeps its upstream ids/classes so css/codemirror.css applies.
+ */
+html {
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    width: 100vw;
+}
+:root.ubv-m3 body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden auto;
+    width: 100%;
+}
+.ubv-editor-page {
+    flex: 1 1 auto;
+    grid-template-rows: auto auto minmax(max(16rem, 40vh), 1fr);
+    min-height: 0;
+    padding-bottom: var(--ubv-pad);
+}
+
+.ubv-workbench { display: grid; gap: var(--ubv-pad); }
+.ubv-toolbar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap) var(--ubv-pad);
+    justify-content: space-between;
+}
+.ubv-actions-end { justify-content: flex-end; }
+@media (max-width: 720px) {
+    .ubv-toolbar { flex-direction: column; align-items: stretch; }
+    .ubv-actions-end { justify-content: flex-start; }
+}
+
+/* Editor card: the CodeMirror instance fills it */
+.ubv-editor-card {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.ubv-editor-card .codeMirrorContainer {
+    display: block;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+.ubv-editor-card .CodeMirror {
+    background: var(--md-sys-color-surface-container-lowest);
+    border-radius: var(--ubv-radius-card);
+    height: 100%;
+}
+.ubv-editor-card .CodeMirror-gutters {
+    background: var(--md-sys-color-surface-container-low);
+    border-color: var(--md-sys-color-outline-variant);
+}
+/* Directive tokens: built-in defaults, comments, invalid lines */
+.ubv-editor-card .cm-keyword { color: var(--md-sys-color-primary); font-weight: 600; }
+.ubv-editor-card .cm-comment { color: var(--md-sys-color-on-surface-variant); }
+.ubv-editor-card .cm-error {
+    background: color-mix(in srgb, var(--md-sys-color-error) 18%, transparent);
+    color: var(--md-sys-color-error);
+    text-decoration: underline wavy var(--md-sys-color-error);
+}

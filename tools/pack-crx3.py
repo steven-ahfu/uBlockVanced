@@ -1,62 +1,76 @@
 #!/usr/bin/env python3
 """
 Pack a Chrome extension directory into CRX3 format.
-Generates a new RSA key (or reuses existing .pem) and creates a valid CRX3 binary.
+
+Uses the `openssl` CLI for key generation and signing so the only
+requirements are Python 3 and OpenSSL. Generates a new RSA-2048 key or
+reuses an existing .pem; keep the .pem to preserve the extension ID.
+
+Usage:
+    pack-crx3.py <src_dir> <zip_path> <crx_path> [pem_path]
+
+Pass "-" as zip_path to skip writing the intermediate zip.
 """
-import os, sys, struct, hashlib, zipfile, io
+import hashlib
+import io
+import os
+import struct
+import subprocess
+import sys
+import zipfile
 
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.backends import default_backend
+if len(sys.argv) < 4:
+    raise SystemExit(__doc__)
 
-# ---------- args ----------
 src_dir  = sys.argv[1]  # e.g. dist/build/uBlock0.chromium
-zip_path = sys.argv[2]  # e.g. dist/build/uBlockVanced.zip
+zip_path = sys.argv[2]  # e.g. dist/build/uBlockVanced.zip, or "-" to skip
 crx_path = sys.argv[3]  # e.g. dist/build/uBlockVanced.crx
 pem_path = sys.argv[4] if len(sys.argv) > 4 else "uBlockVanced.pem"
+
+
+def openssl(*args, data=None):
+    return subprocess.run(
+        ["openssl", *args], input=data, capture_output=True, check=True
+    ).stdout
+
 
 # ---------- key ----------
 if os.path.exists(pem_path):
     print(f"Reusing key: {pem_path}")
-    with open(pem_path, "rb") as f:
-        private_key = serialization.load_pem_private_key(f.read(), password=None, backend=default_backend())
 else:
     print(f"Generating new RSA-2048 key -> {pem_path}")
-    private_key = rsa.generate_private_key(
-        public_exponent=65537, key_size=2048, backend=default_backend()
-    )
+    pem = openssl("genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048")
     with open(pem_path, "wb") as f:
-        f.write(private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption()
-        ))
+        f.write(pem)
     print(f"Key saved to {pem_path} — keep this file to preserve extension ID!")
 
 # ---------- build ZIP ----------
-print(f"Building ZIP: {zip_path}")
+print("Building ZIP payload")
 buf = io.BytesIO()
 with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-    for root, dirs, files in os.walk(src_dir):
+    for root, dirs, files in sorted(os.walk(src_dir)):
         # Skip hidden dirs
-        dirs[:] = [d for d in dirs if not d.startswith(".")]
-        for fname in files:
+        dirs[:] = sorted(d for d in dirs if not d.startswith("."))
+        for fname in sorted(files):
             fpath = os.path.join(root, fname)
             arcname = os.path.relpath(fpath, src_dir).replace("\\", "/")
             zf.write(fpath, arcname)
 zip_bytes = buf.getvalue()
 
-os.makedirs(os.path.dirname(zip_path), exist_ok=True)
-with open(zip_path, "wb") as f:
-    f.write(zip_bytes)
+if zip_path != "-":
+    os.makedirs(os.path.dirname(os.path.abspath(zip_path)), exist_ok=True)
+    with open(zip_path, "wb") as f:
+        f.write(zip_bytes)
+    print(f"  ZIP written: {zip_path}")
 print(f"  ZIP size: {len(zip_bytes):,} bytes")
 
 # ---------- build CRX3 header ----------
-pub_key = private_key.public_key()
-pub_der  = pub_key.public_bytes(serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo)
+# DER-encoded SubjectPublicKeyInfo
+pub_der = openssl("pkey", "-in", pem_path, "-pubout", "-outform", "DER")
 
 # crx_id = first 16 bytes of SHA-256 of DER public key
 crx_id = hashlib.sha256(pub_der).digest()[:16]
+
 
 # SignedData protobuf: field 1 (crx_id) = bytes
 def encode_varint(n):
@@ -67,9 +81,11 @@ def encode_varint(n):
     parts.append(n)
     return bytes(parts)
 
+
 def encode_bytes_field(field_num, data):
     tag = encode_varint(field_num << 3 | 2)
     return tag + encode_varint(len(data)) + data
+
 
 signed_data_proto = encode_bytes_field(1, crx_id)
 
@@ -81,7 +97,8 @@ signed_payload = (
     + zip_bytes
 )
 
-signature = private_key.sign(signed_payload, padding.PKCS1v15(), hashes.SHA256())
+# RSA PKCS#1 v1.5 over SHA-256
+signature = openssl("dgst", "-sha256", "-sign", pem_path, data=signed_payload)
 
 # AsymmetricKeyProof: field 1 = pubkey bytes, field 2 = signature bytes
 key_proof_proto = (
@@ -89,31 +106,47 @@ key_proof_proto = (
     encode_bytes_field(2, signature)
 )
 
-# CrxFileHeader: field 2 = AsymmetricKeyProof, field 10000 = SignedData
-# field 10000 tag = varint(10000 << 3 | 2) = 0x82 0xF1 0x04
-field_10000_tag = b"\x82\xf1\x04"
+# CrxFileHeader: field 2 = AsymmetricKeyProof (sha256_with_rsa),
+# field 10000 = SignedData
 crx_header_proto = (
     encode_bytes_field(2, key_proof_proto) +
-    field_10000_tag + encode_varint(len(signed_data_proto)) + signed_data_proto
+    encode_bytes_field(10000, signed_data_proto)
 )
 
 # CRX3 binary: magic + version(3) + header_size + header + zip
-crx_magic = b"Cr24"
-crx_version = struct.pack("<I", 3)
-header_size = struct.pack("<I", len(crx_header_proto))
+crx_bytes = (
+    b"Cr24"
+    + struct.pack("<I", 3)
+    + struct.pack("<I", len(crx_header_proto))
+    + crx_header_proto
+    + zip_bytes
+)
 
-crx_bytes = crx_magic + crx_version + header_size + crx_header_proto + zip_bytes
-
-os.makedirs(os.path.dirname(crx_path), exist_ok=True)
+os.makedirs(os.path.dirname(os.path.abspath(crx_path)), exist_ok=True)
 with open(crx_path, "wb") as f:
     f.write(crx_bytes)
 
+ext_id = "".join(
+    chr(ord("a") + (b >> 4)) + chr(ord("a") + (b & 0x0F)) for b in crx_id
+)
 print(f"  CRX size: {len(crx_bytes):,} bytes")
-print(f"  Extension ID: {''.join(chr(ord('a') + (b & 0x0f)) + chr(ord('a') + (b >> 4)) for b in crx_id)}")
+print(f"  Extension ID: {ext_id}")
 print(f"CRX3 written: {crx_path}")
-# Verify magic
+
+# Verify magic and signature round-trip
 with open(crx_path, "rb") as f:
     assert f.read(4) == b"Cr24", "Bad magic"
     ver = struct.unpack("<I", f.read(4))[0]
     assert ver == 3, f"Bad version: {ver}"
-print("CRX3 header verified OK")
+pub_pem = openssl("pkey", "-in", pem_path, "-pubout")
+with open(crx_path + ".sig", "wb") as f:
+    f.write(signature)
+with open(crx_path + ".pub", "wb") as f:
+    f.write(pub_pem)
+try:
+    openssl("dgst", "-sha256", "-verify", crx_path + ".pub",
+            "-signature", crx_path + ".sig", data=signed_payload)
+finally:
+    os.remove(crx_path + ".sig")
+    os.remove(crx_path + ".pub")
+print("CRX3 header and signature verified OK")

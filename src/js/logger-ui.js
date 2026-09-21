@@ -357,7 +357,7 @@ const processLoggerEntries = function(response) {
         let unboxed;
         try {
             unboxed = JSON.parse(entry);
-        } catch(ex) {
+        } catch {
             continue;
         }
         if ( unboxed.filter instanceof Object ){

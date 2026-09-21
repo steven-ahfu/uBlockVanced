@@ -1,0 +1,508 @@
+/*
+ * uBlockVanced popup (React + Material 3 Expressive). Layout ids (#panes,
+ * #main, #sticky, #firewall, body[data-more]) come from upstream
+ * popup-fenix.css; this file styles the Material controls and the ribbons
+ * that replaced the upstream toolbars. Every size and radius is a token
+ * from ui/shared/tokens.css; tiles and icon buttons come from
+ * ui/shared/controls.css.
+ */
+#root { display: contents; }
+
+/* Panels: the pane is the page ground; main and firewall are two cards. */
+:root.ubv-m3 body { background: var(--md-sys-color-surface); }
+#panes {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    gap: var(--ubv-gap);
+    padding: var(--ubv-gap);
+}
+:root body { --popup-main-min-width: 34em; }
+#main {
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--ubv-radius-card);
+    box-shadow: var(--el-card);
+    margin: 0;
+    max-width: 560px;
+    padding: 0 0 4px;
+}
+#sticky {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--md-sys-color-surface-container);
+    border-bottom: 0;
+    border-radius: var(--ubv-radius-card) var(--ubv-radius-card) 0 0;
+    padding: var(--ubv-gap);
+}
+/* Portrait: upstream hoists #sticky out of #main, so it becomes its own card. */
+#panes > #sticky {
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--ubv-radius-card);
+    box-shadow: var(--el-card);
+}
+body.off #sticky,
+body.off #main,
+body.off #firewall { border-color: var(--md-sys-color-outline-variant); }
+
+/* Header row: [more save revert] [power] [reload less]. The clusters take
+   their content width; the power control fills what is left. */
+.ubv-sticky {
+    align-items: center;
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    margin: 0;
+}
+.ubv-cluster {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    min-width: var(--ubv-control);
+}
+.ubv-cluster-end { justify-content: flex-end; }
+
+/* Power control: an M3E ToggleButton (variant tonal). Its inline colours
+   are var(--md-sys-color-secondary*) references, remapped here per state:
+   selected (on) = primary-container with an iris glyph, unselected (off) =
+   neutral surface. Geometry comes from ui/shared/metrics.ts. */
+:root.ubv-m3 .ubv-power {
+    --md-sys-color-secondary: var(--md-sys-color-primary-container);
+    --md-sys-color-on-secondary: var(--md-sys-color-primary);
+    --md-sys-color-secondary-container: var(--md-sys-color-surface-container-high);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface-variant);
+    box-shadow: var(--el-2);
+    box-sizing: border-box;
+    gap: 10px;
+    justify-content: flex-start;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+}
+:root.ubv-m3 .ubv-power md-icon { --md-icon-size: var(--ubv-icon-lg); }
+:root.ubv-m3 .ubv-power.off { box-shadow: var(--el-1); }
+:root.ubv-m3 .ubv-power:not(:disabled):hover {
+    --md-sys-color-secondary: rgb(var(--primary-30));
+    --md-sys-color-secondary-container: var(--ubv-hover-surface);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface);
+}
+:root.ubv-m3 .ubv-power:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+:root.ubv-m3 .ubv-power:disabled { filter: none; margin: 0; }
+
+/* The site the switch acts on, as the control's own label: glyph, then the
+   hostname with the registrable domain carrying the emphasis. It truncates
+   rather than wraps, so the header keeps one fixed row height. */
+.ubv-power-icon { flex: 0 0 auto; }
+.ubv-power-site {
+    display: block;
+    flex: 1 1 auto;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    min-width: 0;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ubv-power-prefix { font-weight: 400; opacity: 0.65; }
+.ubv-power-domain { font-weight: 600; }
+
+/* Tool strip: five per-site switches, a hairline, then three navigation
+   tools — one centred band of equal squares instead of two grids whose
+   cells never lined up. The id selectors outrank upstream's #extraTools /
+   #basicTools grid rules. */
+.ubv-toolstrip {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+    justify-content: center;
+    padding: var(--ubv-gap);
+}
+#extraTools.ubv-ribbon,
+#basicTools.ubv-ribbon {
+    background: transparent;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    padding: 0;
+    width: auto;
+}
+/* A group only earns the separator when something precedes it. */
+#basicTools.ubv-ribbon:not(:first-child) {
+    border-inline-start: 1px solid var(--md-sys-color-outline-variant);
+    padding-inline-start: var(--ubv-gap);
+}
+/* Upstream collapses a hidden section with height:0, which still reserves
+   a flex track (and a separator) here; take it out of flow instead. */
+body:not([data-more*="d"]) #extraTools.ubv-ribbon,
+body:not([data-more*="c"]) #basicTools.ubv-ribbon { display: none; }
+body:not([data-more*="c"]):not([data-more*="d"]) .ubv-toolstrip { display: none; }
+:root.mobile .ubv-tool-logger,
+:root body[data-ui~="-logger"] .ubv-tool-logger { display: none; }
+
+/* Unprocessed-request warning */
+.ubv-warning {
+    align-items: center;
+    background: var(--md-sys-color-error-container);
+    border-radius: var(--ubv-radius-control);
+    color: var(--md-sys-color-on-error-container);
+    display: none;
+    font-size: 12.5px;
+    gap: 8px;
+    margin: 0 var(--ubv-gap) var(--ubv-gap);
+    padding: 8px 6px 8px 12px;
+}
+:root.warn .ubv-warning { display: flex; }
+.ubv-warning > span { flex: 1 1 auto; }
+.ubv-warning-icon { --md-icon-size: var(--ubv-icon); color: var(--md-sys-color-error); flex-shrink: 0; }
+
+.ubv-version {
+    color: var(--md-sys-color-on-surface-variant);
+    display: flex;
+    font-size: 11.5px;
+    gap: 4px;
+    justify-content: center;
+    padding: 6px 0 10px;
+}
+
+/* Firewall row filters: an icon button opens an M3E multi-select menu; the
+   filter state reads back as one sentence beside the button. The menu is
+   absolutely positioned so opening it never moves the header. */
+#firewall > section.ubv-filter-section {
+    align-items: flex-start;
+    gap: 0;
+    left: var(--ubv-gap);
+    padding: 0;
+    right: var(--ubv-gap);
+    top: var(--ubv-gap);
+}
+.ubv-filter {
+    align-items: center;
+    display: flex;
+    gap: var(--ubv-gap);
+    min-width: 0;
+    position: relative;
+    width: 100%;
+}
+.ubv-filter-sentence {
+    color: var(--md-sys-color-on-surface-variant);
+    flex: 1 1 auto;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    min-width: 0;
+    padding-inline-end: var(--ubv-gap);
+    text-align: start;
+}
+.ubv-filter-button[aria-expanded="true"],
+#firewall.showBlocked .ubv-filter-button,
+#firewall.showAllowed .ubv-filter-button,
+#firewall.hideBlocked .ubv-filter-button,
+#firewall.hideAllowed .ubv-filter-button,
+#firewall.show3pScript .ubv-filter-button,
+#firewall.show3pFrame .ubv-filter-button,
+#firewall.hide3pScript .ubv-filter-button,
+#firewall.hide3pFrame .ubv-filter-button { --md-icon-button-icon-color: var(--md-sys-color-primary); }
+:root.ubv-m3 .ubv-filter-menu {
+    --mer-menu-bg: var(--md-sys-color-surface-container-high);
+    --mer-menu-fg: var(--md-sys-color-on-surface);
+    --mer-menu-muted: var(--md-sys-color-on-surface-variant);
+    --mer-menu-item-hover: var(--md-sys-color-surface-container-highest);
+    --mer-menu-item-selected-bg: var(--md-sys-color-primary-container);
+    --mer-menu-item-selected-fg: var(--md-sys-color-on-primary-container);
+    --mer-menu-radius: var(--ubv-radius-control);
+    --mer-menu-item-radius: var(--ubv-radius-chip);
+    --mer-menu-item-height: 36px;
+    --mer-menu-item-padding-inline: 12px;
+    --mer-menu-item-inner-gap: 8px;
+    --mer-menu-item-gap: 2px;
+    --mer-menu-group-gap: 6px;
+    --mer-menu-item-label-size: 12.5px;
+    --mer-menu-item-label-line-height: 16px;
+    --mer-menu-item-trailing-icon-size: 18px;
+    --mer-menu-shadow: var(--el-3);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    font-family: var(--md-ref-typeface-plain);
+    max-height: calc(100vh - 16px);
+    min-width: 240px;
+    padding: 6px;
+    position: fixed;
+    width: max-content;
+    z-index: 2147483000;
+}
+:root.ubv-m3 .ubv-filter-menu .mer-menu-item { transition: var(--ubv-hover-transition); }
+:root.ubv-m3 .ubv-filter-menu .mer-menu-item__iconPlaceholder { display: none; }
+:root.ubv-m3 .ubv-filter-menu .mer-menu-item md-icon { --md-icon-size: 18px; }
+.ubv-filter-group {
+    color: var(--md-sys-color-on-surface-variant);
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 6px 12px 2px;
+    text-transform: uppercase;
+}
+
+/* Firewall: the second card. */
+#firewall {
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--ubv-radius-card);
+    box-shadow: var(--el-card);
+    margin: 0;
+}
+
+/* Firewall matrix (M3) -------------------------------------------------------
+   Every control in the matrix is a Material component: a cell is a
+   ToggleButton (variant tonal, shape square), the hover hotspots are an
+   OutlinedSegmentedButtonSet and the row expanders are IconButtons. The label
+   and the cell slots are plain <div>s, so none of the upstream
+   `#firewall > div > span...` rules match any more and the row layout is the
+   grid below. What still comes from popup-fenix.css is row-level only: the
+   filter classes that collapse a row (showBlocked / hideAllowed /
+   show3pScript / ...) and the expanded / isSubdomain display rules.
+
+   Cell colours are the library's own inline var(--md-sys-color-secondary*)
+   references, remapped per rule class on the host — the same trick
+   ui/shared/controls.css uses for the ribbon tiles:
+       no rule     surface-container-high
+       allow       the palette's green at 24% over the card surface
+       block       the same mix of the palette's red (= error-container)
+       no filter   surface-container-highest
+       own rule    the full-strength colour plus --ubv-selected-outline
+   The three hues come from the upstream --popup-cell-*-own-surface-rgb slots
+   so :root.colorBlind keeps swapping them. */
+
+:root.ubv-m3 #firewall {
+    --ubv-fw-row: 32px;                 /* dense row: taller than the 28px expander */
+    --ubv-fw-cell: 84px;                /* wide enough to hold the hotspots */
+    --ubv-fw-allow: color-mix(in srgb, rgb(var(--popup-cell-allow-own-surface-rgb)) 24%, var(--md-sys-color-surface-container));
+    --ubv-fw-allow-hi: color-mix(in srgb, rgb(var(--popup-cell-allow-own-surface-rgb)) 38%, var(--md-sys-color-surface-container));
+    --ubv-fw-allow-own: rgb(var(--popup-cell-allow-own-surface-rgb));
+    --ubv-fw-allow-own-hi: color-mix(in srgb, rgb(var(--popup-cell-allow-own-surface-rgb)) 86%, var(--md-sys-color-on-surface));
+    --ubv-fw-block: color-mix(in srgb, rgb(var(--popup-cell-block-own-surface-rgb)) 24%, var(--md-sys-color-surface-container));
+    --ubv-fw-block-hi: color-mix(in srgb, rgb(var(--popup-cell-block-own-surface-rgb)) 38%, var(--md-sys-color-surface-container));
+    --ubv-fw-block-own: rgb(var(--popup-cell-block-own-surface-rgb));
+    --ubv-fw-block-own-hi: color-mix(in srgb, rgb(var(--popup-cell-block-own-surface-rgb)) 86%, var(--md-sys-color-on-surface));
+    --ubv-fw-noop: var(--md-sys-color-surface-container-highest);
+    --ubv-fw-noop-hi: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 70%, var(--md-sys-color-on-surface));
+    --ubv-fw-noop-own: rgb(var(--popup-cell-noop-own-surface-rgb));
+    --ubv-fw-noop-own-hi: color-mix(in srgb, rgb(var(--popup-cell-noop-own-surface-rgb)) 86%, var(--md-sys-color-on-surface));
+}
+
+/* Rows: label column plus one cell column, two in advanced-user mode. The
+   second selector re-asserts the grid over popup-fenix.css's `display: flex`
+   for the built-in type rows. */
+:root.ubv-m3 #firewall > div {
+    align-items: center;
+    border: 0;
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(0, 1fr) var(--ubv-fw-cell);
+    margin: 0 var(--ubv-gap) 4px;
+    padding: 0;
+}
+:root.ubv-m3 body.advancedUser #firewall > div,
+:root.ubv-m3 body.advancedUser #firewall > div:first-of-type ~ div[data-des="*"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--ubv-fw-cell) var(--ubv-fw-cell);
+}
+:root.ubv-m3 #firewall > div:last-of-type { margin-bottom: var(--ubv-gap); }
+
+/* Label: expander slot, then plain text. */
+:root.ubv-m3 #firewall > div > .ubv-fw-label {
+    align-items: center;
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid transparent;
+    border-radius: var(--ubv-radius-chip);
+    box-shadow: var(--el-1);
+    box-sizing: border-box;
+    color: var(--md-sys-color-on-surface);
+    display: flex;
+    gap: 2px;
+    min-height: var(--ubv-fw-row);
+    min-width: 0;
+    overflow: hidden;
+    /* No vertical padding: the lead slot is one --ubv-control-sm tall, so a
+       one-line row is exactly --ubv-fw-row and a wrapped one grows. */
+    padding: 0 6px 0 12px;
+    position: relative;
+    transition: var(--ubv-hover-transition);
+}
+:root.ubv-m3 #firewall > div[data-des="*"] > .ubv-fw-label,
+:root.ubv-m3 #firewall > div.isRootContext > .ubv-fw-label {
+    background: var(--md-sys-color-surface-container-highest);
+    border-color: var(--md-sys-color-outline-variant);
+}
+:root.ubv-m3 #firewall > div.isDomain > .ubv-fw-label { font-weight: 600; }
+:root.ubv-m3 #firewall > div.isSubdomain > .ubv-fw-label { padding-left: 22px; }
+:root.ubv-m3 #firewall > div.isCname > .ubv-fw-label { color: var(--popup-cell-cname-ink); }
+:root.ubv-m3 #firewall > div:hover > .ubv-fw-label { background: var(--ubv-hover-surface); }
+
+:root.ubv-m3 #firewall .ubv-fw-lead {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: var(--ubv-control-sm);
+    justify-content: center;
+    width: var(--ubv-control-sm);
+}
+/* The row hover paints the label with --ubv-hover-surface, so the expander
+   needs one more step up to stay legible as a control of its own. */
+:root.ubv-m3 #firewall .ubv-fw-expander:not([disabled]):hover {
+    background: color-mix(in srgb, var(--ubv-hover-surface) 80%, var(--md-sys-color-on-surface));
+}
+:root.ubv-m3 #firewall .ubv-fw-text {
+    font-size: 12.5px;
+    line-height: 1.25;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding-block: 4px;
+    text-align: start;
+}
+:root.ubv-m3 #firewall .ubv-fw-text > sub {
+    bottom: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    display: block;
+    font-size: 85%;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+/* The coloured bar at the left edge of a row: the same signal (and the same
+   palette slots) popup-fenix.css drew on the label span, redrawn here because
+   the label is no longer a span. Totals only count while the row is collapsed. */
+:root.ubv-m3 #firewall > div > .ubv-fw-label::before {
+    background: var(--ubv-fw-bar, transparent);
+    content: '';
+    filter: var(--popup-cell-label-filter);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: var(--ubv-fw-bar-width, 7px);
+}
+:root.ubv-m3 #firewall > div.allowed,
+:root.ubv-m3 #firewall:not(.expanded) > div.isDomain.totalAllowed:not(.expandException),
+:root.ubv-m3 #firewall.expanded > div.isDomain.totalAllowed.expandException {
+    --ubv-fw-bar: var(--popup-cell-allow-own-surface);
+}
+:root.ubv-m3 #firewall > div.blocked,
+:root.ubv-m3 #firewall:not(.expanded) > div.isDomain.totalBlocked:not(.expandException),
+:root.ubv-m3 #firewall.expanded > div.isDomain.totalBlocked.expandException {
+    --ubv-fw-bar: var(--popup-cell-block-own-surface);
+}
+:root.ubv-m3 #firewall > div.allowed.blocked,
+:root.ubv-m3 #firewall:not(.expanded) > div.isDomain.totalAllowed.totalBlocked:not(.expandException),
+:root.ubv-m3 #firewall.expanded > div.isDomain.totalAllowed.totalBlocked.expandException {
+    --ubv-fw-bar: var(--popup-cell-label-mixed-surface);
+}
+:root.ubv-m3 #firewall > div.isRootContext {
+    --ubv-fw-bar: var(--md-sys-color-outline);
+    --ubv-fw-bar-width: 14px;
+}
+
+/* Cell slot: the grid cell the ToggleButton fills and the hotspots float over. */
+:root.ubv-m3 #firewall .ubv-fw-slot {
+    min-width: 0;
+    position: relative;
+}
+
+/* Cell: a tonal ToggleButton. `selected` means "this cell owns the rule", so
+   the library's selected colours are the full-strength ones. */
+:root.ubv-m3 #firewall .ubv-fw-cell {
+    --ubv-fw-rest: var(--md-sys-color-surface-container-high);
+    --ubv-fw-hover: var(--ubv-hover-surface);
+    --ubv-fw-ink: var(--md-sys-color-on-surface-variant);
+    --md-sys-color-secondary: var(--ubv-fw-rest);
+    --md-sys-color-secondary-container: var(--ubv-fw-rest);
+    --md-sys-color-on-secondary: var(--ubv-fw-ink);
+    --md-sys-color-on-secondary-container: var(--ubv-fw-ink);
+    box-shadow: var(--el-1);
+    box-sizing: border-box;
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+    min-height: 0;
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.allowRule {
+    --ubv-fw-rest: var(--ubv-fw-allow);
+    --ubv-fw-hover: var(--ubv-fw-allow-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-surface);
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.blockRule {
+    --ubv-fw-rest: var(--ubv-fw-block);
+    --ubv-fw-hover: var(--ubv-fw-block-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-surface);
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.noopRule {
+    --ubv-fw-rest: var(--ubv-fw-noop);
+    --ubv-fw-hover: var(--ubv-fw-noop-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-surface);
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.allowRule.ownRule {
+    --ubv-fw-rest: var(--ubv-fw-allow-own);
+    --ubv-fw-hover: var(--ubv-fw-allow-own-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-primary);
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.blockRule.ownRule {
+    --ubv-fw-rest: var(--ubv-fw-block-own);
+    --ubv-fw-hover: var(--ubv-fw-block-own-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-primary);
+}
+:root.ubv-m3 #firewall .ubv-fw-cell.noopRule.ownRule {
+    --ubv-fw-rest: var(--ubv-fw-noop-own);
+    --ubv-fw-hover: var(--ubv-fw-noop-own-hi);
+    --ubv-fw-ink: var(--md-sys-color-on-primary);
+}
+/* One hover for every state: the rest colour steps up to its hover colour. */
+:root.ubv-m3 #firewall .ubv-fw-cell:not(:disabled):hover { --ubv-fw-rest: var(--ubv-fw-hover); }
+:root.ubv-m3 #firewall .ubv-fw-cell:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+:root.ubv-m3 #firewall .ubv-fw-cell.ownRule { box-shadow: var(--el-2); }
+
+/* Count marks, as upstream: + / ++ / +++ allowed on the left, − / −− / −−−
+   blocked on the right (the cell is justified space-between). */
+:root.ubv-m3 #firewall .ubv-fw-cell[data-acount]::before { content: ''; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-bcount]::after { content: ''; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-acount="1"]::before { content: '+'; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-acount="2"]::before { content: '++'; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-acount="3"]::before { content: '+++'; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-bcount="1"]::after { content: '\2212'; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-bcount="2"]::after { content: '\2212\2212'; }
+:root.ubv-m3 #firewall .ubv-fw-cell[data-bcount="3"]::after { content: '\2212\2212\2212'; }
+:root.ubv-m3 #firewall .ubv-fw-slot.hotspot .ubv-fw-cell::before,
+:root.ubv-m3 #firewall .ubv-fw-slot.hotspot .ubv-fw-cell::after { content: ''; }
+
+/* Hotspots: an OutlinedSegmentedButtonSet over the hovered cell. The set
+   writes each segment's height, min-width and padding inline from its `size`,
+   and takes no per-segment style, so shrinking them to cell size needs
+   !important. Segments are always [allow] noop block, allow only in god mode,
+   so they are addressed from the end. */
+:root.ubv-m3 #firewall .ubv-fw-actions > button {
+    flex: 1 1 0 !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    padding-inline: 0 !important;
+    transition: var(--ubv-hover-transition);
+}
+:root.ubv-m3 #firewall .ubv-fw-actions md-icon { --md-icon-size: 16px; }
+:root.ubv-m3 #firewall .ubv-fw-actions > button:last-of-type:hover {
+    background: var(--ubv-fw-block-own) !important;
+    color: var(--md-sys-color-on-primary) !important;
+}
+:root.ubv-m3 #firewall .ubv-fw-actions > button:nth-last-of-type(2):hover {
+    background: var(--ubv-fw-noop-own) !important;
+    color: var(--md-sys-color-on-primary) !important;
+}
+:root.ubv-m3 #firewall .ubv-fw-actions > button:first-of-type:nth-last-of-type(3):hover {
+    background: var(--ubv-fw-allow-own) !important;
+    color: var(--md-sys-color-on-primary) !important;
+}
+:root.ubv-m3 #firewall .ubv-fw-actions > button:focus-visible {
+    box-shadow: var(--focus-ring);
+    outline: none;
+}

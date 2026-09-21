@@ -71,21 +71,16 @@ body {
  * uBlockForge premium code viewer polish
  */
 body {
-    background:
-        radial-gradient(circle at top left, rgb(var(--primary-70) / 0.14), transparent 22rem),
-        var(--surface-2);
+    background: var(--surface-1);
     box-sizing: border-box;
     padding: 1.1rem;
 }
 
 #header {
-    backdrop-filter: blur(18px);
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.08), transparent 58%),
-        rgb(var(--surface-0-rgb) / 86%);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     margin: 0 auto 1rem;
     max-width: var(--default-page-max-width);
     padding: 0.95rem;
@@ -103,12 +98,10 @@ body {
 #currentURL > .fa-icon,
 #currentURL > button.fa-icon {
     align-items: center;
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.12), transparent 50%),
-        rgb(var(--surface-0-rgb) / 76%);
-    border: 1px solid var(--border-2);
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
     border-radius: 999px;
-    box-shadow: none;
+    box-shadow: var(--el-1);
     color: var(--ink-2);
         fill: var(--ink-2);
     cursor: pointer;
@@ -119,23 +112,22 @@ body {
     min-height: 2.75rem;
     min-width: 2.75rem;
     padding: 0;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
 }
 
 #currentURL > .fa-icon:hover,
 #currentURL > button.fa-icon:hover {
-    background-color: rgb(var(--surface-0-rgb) / 92%);
+    background-color: var(--surface-3);
+    box-shadow: var(--el-2);
     color: var(--ink-1);
         fill: var(--ink-1);
 }
 
 #pastURLs {
-    backdrop-filter: blur(12px);
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 60%),
-        rgb(var(--surface-0-rgb) / 92%);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-3);
     margin-top: 0.7rem;
     max-height: min(18rem, 50vh);
     overflow-y: auto;
@@ -143,7 +135,7 @@ body {
 }
 
 #pastURLs > span {
-    border-bottom: 1px solid rgb(255 255 255 / 0.04);
+    border-bottom: 1px solid var(--border-1);
     padding: 0.7rem 0.8rem;
     transition:
         background-color var(--transition-fast),
@@ -156,17 +148,15 @@ body {
 }
 
 #pastURLs > span.selected {
-    background-color: rgb(var(--primary-70) / 0.14);
-    color: var(--ink-1);
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
 }
 
 #content {
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 45%),
-        var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-card);
     margin: 0 auto;
     max-width: var(--default-page-max-width);
     overflow: hidden;

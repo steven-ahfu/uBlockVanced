@@ -1,10 +1,8 @@
-
-
 <p align="center">
   <img src="src/img/icon_128.png" alt="uBlockVanced" width="80">
 </p>
 
-<h1 align="center">uBlockVanced v0.3.1</h1>
+<h1 align="center">uBlockVanced</h1>
 
 <p align="center">
   Enhanced fork of <a href="https://github.com/gorhill/uBlock">uBlock Origin</a> (Manifest V2) with deep element inspection, procedural cosmetic filters, and Catppuccin Mocha dark theme.
@@ -12,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Manifest-V2-blue" alt="MV2">
-  <img src="https://img.shields.io/badge/Version-0.3.1-89b4fa" alt="Version 0.3.1">
+  <img src="https://img.shields.io/badge/Version-0.4.5-89b4fa" alt="Version 0.4.5">
   <img src="https://img.shields.io/badge/Theme-Catppuccin%20Mocha-cba6f7" alt="Catppuccin Mocha">
   <img src="https://img.shields.io/badge/License-GPLv3-green" alt="GPLv3">
 </p>
@@ -102,11 +100,32 @@ Right-click any element and select **Inspect with Element Probe** to set it as t
 
 ## Building
 
+Requires Node 22+, Python 3, `zip`, and `openssl`. Filter lists are pulled from uAssets on first build.
+
 ```bash
-make chromium   # Build for Chrome/Edge
-make firefox    # Build for Firefox
-make opera      # Build for Opera
+make packages   # Everything below, versioned from dist/version, into dist/build/
+make chromium   # dist/build/uBlock0.chromium/ (Chrome, Edge, Brave, Vivaldi)
+make crx        # Signed CRX3 of the Chromium build (key: uBlockVanced.pem, created on first run)
+make firefox    # dist/build/uBlockVanced.firefox.xpi (desktop + Android, unsigned)
+make opera      # dist/build/uBlock0.opera/
+make thunderbird
 ```
+
+`make packages` produces:
+
+| File | Browser | Install |
+|---|---|---|
+| `uBlockVanced-<v>.chromium.zip` | Chrome, Edge, Brave, Vivaldi | Extract, `chrome://extensions` → Developer mode → Load unpacked |
+| `uBlockVanced-<v>.chromium.crx` | Same | Drag onto `chrome://extensions`, or enterprise policy. Keep `uBlockVanced.pem` so the extension ID stays stable |
+| `uBlockVanced-<v>.firefox.xpi` | Firefox, Firefox Android | `about:debugging` → Load Temporary Add-on. For a permanent install use Developer Edition/Nightly/ESR with `xpinstall.signatures.required=false`, or sign via AMO |
+| `uBlockVanced-<v>.opera.zip` | Opera | Extract, `opera://extensions` → Developer mode → Load unpacked |
+| `uBlockVanced-<v>.thunderbird.xpi` | Thunderbird | Add-ons Manager → Install Add-on From File |
+
+Safari is not supported (no MV2 WebExtensions).
+
+### Releases
+
+Every push to `main` runs lint and tests. When `dist/version` changes to a version with no tag yet, `.github/workflows/release.yml` builds all of the above, tags the commit, and publishes a GitHub release with the files attached and the top `CHANGELOG.md` section as notes. Four-part versions (`0.3.2.1`) are marked pre-release. Set the `CRX_PRIVATE_KEY` repo secret to the contents of your `uBlockVanced.pem` for a stable CRX extension ID.
 
 ## License
 

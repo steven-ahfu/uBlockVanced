@@ -96,10 +96,10 @@ body {
 }
 
 #diff {
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
-    border-radius: var(--radius-medium);
-    box-shadow: var(--panel-shadow);
+    border-radius: var(--radius-large);
+    box-shadow: var(--el-2);
     overflow: hidden;
     padding: 0.62rem 0.68rem;
 }
@@ -139,11 +139,10 @@ body {
 }
 
 #ruleFilter {
-    backdrop-filter: blur(18px);
-    background: rgb(var(--surface-0-rgb) / 88%);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     gap: 0.55rem;
     justify-content: space-between;
     margin: 0.55rem auto 0;
@@ -183,10 +182,10 @@ body {
 
 #ruleFilter #diffCollapse {
     align-items: center;
-    background: var(--field-surface);
-    border: 1px solid var(--border-2);
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
     border-radius: 999px;
-    box-shadow: none;
+    box-shadow: var(--el-1);
     color: var(--ink-2);
         fill: var(--ink-2);
     display: inline-flex;
@@ -198,6 +197,8 @@ body {
 }
 
 #ruleFilter #diffCollapse:hover {
+    background: var(--surface-3);
+    box-shadow: var(--el-2);
     color: var(--ink-1);
         fill: var(--ink-1);
 }
@@ -218,19 +219,17 @@ body {
 
 .CodeMirror-merge {
     border: 1px solid var(--border-1);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     overflow: hidden;
 }
 
 .CodeMirror-merge-gap {
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 60%),
-        rgb(var(--surface-0-rgb) / 72%);
+    background: var(--surface-1);
 }
 
 body.editing .CodeMirror-merge-editor .CodeMirror,
 .codeMirrorContainer .CodeMirror {
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
 }
 
 @media (max-width: 900px) {

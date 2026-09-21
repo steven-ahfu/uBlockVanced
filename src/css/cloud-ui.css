@@ -107,13 +107,10 @@
  * uBlockForge premium cloud sync polish
  */
 #cloudWidget {
-    backdrop-filter: blur(16px);
-    background:
-        linear-gradient(145deg, rgb(255 255 255 / 0.08), transparent 55%),
-        var(--surface-raised);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     margin: 1rem 0 1.25rem;
     overflow: hidden;
 }
@@ -188,13 +185,10 @@
 
 #cloudWidget #cloudOptions {
     align-items: stretch;
-    backdrop-filter: blur(18px);
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.07), transparent 60%),
-        rgb(var(--surface-0-rgb) / 92%);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: calc(var(--radius-large) - 4px);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-3);
     flex-direction: column;
     gap: 0.85rem;
     inset: 0.5rem;
@@ -219,8 +213,8 @@
 }
 
 #cloudCapacity {
-    background-color: rgb(var(--surface-0-rgb) / 68%);
-    border-top: 1px solid rgb(255 255 255 / 0.04);
+    background-color: var(--surface-1);
+    border-top: 1px solid var(--border-1);
     height: 6px;
 }
 

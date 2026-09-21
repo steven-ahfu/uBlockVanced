@@ -211,3 +211,13 @@ input[type="number"] {
         justify-content: flex-start;
     }
 }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (dashboard panes)
+ */
+.fa-icon.info { background: transparent; border-color: transparent; }
+.fa-icon.info:hover, .fa-icon.info:focus-visible { background: var(--surface-2); border-color: transparent; transform: none; }
+.editorEyebrow { color: rgb(var(--primary-70)); font-size: 12px; font-weight: 600; letter-spacing: 0.16em; opacity: 1; }
+.editorTitle { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.6rem); font-weight: 600; letter-spacing: -0.022em; }
+.statusPill { background: var(--surface-2); border-color: transparent; padding: 0.5rem 1rem; }
+.statusPill.is-accent, .statusPill.is-success { background: var(--primary-container); border-color: transparent; color: var(--on-primary-container); }

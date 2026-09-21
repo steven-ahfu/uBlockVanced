@@ -1,5 +1,11 @@
 @charset "UTF-8";
 /* https://protocol.mozilla.org/assets/docs/css/protocol.css */
+@font-face { font-family: Geist; font-style: normal; font-weight: 400; src: url('fonts/Geist/Geist-Regular.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: normal; font-weight: 500; src: url('fonts/Geist/Geist-Medium.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: normal; font-weight: 600; src: url('fonts/Geist/Geist-SemiBold.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: normal; font-weight: 700; src: url('fonts/Geist/Geist-Bold.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: normal; font-weight: 800; src: url('fonts/Geist/Geist-ExtraBold.ttf') format('truetype'); }
+@font-face { font-family: Geist; font-style: italic; font-weight: 400; src: url('fonts/Geist/Geist-Italic.ttf') format('truetype'); }
 @font-face {
     font-family: Inter;
     font-style: normal;
@@ -432,8 +438,7 @@ html {
 }
 
 html:not(#uBO-popup-panel) body {
-    background-image: var(--page-accent-glow);
-    background-attachment: fixed;
+    background-image: none;
 }
 
 html:not(#uBO-popup-panel) hr {
@@ -479,13 +484,46 @@ textarea:focus-visible {
     outline: none;
 }
 
+/* uBlockVanced: pointer cursor on interactive controls */
+button:not(:disabled):not(.disabled),
+[role="button"],
+[role="tab"]:not([aria-selected="true"]),
+select:not(:disabled),
+summary,
+a[href],
+label:has(> .checkbox:not([disabled])),
+label:has(> .radio:not([disabled])),
+label:has(> .input.checkbox:not([disabled])),
+label:has(> .input.radio:not([disabled])),
+label:has(> input[type="checkbox"]:not(:disabled)),
+label:has(> input[type="radio"]:not(:disabled)),
+label[for],
+.checkbox:not([disabled]),
+.radio:not([disabled]),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="range"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="color"]:not(:disabled) {
+    cursor: pointer;
+}
+
+button:disabled,
+button.disabled,
+select:disabled,
+.checkbox[disabled],
+.radio[disabled],
+label:has(> .checkbox[disabled]),
+label:has(> .radio[disabled]),
+[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
 html:not(#uBO-popup-panel) button {
     border: 1px solid transparent;
-    background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.22), transparent 42%),
-        var(--button-surface);
+    background: var(--button-surface);
     border-radius: var(--radius-small);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-1);
     gap: 0.42rem;
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -494,8 +532,8 @@ html:not(#uBO-popup-panel) button {
 }
 
 html:not(#uBO-popup-panel) button:not(.disabled):not([disabled]):hover {
-    border-color: rgb(var(--primary-70) / 0.18);
-    box-shadow: var(--panel-shadow-strong);
+    border-color: var(--border-2);
+    box-shadow: var(--el-2);
     transform: translateY(-1px);
 }
 
@@ -505,9 +543,8 @@ html:not(#uBO-popup-panel) button:not(.disabled):not([disabled]):active {
 }
 
 html:not(#uBO-popup-panel) button.preferred:not(.disabled):not([disabled]) {
-    box-shadow:
-        0 1px 0 rgb(255 255 255 / 0.08),
-        0 18px 44px rgb(var(--primary-50) / 0.22);
+    border-radius: var(--radius-selected);
+    box-shadow: var(--el-2);
 }
 
 html:not(#uBO-popup-panel) button.disabled,
@@ -558,7 +595,8 @@ html:not(#uBO-popup-panel) textarea:focus-visible {
 
 html:not(#uBO-popup-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="color"])::placeholder,
 html:not(#uBO-popup-panel) textarea::placeholder {
-    color: var(--field-placeholder);
+    color: var(--ink-3);
+    opacity: 1;
 }
 
 html:not(#uBO-popup-panel) select {
@@ -579,7 +617,12 @@ html:not(#uBO-popup-panel) textarea {
 }
 
 html:not(#uBO-popup-panel) .searchfield input {
-    padding-inline-start: 1.7rem;
+    padding-inline-start: 2.6rem;
+}
+html:not(#uBO-popup-panel) .searchfield .fa-icon {
+    inset-inline-start: 0.9rem;
+    left: auto;
+    pointer-events: none;
 }
 
 html:not(#uBO-popup-panel) label {
@@ -594,6 +637,10 @@ html:not(#uBO-popup-panel) .li > .reportField {
 
 .checkbox > input[type="checkbox"] + svg {
     border-radius: 6px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), border-radius var(--transition-fast);
+}
+.checkbox > input[type="checkbox"]:checked + svg {
+    border-radius: 7px;
 }
 
 .checkbox > input[type="checkbox"]:focus-visible + svg,
@@ -601,6 +648,7 @@ html:not(#uBO-popup-panel) .li > .reportField {
     box-shadow: var(--focus-ring);
 }
 
+.checkbox { border-radius: calc(var(--radius-small) - 2px); }
 label:hover .checkbox:not([disabled]) {
     background-color: rgb(var(--primary-70) / 10%);
     border-radius: calc(var(--radius-small) - 2px);
@@ -617,8 +665,6 @@ section.notice {
 }
 
 html:not(#uBO-popup-panel) .fieldset {
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
     background: var(--surface-raised);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
@@ -629,15 +675,6 @@ html:not(#uBO-popup-panel) .fieldset {
     overflow: hidden;
     padding: clamp(12px, 1.4vw, 18px);
     position: relative;
-}
-
-html:not(#uBO-popup-panel) .fieldset::before {
-    background: linear-gradient(90deg, rgb(var(--primary-70) / 0.32), transparent 65%);
-    content: '';
-    height: 1px;
-    inset: 0 0 auto;
-    opacity: 0.8;
-    position: absolute;
 }
 
 html:not(#uBO-popup-panel) .fieldset-header {
@@ -710,4 +747,63 @@ html:not(#uBO-popup-panel) .li.synopsis {
     .badge {
         border: 1px solid CanvasText;
     }
+}
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (common)
+ */
+html:not(#uBO-popup-panel) button {
+    transition:
+        color var(--transition-fast),
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-radius var(--transition-normal);
+}
+html:not(#uBO-popup-panel) button:not(.disabled):not([disabled]):hover {
+    background: var(--surface-2);
+}
+html:not(#uBO-popup-panel) button.preferred:not(.disabled):not([disabled]):hover {
+    background: var(--button-preferred-surface);
+    filter: brightness(1.06);
+}
+html:not(#uBO-popup-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+html:not(#uBO-popup-panel) select,
+html:not(#uBO-popup-panel) textarea {
+    background-color: var(--surface-1);
+    border-color: var(--border-1);
+    border-radius: var(--radius-small);
+    box-shadow: none;
+}
+html:not(#uBO-popup-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):hover,
+html:not(#uBO-popup-panel) select:hover,
+html:not(#uBO-popup-panel) textarea:hover {
+    background-color: var(--surface-1);
+    border-color: var(--border-2);
+    box-shadow: none;
+}
+html:not(#uBO-popup-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):focus-visible,
+html:not(#uBO-popup-panel) select:focus-visible,
+html:not(#uBO-popup-panel) textarea:focus-visible {
+    background-color: var(--surface-1);
+    border-color: rgb(var(--primary-70));
+}
+html:not(#uBO-popup-panel) .fieldset-header {
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+}
+section.notice {
+    border-radius: var(--radius-medium);
+    box-shadow: var(--el-2);
+}
+.wikilink.fa-icon {
+    background: transparent;
+    border-color: transparent;
+}
+.wikilink.fa-icon:hover {
+    background: var(--surface-2);
+    transform: none;
 }

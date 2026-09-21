@@ -121,9 +121,10 @@ body.redacted #unredactButton {
 }
 
 .body > .supportSection {
-    background: var(--surface-raised);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
-    border-radius: var(--radius-medium);
+    border-radius: var(--radius-large);
+    box-shadow: var(--el-2);
     margin: 0;
     padding: 0.85rem 0.95rem;
 }
@@ -156,7 +157,7 @@ body.redacted #unredactButton {
 }
 
 .supportSection.e > .supportEntry {
-    background: var(--field-surface);
+    background: var(--surface-1);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-medium);
     padding: 0.62rem 0.72rem;

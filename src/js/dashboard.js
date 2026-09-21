@@ -90,6 +90,11 @@ function loadDashboardPanel(pane, first) {
         tabButton.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         const iframe = qs$('#iframe');
         iframe.title = tabButton.textContent.trim() || 'Dashboard content';
+        // uBlockVanced: fade the pane out, swap, fade back in once loaded.
+        dom.cl.add(iframe, 'paneLoading');
+        iframe.addEventListener('load', ( ) => {
+            dom.cl.remove(iframe, 'paneLoading');
+        }, { once: true });
         iframe.contentWindow.location.replace(pane);
         if ( pane !== 'no-dashboard.html' ) {
             vAPI.localStorage.setItem('dashboardLastVisitedPane', pane);

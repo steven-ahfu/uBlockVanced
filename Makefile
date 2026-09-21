@@ -1,12 +1,16 @@
 # https://stackoverflow.com/a/6273809
 run_options := $(filter-out $@,$(MAKECMDGOALS))
 
-.PHONY: all clean cleanassets test lint chromium opera firefox npm dig \
+.PHONY: all clean cleanassets test lint chromium opera firefox thunderbird ui \
+	crx packages npm dig \
 	mv3-chromium mv3-firefox mv3-edge mv3-safari ubol-codemirror \
 	compare maxcost medcost mincost modifiers record wasm \
 	publish-chromium publish-edge publish-firefox \
 	publish-dev-chromium publish-dev-firefox \
 	upload-firefox upload-dev-firefox
+
+version := $(shell cat ./dist/version)
+crx_key ?= uBlockVanced.pem
 
 sources := ./dist/version $(shell find ./assets -type f) $(shell find ./src -type f)
 platform := $(wildcard platform/*/*)
@@ -23,23 +27,59 @@ mv3-safari-deps := $(wildcard platform/mv3/safari/*)
 
 all: chromium firefox npm
 
-dist/build/uBlock0.chromium: tools/make-chromium.sh $(sources) $(platform) $(assets)
+# uBlockVanced: bundle the React UI layer (ui/) into dist/ui before packaging.
+ui: node_modules
+	npm run build:ui
+
+
+dist/build/uBlock0.chromium: tools/make-chromium.sh $(sources) $(platform) $(assets) ui
 	tools/make-chromium.sh
 
 # Build the extension for Chromium.
 chromium: dist/build/uBlock0.chromium
 
-dist/build/uBlock0.opera: tools/make-opera.sh $(sources) $(platform) $(assets)
+dist/build/uBlock0.opera: tools/make-opera.sh $(sources) $(platform) $(assets) ui
 	tools/make-opera.sh
 
 # Build the extension for Opera.
 opera: dist/build/uBlock0.opera
 
-dist/build/uBlock0.firefox: tools/make-firefox.sh $(sources) $(platform) $(assets)
+dist/build/uBlock0.firefox: tools/make-firefox.sh $(sources) $(platform) $(assets) ui
 	tools/make-firefox.sh all
 
 # Build the extension for Firefox.
 firefox: dist/build/uBlock0.firefox
+
+dist/build/uBlock0.thunderbird: tools/make-thunderbird.sh $(sources) $(platform) $(assets) ui
+	tools/make-thunderbird.sh all
+
+# Build the extension for Thunderbird.
+thunderbird: dist/build/uBlock0.thunderbird
+
+# Sign the Chromium build as a CRX3 package. The RSA key at $(crx_key) is
+# created on first run; keep it (it is gitignored) so the extension ID is
+# stable across releases. Override with `make crx crx_key=path/to/key.pem`.
+dist/build/uBlockVanced-$(version).chromium.crx: dist/build/uBlock0.chromium
+	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
+		dist/build/uBlockVanced-$(version).chromium.crx $(crx_key)
+
+crx: dist/build/uBlockVanced-$(version).chromium.crx
+
+# Build every distributable package, versioned from dist/version:
+#   uBlockVanced-<v>.chromium.zip  Chrome / Edge / Brave / Vivaldi (load unpacked or drag-drop)
+#   uBlockVanced-<v>.chromium.crx  same, signed CRX3 for direct install / enterprise policy
+#   uBlockVanced-<v>.firefox.xpi   Firefox desktop + Android (unsigned; see README)
+#   uBlockVanced-<v>.opera.zip     Opera (no WASM, trimmed locales, per store rules)
+#   uBlockVanced-<v>.thunderbird.xpi
+packages: $(assets) ui
+	tools/make-chromium.sh $(version)
+	python3 tools/pack-crx3.py dist/build/uBlock0.chromium - \
+		dist/build/uBlockVanced-$(version).chromium.crx $(crx_key)
+	tools/make-firefox.sh $(version)
+	tools/make-opera.sh $(version)
+	tools/make-thunderbird.sh $(version)
+	@echo
+	@ls -1 dist/build/uBlockVanced-$(version).*
 
 dist/build/uBlock0.npm: tools/make-nodejs.sh $(sources) $(platform) $(assets)
 	tools/make-npm.sh

@@ -33,10 +33,10 @@ body {
 }
 
 #whitelist {
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     margin: 0 auto 12px;
     overflow: hidden;
     text-align: left;
@@ -44,12 +44,10 @@ body {
 
 .actionBar.whitelistActions {
     align-items: center;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem 0.6rem;

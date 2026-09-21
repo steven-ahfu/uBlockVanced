@@ -1,0 +1,21 @@
+/* M3 plain tooltips (shared/Tooltip.tsx): fixed layer, fade in/out. */
+.ubv-tooltip {
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transform: translateY(-2px);
+    transition: opacity 150ms var(--md-sys-motion-easing-standard), transform 150ms var(--md-sys-motion-easing-standard);
+    z-index: 1000;
+}
+.ubv-tooltip.show {
+    opacity: 1;
+    transform: none;
+}
+.ubv-tooltip .mer-plain-tooltip {
+    --mer-plain-tooltip-shape: var(--ubv-radius-chip);
+    max-width: min(320px, 92vw);
+    white-space: pre-line;
+}
+@media (prefers-reduced-motion: reduce) {
+    .ubv-tooltip { transition: none; transform: none; }
+}

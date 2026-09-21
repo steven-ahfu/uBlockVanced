@@ -390,6 +390,11 @@ const filterTypes = {
 //   Also take into account the `src` attribute for `img` elements -- and limit
 //   the value to the 1024 first characters.
 
+// uBlockVanced: ids that name one instance rather than one kind of thing.
+// Kept in step with GENERATED_ID_PATTERNS in
+// js/element-probe/procedural-suggest.js (see tests/procedural-suggest.test.js).
+const reGeneratedId = /^\d+$|^[A-Za-z_-]*\d{6,}$|^[0-9a-f]{8}-[0-9a-f]{4}-|^[0-9a-f]{16,}$|:/i;
+
 const cosmeticFilterFromElement = function(elem) {
     if ( elem === null ) { return 0; }
     if ( elem.nodeType !== 1 ) { return 0; }
@@ -402,7 +407,18 @@ const cosmeticFilterFromElement = function(elem) {
     let selector = '';
 
     // Id
-    let v = typeof elem.id === 'string' && CSS.escape(elem.id);
+    // uBlockVanced: an id normally makes the best cosmetic filter, but some
+    // identify one instance rather than one kind of thing -- a comment number,
+    // a row key, a uuid. Those match exactly one element, once, so the filter
+    // is dead as soon as the page moves on, and the escaped form is unreadable
+    // (Hacker News id "49758736" becomes ###\34 9758736). Skip them and let the
+    // class / attribute / tag fallbacks below produce something reusable.
+    //
+    // MIRRORS GENERATED_ID_PATTERNS in js/element-probe/procedural-suggest.js.
+    // This file is injected into page context as a classic script and cannot
+    // import that module; a test fails if the two lists drift apart.
+    let v = typeof elem.id === 'string' && elem.id !== '' && reGeneratedId.test(elem.id) === false
+        && CSS.escape(elem.id);
     if ( v ) {
         selector = '#' + v;
     }
@@ -903,6 +919,57 @@ const onOptimizeCandidates = function(details) {
 
 /******************************************************************************/
 
+// uBlockVanced: the facts the dialog's Probe tab needs to suggest procedural
+// filters. The dialog runs in its own frame with no access to this page, and
+// the suggester (js/element-probe/procedural-suggest.js) is deliberately
+// DOM-free, so everything it reasons about is gathered here and sent across.
+const classListOf = function(elem) {
+    const raw = elem instanceof Element ? elem.getAttribute('class') : null;
+    if ( typeof raw !== 'string' ) { return []; }
+    return raw.split(/\s+/).filter(s => s !== '');
+};
+
+// The element's own text, ignoring what its children contribute. A wrapper's
+// textContent is every label inside it, which makes a useless :has-text().
+const ownText = function(elem) {
+    let text = '';
+    for ( const node of elem.childNodes ) {
+        if ( node.nodeType === 3 ) { text += node.nodeValue; }
+    }
+    return text.trim().replace(/\s+/g, ' ');
+};
+
+const PROBE_TEXT_CAP = 200;
+const PROBE_ANCESTOR_DEPTH = 4;
+
+const probeFactsFromElement = function(elem) {
+    if ( elem instanceof Element === false ) { return null; }
+    const ancestors = [];
+    let node = elem.parentElement;
+    while (
+        node !== null &&
+        node !== document.body &&
+        node !== document.documentElement &&
+        ancestors.length < PROBE_ANCESTOR_DEPTH
+    ) {
+        ancestors.push({
+            tag: node.localName,
+            id: node.id || '',
+            classes: classListOf(node),
+        });
+        node = node.parentElement;
+    }
+    return {
+        tag: elem.localName,
+        id: elem.id || '',
+        classes: classListOf(elem),
+        text: ownText(elem).slice(0, PROBE_TEXT_CAP),
+        textContent: (elem.textContent || '').trim().replace(/\s+/g, ' ').slice(0, PROBE_TEXT_CAP),
+        path: self.location.pathname,
+        ancestors,
+    };
+};
+
 const showDialog = function(options) {
     pickerFramePort.postMessage({
         what: 'showDialog',
@@ -910,6 +977,7 @@ const showDialog = function(options) {
         netFilters: netFilterCandidates,
         cosmeticFilters: cosmeticFilterCandidates,
         filter: bestCandidateFilter,
+        probeFacts: probeFactsFromElement(targetElements[0] || null),
         options,
     });
 };

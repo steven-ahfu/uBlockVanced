@@ -32,14 +32,14 @@ python3 tools/make-firefox-meta.py $DES/
 if [ "$1" = all ]; then
     echo "*** uBlock0.thunderbird: Creating package..."
     pushd $DES > /dev/null
-    zip ../$(basename $DES).xpi -qr *
+    zip "../uBlockVanced.thunderbird.xpi" -qr ./*
     popd > /dev/null
 elif [ -n "$1" ]; then
     echo "*** uBlock0.thunderbird: Creating versioned package..."
     pushd $DES > /dev/null
-    zip ../$(basename $DES).xpi -qr *
+    zip "../uBlockVanced.thunderbird.xpi" -qr ./*
     popd > /dev/null
-    mv "$BLDIR"/uBlock0.thunderbird.xpi "$BLDIR"/uBlock0_"$1".thunderbird.xpi
+    mv "$BLDIR/uBlockVanced.thunderbird.xpi" "$BLDIR/uBlockVanced-$1.thunderbird.xpi"
 fi
 
 echo "*** uBlock0.thunderbird: Package done."

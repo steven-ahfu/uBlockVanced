@@ -1234,3 +1234,32 @@ body > .permatoolbar {
 .column-resize-handle:hover {
     background: rgb(var(--primary-70) / 35%);
     }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (logger)
+ */
+body { background: var(--surface-0); }
+body > .permatoolbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--surface-0);
+    border-bottom: 1px solid var(--border-1);
+    box-shadow: var(--el-1);
+}
+.permatoolbar button.iconified { border-radius: 14px; }
+.permatoolbar a.wikilink { background: transparent; border-color: transparent; border-radius: 14px; }
+.permatoolbar a.wikilink:hover { background: var(--surface-2); }
+.permatoolbar button.iconified:focus-visible,
+.permatoolbar a.wikilink:focus-visible,
+#netInspector #filterExprButton:focus-visible,
+#netInspector #filterExprPicker span[data-filtex]:focus-visible,
+#loggerExportDialog .options span[data-i18n]:focus-visible,
+#loggerExportDialog .options span.pushbutton:focus-visible,
+#pageSelector:focus-visible,
+#infoInspector .permatoolbar input[type="search"]:focus-visible,
+.closeButton:focus-visible { box-shadow: var(--focus-ring); }
+#modalOverlay { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(20 18 28 / 0.6); }
+#modalOverlay > div > div { border-radius: var(--radius-large); box-shadow: var(--el-card); }
+.inspector .permatoolbar { background: var(--surface-0); }
+/* uBlockVanced: rows that open the details dialog read as clickable */
+#netInspector .logEntry.canDetails > div > span:not(:has(a)) { cursor: pointer; }

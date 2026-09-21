@@ -2,44 +2,52 @@
 
 Actionable work only. Historical and completed roadmap material is archived in CHANGELOG.md; blocked work is kept in Roadmap_Blocked.md.
 
+Last reconciled against the code on 2026-09-20. Most of the previous list had
+shipped without being ticked off; each item below was re-checked against the
+files named in its own "Evidence" line rather than trusted.
+
 ## Actionable Items
 
-- [ ] Export user filters as a shareable JSON with per-rule notes
+- [ ] P0 — Verify the React element picker in Firefox
+  Why: 0.4.0 rewrote the picker dialog wholesale (`ui/pages/epicker/`). It is MV2, so Chrome cannot run it and there is no local harness; the packaged build is the only thing that exercises the `MessageChannel` handshake, the drag, the sliders and the sea.
+  Touches: load `dist/build/uBlock0.firefox` via `about:debugging`, right-click → Block element.
+  Acceptance: dialog appears; Pick / Preview / Create work; both sliders move the filter; Selectors and Probe tabs both populate; Escape quits; the page is not left dimmed.
+  Complexity: S (a careful pass, not code)
 
-- [ ] Per-site enable/disable of user filters
-
-- [ ] Auto-disable filters that match zero elements for 30 days (stale filter cleanup)
-
-- [ ] Import from AdGuard / ABP / uBlock-Origin-Lite cosmetic syntax with a compatibility note for procedurals that can't cross over
-
-- [ ] Theme palette object (Catppuccin Latte/Frappe/Macchiato/Mocha swappable)
-
-- [ ] CSP-compatible mode for sites that reject inline-injected filters
-
-- [ ] P2 — Element Probe panel i18n
-  Why: 72 locale directories exist with translations for all uBO UI, but Element Probe panel text is hardcoded English in HTML and JS. Only the context menu entry ("Inspect with Element Probe") uses i18n.
-  Evidence: `src/_locales/en/messages.json` — only `contextMenuElementProbe` string for Element Probe. All panel text (`src/element-probe-panel.html`, `src/js/element-probe-panel.js`) is hardcoded.
-  Touches: `src/_locales/en/messages.json` (new keys), `src/element-probe-panel.html` (mustache placeholders), `src/js/element-probe-panel.js` (status/log messages)
-  Acceptance: Element Probe panel renders correctly in at least 3 non-English locales. All user-visible strings use i18n keys.
-  Complexity: L
-
-- [ ] P2 — Modularize `element-probe-panel.js`
-  Why: 1822-line single IIFE containing all panel logic — inspection, UI rendering, event handling, history, picker, frame targeting. Adding new procedural operators or features requires modifying a monolithic file.
-  Evidence: `wc -l src/js/element-probe-panel.js` = 1822 lines.
-  Touches: `src/js/element-probe-panel.js` → split into `src/js/element-probe/inspect.js`, `src/js/element-probe/ui.js`, `src/js/element-probe/history.js`, `src/js/element-probe/picker.js`, `src/js/element-probe/frames.js`
-  Acceptance: Panel behavior is identical; each module is <400 lines; new operators can be added by editing only `inspect.js`.
-  Complexity: L
-
-- [ ] P2 — Filter list update diff view in dashboard
-  Why: When subscribed filter lists update, users can't see what changed. Debugging breakage from list updates is trial-and-error. This is distinct from the existing "Side-panel diff" nice-to-have (which is about site DOM changes).
-  Evidence: Community research — filter list management pain point. No diff UI exists in uBO or any competitor.
-  Touches: `src/js/3p-filters.js`, `src/3p-filters.html`, `src/css/3p-filters.css`
-  Acceptance: After a filter list updates, a "View changes" link shows added/removed/modified rules since the previous version.
-  Complexity: L
-
-- [ ] P2 — Resizable logger columns
-  Why: Upstream declined this request (uBlock-issues #853, 4 thumbs-up). Logger columns are fixed-width, making it hard to read long URLs or filter expressions. A differentiator the fork can implement that upstream won't.
-  Evidence: https://github.com/uBlockOrigin/uBlock-issues/issues/853 — declined by gorhill.
-  Touches: `src/js/logger-ui.js`, `src/css/logger-ui.css`
-  Acceptance: Logger columns are draggable-resizable. Column widths persist across sessions via `chrome.storage.local`.
+- [ ] P1 — AMO submission
+  Why: the fork is only distributed as GitHub release artifacts. Three things block a listing, none started.
+  Evidence: `platform/firefox/manifest.json` gecko id is `uBlockVanced@sysadmindoc.dev` (upstream's namespace, and AMO ids are permanent); the React UI is esbuild-bundled so AMO requires a source upload with build instructions; `package.json` author/repo/bugs still point at `SysAdminDoc`.
+  Risk: the name may be refused under AMO's "no names implying affiliation" policy.
   Complexity: M
+
+- [ ] P2 — Import from AdGuard / ABP cosmetic syntax
+  Why: the operator compatibility table exists but nothing consumes it for import.
+  Evidence: `src/js/filter-export.js` maps `:contains-own()`, `:-abp-properties()`, `:matches-property-regex()` and friends to notes; `normalizeFilterImportText()` does not translate them.
+  Acceptance: pasting an AdGuard or ABP cosmetic filter into My filters either converts it or is rejected with the note explaining why it cannot cross over.
+  Complexity: M
+
+- [ ] P3 — Retire the non-React picker fallback
+  Why: `src/js/epicker-ui.js`, `src/web_accessible_resources/epicker-ui.html` and `src/css/epicker-ui.css` are now dead in every packaged build; they only run when `src/` is loaded unpacked. Two implementations of one dialog will drift.
+  Blocked on: P0 above. Do not delete the fallback until the React picker is confirmed working.
+  Complexity: S
+
+- [ ] P3 — Theme tokens that still need a class
+  Why: seven custom properties are declared only under a `.dark` selector, so a document that paints before `js/theme.js` runs has no value for them.
+  Evidence: `--scrollbar-track` and the six `--popup-cell-*-surface-rgb` colours in `src/css/themes/default.css`. All are cosmetic and confined to extension pages, which is why they were left when 0.3.8 moved the palette to bare `:root`.
+  Acceptance: `tests/theme-palette.test.js` can assert zero class-only tokens.
+  Complexity: S
+
+## Shipped since this list was last accurate
+
+Ticked off after checking the code, not the changelog:
+
+- React + Material 3 Expressive port — all 16 pages including the element picker (0.4.0)
+- Export user filters as shareable JSON with per-rule notes — `src/js/filter-export.js`, `tests/filter-export.test.js`
+- Per-site enable/disable of user filters — `src/js/user-filters.js`, `tests/user-filters.test.js`
+- Stale filter cleanup, 30 zero-match days — `src/js/user-filter-stats.js`, `tests/user-filter-stats.test.js`
+- Theme palette object, Catppuccin Latte/Frappé/Macchiato/Mocha swappable — `catppuccinPalette` hidden setting, `src/css/themes/default.css`
+- CSP-compatible mode — `cspCompatibleMode` hidden setting, `src/js/cosmetic-filtering.js`
+- Element Probe panel i18n — 82 `ep*` keys in `src/_locales/en/messages.json`
+- Modularize `element-probe-panel.js` — 1822 lines down to 76; logic lives in `src/js/element-probe/`
+- Filter list update diff view — `ui/pages/3p-filters/components/FilterDiffPanel.tsx`, `tests/filter-list-diff.test.js`
+- Resizable logger columns — `ui/pages/logger-ui/`

@@ -38,10 +38,10 @@ body {
 }
 
 #advancedSettings {
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     margin: 0 auto 12px;
     min-height: 12em;
     overflow: hidden;
@@ -52,10 +52,8 @@ body {
 }
 
 #advancedSettings[data-dirty="true"] {
-    border-color: rgb(var(--yellow-40) / 0.26);
-    box-shadow:
-        0 0 0 1px rgb(var(--yellow-40) / 0.18),
-        var(--panel-shadow);
+    border-color: var(--warning-border);
+    box-shadow: var(--el-2);
 }
 
 .CodeMirror-wrap pre {
@@ -64,12 +62,10 @@ body {
 
 .actionBar.advancedActions {
     align-items: center;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    background: var(--surface-raised-strong);
+    background: var(--surface-0);
     border: 1px solid var(--border-1);
     border-radius: var(--radius-large);
-    box-shadow: var(--panel-shadow);
+    box-shadow: var(--el-2);
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem 0.6rem;

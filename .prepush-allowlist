@@ -1,0 +1,16 @@
+# Repo allowlist for the pre-push scanner (~/.agents/scripts/prepush-scan.py).
+# Format: <path-glob> [category].  Category-scoped only: every other rule
+# (sensitive filenames, known token formats, private keys) still applies to
+# these paths.  See ~/.agents/prepush-guard/README.md.
+
+# uBlock Origin's identifiers are long camelCase names, and any quoted string
+# over 24 chars drawn from [A-Za-z0-9_-] with two character classes clears the
+# 4.2-bit entropy threshold.  Two inherited upstream identifiers trip it:
+#   src/_locales/en/messages.json  popupBlockedOnThisPage_v2          (4.29)
+#   src/js/contextmenu.js          uBlock0-temporarilyAllowLargeMediaElements (4.36)
+# Both are public identifiers shipped in the extension, not credentials.
+# The real secrets in this repo are the CRX signing key (uBlockVanced.pem)
+# and .env, which are gitignored and unaffected by these two lines.
+# Approved 2026-09-18.
+src/_locales/en/messages.json high-entropy
+src/js/contextmenu.js high-entropy

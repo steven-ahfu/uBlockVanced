@@ -1575,3 +1575,125 @@ body.compact #moreOrLess > span {
         outline-offset: 1px;
     }
 }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (popup)
+ * Solid surfaces, one soft elevation, compact tonal power control, no idle motion.
+ */
+:root.dark body:not(.off) #switch { filter: none; }
+#panes { backdrop-filter: none; -webkit-backdrop-filter: none; background: transparent; border: 0; box-shadow: none; padding: 0; }
+#main {
+    background: var(--surface-0);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-xlarge);
+    box-shadow: var(--el-card);
+    margin: 8px;
+    padding: 6px;
+}
+#sticky { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--surface-0); border-bottom: 0; padding: 8px 8px 4px; }
+body.off #sticky { background: var(--surface-0); border-bottom: 0; }
+body.off #main, body.off #firewall { border-color: var(--border-1); }
+#hostname { background: transparent; border: 0; flex-direction: column; gap: 1px; justify-content: center; padding: 6px 0 10px; text-align: center; }
+#hostname > span:first-child { font-size: 11.5px; letter-spacing: 0.06em; order: 2; text-transform: uppercase; }
+#hostname > span + span { font-size: 15px; }
+#stickyTools { gap: 8px; grid-template-columns: auto minmax(0, 1fr) auto; }
+.rulesetTools { flex-direction: row; gap: 6px; }
+.rulesetTools [id] {
+    background: var(--surface-2);
+    border: 0;
+    border-radius: 14px;
+    font-size: 1.3rem;
+    height: 40px;
+    min-height: 40px;
+    width: 40px;
+}
+.rulesetTools [id] > svg { fill: var(--ink-2); }
+:root.desktop .rulesetTools [id]:hover { background: var(--surface-3); }
+:root.desktop .rulesetTools [id]:hover > svg { fill: var(--ink-1); }
+#stickyTools .sectionToggle { font-size: 1.1rem; min-height: 40px; }
+body.needSave #saveRules, body.needSave #revertRules, body.needReload #refresh { background: var(--primary-container); border: 0; box-shadow: var(--el-1); }
+body.needSave #saveRules > svg, body.needSave #revertRules > svg, body.needReload #refresh > svg { fill: var(--on-primary-container); }
+
+/* Power control: compact tonal card instead of the 96px glyph */
+#switch {
+    background: var(--primary-container);
+    border: 1px solid var(--primary-outline);
+    border-radius: 22px;
+    box-shadow: var(--el-2);
+    color: rgb(var(--primary-70));
+    fill: rgb(var(--primary-70));
+    font-size: 30px;
+    margin: 0;
+    min-height: 56px;
+    transition:
+        background-color var(--transition-normal),
+        border-color var(--transition-fast),
+        border-radius var(--transition-normal),
+        fill var(--transition-fast),
+        stroke var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+#switch:hover, #switch:focus-visible { transform: none; }
+:root.desktop body:not(.off) #switch:hover { background: rgb(var(--primary-30)); }
+body.off #switch {
+    background: var(--surface-2);
+    border-color: var(--border-1);
+    border-radius: 26px;
+    box-shadow: var(--el-1);
+    fill: var(--surface-2);
+    stroke: var(--ink-3);
+}
+:root.desktop body.off #switch:hover { background: var(--surface-3); stroke: var(--ink-1); }
+body.compact #switch { font-size: 28px; min-height: 52px; }
+
+#extraTools, #basicTools { gap: 8px; padding: 12px 8px 4px; }
+#basicTools { padding-top: 8px; }
+.toolRibbon .tool {
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
+    border-radius: 22px;
+    box-shadow: var(--el-1);
+    color: var(--ink-1);
+    min-height: 72px;
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-radius var(--transition-normal);
+}
+#extraTools .tool { border-radius: 28px; color: var(--ink-3); fill: var(--ink-3); }
+#basicTools .tool .fa-icon, #basicTools .tool > svg { color: rgb(var(--primary-70)); fill: rgb(var(--primary-70)); }
+.toolRibbon .tool:hover, .toolRibbon .tool:focus-visible {
+    background: var(--surface-3);
+    border-color: var(--border-1);
+    box-shadow: var(--el-2);
+    color: var(--ink-1);
+    transform: translateY(-1px);
+}
+#extraTools .tool:hover { border-radius: 28px; }
+#basicTools .tool:hover { border-radius: 22px; }
+.toolRibbon .tool .caption { color: inherit; font: 500 10.5px/1.2 var(--font-family); margin-top: 6px; }
+#extraTools > span.on {
+    background: var(--primary-container);
+    border-color: var(--primary-outline);
+    border-radius: 18px;
+    box-shadow: var(--el-1);
+    color: var(--on-primary-container);
+    fill: var(--on-primary-container);
+}
+#extraTools > span.on .fa-icon { color: var(--on-primary-container); fill: var(--on-primary-container); }
+#extraTools > span.on:hover { border-radius: 18px; }
+#extraTools > span.on .fa-icon-badge { background: rgb(var(--primary-70)); color: var(--surface-1); }
+#unprocessedRequestWarning { border-radius: var(--radius-medium); margin: 8px 8px 0; }
+.itemRibbon { color: var(--ink-4); column-gap: 6px; font-size: 11px; grid-template: auto / auto auto; justify-content: center; letter-spacing: 0.08em; margin: 10px 0 6px; }
+.itemRibbon > span + span { text-align: start; }
+#firewall { background: var(--surface-0); border-radius: var(--radius-xlarge); box-shadow: var(--el-card); margin: 8px 0 8px 8px; }
+#firewall > section .fa-icon { background: var(--surface-2); border: 0; }
+#firewall > section .filterExpressions { background: var(--surface-0); border-radius: var(--radius-medium); box-shadow: var(--el-3); }
+#firewall > section .filterExpressions span.on { background: var(--primary-container); border-color: var(--primary-outline); color: var(--on-primary-container); }
+#firewall > div > span, #actionSelector > #dynaCounts { background-color: var(--surface-1); }
+#firewall > div[data-des="*"] > span:first-of-type, #firewall > div.isRootContext > span:first-of-type, #firewall > div.expandException > span:first-of-type { background: var(--surface-2); border-color: transparent; }
+#firewall > div:hover > span { background-color: var(--surface-2); }
+body.advancedUser #firewall > div > span.ownRule, #firewall > div > span.ownRule { box-shadow: none; }

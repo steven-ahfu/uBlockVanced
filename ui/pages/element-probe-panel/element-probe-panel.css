@@ -1,0 +1,260 @@
+/*
+ * uBlockVanced - Element Probe (React + Material 3 Expressive).
+ * Layout only: every control is a library component, so this file sizes the
+ * panel's own boxes with the --ubv-* tokens and paints nothing by hand.
+ */
+
+.ep-page {
+    max-width: 960px;
+}
+.ep-selection {
+    margin: -4px 4px 0;
+}
+
+/* Sections: the shared card, with the panel heading on top. */
+.ep-section {
+    gap: var(--ubv-gap);
+}
+.ep-heading {
+    align-items: center;
+    justify-content: flex-start;
+}
+.ep-heading-icon {
+    --md-icon-size: var(--ubv-icon);
+    color: var(--md-sys-color-primary);
+    display: inline-flex;
+    flex: 0 0 auto;
+    position: relative;
+}
+.ep-heading-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.ep-heading-copy .ubv-muted {
+    margin-top: 2px;
+}
+.ep-heading-meta {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    gap: var(--ubv-gap);
+}
+
+/* Workflow overview: three cards under the title. */
+.ep-overview {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.ep-overview-card {
+    gap: 2px;
+}
+.ep-overview-head {
+    --md-icon-size: 18px;
+    align-items: center;
+    color: var(--md-sys-color-primary);
+    display: flex;
+    gap: 6px;
+}
+.ep-overview-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.ep-overview-value {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.ep-overview-hint {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 11.5px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+/* Inspection controls. */
+.ep-frame-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ubv-gap);
+}
+.ep-frame-select {
+    flex: 1 1 260px;
+    min-width: 200px;
+}
+/* Same select geometry as the Settings page, with room for the label. */
+.ubv-select {
+    --md-outlined-select-text-field-container-shape: var(--ubv-radius-control);
+    --md-outlined-select-text-field-leading-space: 14px;
+    --md-outlined-select-text-field-trailing-space: 8px;
+    min-width: 160px;
+}
+.ep-toggle-list {
+    flex: 1 1 240px;
+    min-width: 220px;
+}
+.ep-toggle-row {
+    --md-list-item-one-line-container-height: var(--ubv-button);
+}
+
+/* Element details: the upstream label/value grid. */
+.ep-element-info {
+    display: grid;
+    gap: 2px var(--ubv-gap);
+    grid-template-columns: minmax(84px, max-content) 1fr;
+}
+.ep-element-row {
+    display: contents;
+}
+.ep-element-label {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 5px 0;
+    text-transform: uppercase;
+}
+.ep-element-value {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    padding: 5px 0;
+}
+.ep-value-tag { color: var(--md-sys-color-primary); }
+.ep-value-id { color: var(--md-sys-color-tertiary); }
+
+/* Selector and procedural rows. */
+.ep-selector-list,
+.ep-history-list,
+.ep-log-list {
+    display: grid;
+    gap: 4px;
+}
+.ep-selector-item {
+    --md-list-item-two-line-container-height: 56px;
+}
+.ep-selector-item.selected {
+    background: var(--md-sys-color-primary-container);
+    outline: 1px solid var(--ubv-selected-outline);
+}
+.ep-row-badge {
+    display: inline-flex;
+    margin-inline-end: 4px;
+}
+.ep-code {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    overflow-wrap: anywhere;
+}
+.ep-match-count {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* Filter output. */
+.ep-output {
+    --md-outlined-text-field-input-text-font: var(--font-mono, ui-monospace, monospace);
+    --md-outlined-text-field-input-text-size: 12px;
+}
+.ep-hint {
+    display: grid;
+    gap: 6px;
+}
+.ep-fields {
+    display: grid;
+    gap: var(--ubv-gap);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.ep-filter-actions {
+    padding-top: 2px;
+}
+
+/* Destructive controls keep the Material error role. */
+.ep-danger {
+    --md-outlined-button-label-text-color: var(--md-sys-color-error);
+    --md-outlined-button-icon-color: var(--md-sys-color-error);
+    --md-outlined-icon-button-icon-color: var(--md-sys-color-error);
+}
+
+/* Syntax reference. */
+.ep-help-head {
+    color: var(--md-sys-color-on-surface-variant);
+    display: grid;
+    font-size: 10.5px;
+    font-weight: 700;
+    gap: var(--ubv-gap);
+    grid-template-columns: minmax(120px, max-content) 1fr 1fr;
+    letter-spacing: 0.1em;
+    padding: 0 14px;
+    text-transform: uppercase;
+}
+.ep-help-list {
+    display: grid;
+    gap: 4px;
+}
+.ep-help-operator {
+    color: var(--md-sys-color-primary);
+    font-weight: 600;
+    min-width: 108px;
+}
+
+/* History. */
+.ep-history-item.undone {
+    opacity: 0.55;
+}
+.ep-row-actions {
+    align-items: center;
+    display: inline-flex;
+    gap: 4px;
+}
+
+/* Activity log. */
+.ep-log {
+    max-height: 260px;
+    overflow-y: auto;
+}
+.ep-log-entry {
+    --md-list-item-one-line-container-height: 30px;
+    --md-list-item-label-text-size: 11.5px;
+    background: transparent;
+}
+.ep-log-entry.info { --md-list-item-label-text-color: var(--md-sys-color-on-surface-variant); }
+.ep-log-entry.success { --md-list-item-label-text-color: var(--md-sys-color-primary); }
+.ep-log-entry.error { --md-list-item-label-text-color: var(--md-sys-color-error); }
+
+/* Empty states. */
+.ep-empty {
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+.ep-empty-icon {
+    --md-icon-size: 32px;
+    color: var(--md-sys-color-primary);
+}
+.ep-empty-main {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    max-width: 52ch;
+}
+.ep-empty .ubv-muted {
+    max-width: 52ch;
+}
+.ep-empty-note {
+    max-width: 42ch;
+    padding: 16px 0;
+    text-align: center;
+    margin-inline: auto;
+}
+
+@media (max-width: 560px) {
+    .ep-heading { flex-wrap: wrap; }
+    .ep-element-info { grid-template-columns: 1fr; }
+    .ep-element-label { padding-bottom: 0; }
+    .ep-help-head { display: none; }
+}

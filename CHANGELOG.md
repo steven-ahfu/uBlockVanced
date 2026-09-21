@@ -1,3 +1,124 @@
+# uBlockVanced 0.4.5
+
+- Picking an element left the editor looking empty. CodeMirror is built while the dialog is still `display: none`, so it measured at zero size and never laid the filter out. It re-measures when the dialog appears.
+- The picked candidate shows immediately instead of only once the page answers.
+
+# uBlockVanced 0.4.4
+
+- Clicking a candidate did not fill the editor. The page answers with finished selector strings; the port treated them as the path arrays it had sent and called `.join()` on a string, so the handler threw.
+- New chips under the editor append `:upward(n)`, `:has-text()`, `:nth-of-type()`, `:min-text-length()` or `:matches-path()` to the filter, offering only what applies.
+
+# uBlockVanced 0.4.3
+
+- The element picker covered every page in purple. The shared page frame paints `:root.ubv-m3 body`, which outranked the picker's `html, body { background: transparent }` -- and that iframe is pinned over the whole site.
+- `tests/epicker-transparent.test.js` resolves the real cascade across both stylesheets and fails if anything ever makes that document opaque again.
+
+# uBlockVanced 0.4.2
+
+- The React picker lost tap-to-pick and swipe in 0.4.0. Restored: tap picks, swipe left recalls the dialog, swipe right dismisses or quits.
+- Touch targets meet Material's 48 px minimum on a coarse pointer; matrix cells go 28 to 36 px.
+- On phone viewports the picker spans the width and the candidate list gets the room back.
+
+# uBlockVanced 0.4.1
+
+- `auto` theme followed the OS, so a light desktop gave a dark panel around a white editor. `auto` now means dark.
+- Light mode takes the Latte palette, so it is light throughout.
+- Candidate rows and the picker's scroll box are themed.
+- ROADMAP.md reconciled: ten shipped items were still unticked.
+
+# uBlockVanced 0.4.0
+
+- The element picker is a React + Material 3 Expressive page, the last one that was not.
+- Buttons, tabs, both candidate lists and the sliders are Material components. 160 of 300 CSS declarations went with them.
+- Picker arithmetic moved to `src/js/epicker-model.js`; the specificity ladder now has 17 tests.
+- The message protocol is unchanged.
+
+# uBlockVanced 0.3.12
+
+- Updating filter lists shows the Material 3 Expressive loading indicator. An update has no known length, so a bar implying it measures something was the wrong shape. The linear bar stays for applying changes.
+
+# uBlockVanced 0.3.11
+
+- The picker dialog rendered light: `theme.js` applied the theme only from a promise callback that never settles in that iframe. The default now applies synchronously.
+- Element Probe's Pick mode could not pick. Its viewport-covering overlay was the topmost hit, so `elementFromPoint` returned the overlay itself.
+
+# uBlockVanced 0.3.10
+
+- The picker offered per-instance ids as candidates: a Hacker News comment gave `###\34 9758736`, valid but dead the moment it scrolls away. Ids that name an instance -- all digits, long digit runs, uuids, hex digests -- are skipped. `hnmain` and `footer2` are untouched.
+
+# uBlockVanced 0.3.9
+
+- The element picker gains a Probe tab beside the selector list: `:has-text()`, `:upward()`, `:matches-path()` and friends, ranked.
+- Where the classic list can only offer a CSS-module hash, Probe offers `##span:has-text(Subscribe):upward(2)` -- anchored on the text, walked up to the wrapper.
+- Generated class names are excluded from every suggestion, not just ranked lower.
+
+# uBlockVanced 0.3.8
+
+- Opening the element picker covered the page in an opaque sheet. `--ctp-*` was defined only under `:root.dark`, so the picker's SVG `fill` was invalid at computed-value time and fell back to its initial value: opaque black.
+- The palette is now on bare `:root`, and the picker's paints carry literal fallbacks.
+
+# uBlockVanced 0.3.7
+
+- Element Probe's pick mode froze the page: it armed its listeners with the `setTimeout` it had just frozen, so nothing was bound and the page's timers stayed hijacked.
+- Highlighting a selector that resolved to `html` or `body` painted the whole screen purple.
+- Dropped the dead "Inspect with Element Probe" context-menu entry.
+
+# uBlockVanced 0.3.6
+
+- The popup header is one row: the site name moved into the power button it acts on. Height halved.
+- The five switches and three tools are one centred band of 48 px icon buttons. Names moved to the tooltips, which now lead with them.
+
+# uBlockVanced 0.3.5
+
+- **One shared file picker.** Importing filters, rules, trusted sites or a settings backup went through a hand-rolled hidden `<input type="file">` repeated on four pages, each with its own ref and change handler. There is now a single `FilePicker` component: the visible control is an ordinary Material button, and the native input it drives is hidden inside the component, next to its own button. Only a native input can open the OS file dialog, so it remains the engine, but it is no longer part of any page's markup. The import buttons look and behave exactly as before, including picking the same file twice in a row.
+
+# uBlockVanced 0.3.4
+
+Every dashboard page is now React + Material 3 Expressive, and the popup is rebuilt against the original design.
+
+- **Popup layout back to the design**: `[more · save · revert] [power] [reload · less]` header row, five per-site switch tiles, three tool tiles, main and firewall as two cards. The reload button is a 40 px square whose hover layer matches its box; the upstream `[id]` rules that stretched it no longer reach the Material controls.
+- **Shared size scale** in `ui/shared/tokens.css` (`--ubv-control` 40, `--ubv-button` 48, `--ubv-power` 56, `--ubv-tile` 72, `--ubv-icon` 20) and `ui/shared/metrics.ts`, so every Material host is exactly its hover box. One shared `IconButton` wrapper replaces per-page sizes.
+- **M3E tiles and power control**: ToggleButton / FilledTonalButton with primary-container fill and a tighter radius when selected; off state is neutral, not red.
+- **Hover motion everywhere**: one global 500 ms ease-in-out (`--ubv-hover-transition`) for mouse-in and mouse-out on tiles, icon buttons, page buttons, settings rows and menu items.
+- **Firewall row filter**: an M3E multi-select menu (blocked / allowed, 3rd-party scripts / frames, each group invertible) that reads back as one sentence, e.g. "Showing only rows with blocked requests; hiding rows with 3rd-party scripts".
+- **React ports**: dashboard, settings, 3p-filters, 1p-filters, dyna-rules, whitelist, advanced-settings, about, support, asset-viewer, document-blocked, no-dashboard, plus the shared cloud widget and tooltips.
+- **Element Probe hint** no longer implies an element was inspected: it says the right-clicked element is remembered and how to open the panel.
+- **Editors no longer resize while scrolling**: the CodeMirror host on My filters, Trusted sites, Advanced settings, My rules and the asset viewer was a flex row, so the editor's width followed the widest rendered line. Hosts are block and the editor is pinned to full width.
+- **Material components everywhere**: every rendered control is now a `material-expressive-react` component. Page cards are `md-outlined-card`, status pills are chip sets of assist chips, settings rows are `md-list-item` with the switch in the row's end slot, toolbars are Material toolbars, separators are `md-divider`, counts are `md-badge`. Shared wrappers live in `ui/shared/`: `Card`, `Pill`, `IconButton`, `List`/`ListItem`, `Tile`.
+- **Logger is a React page**: toolbars, page selector, row-filter chips, the virtualised log table with resizable columns, and the entry, settings and export dialogs are Material components. The DOM inspector still runs the upstream module behind a Material shell.
+- **Element Probe panel is a React page**: inspection toolbar, frame selector, selector and procedural lists, filter output, syntax reference and activity log are Material components; the page-context scripts are evaluated unchanged. Filter history is now reachable, having been dead UI upstream.
+- **Firewall matrix rebuilt**: each cell is a tonal toggle button, the hover allow/noop/block hotspots are a segmented button set, and row expanders are icon buttons. Cells are keyboard reachable and carry accessible names.
+- **Popup filter menu**: the row filter is a multi-select menu that reads back as one plain sentence, e.g. "Showing only rows with blocked requests".
+- **Accent colour** is picked from a chip set of preset swatches, with a custom option, instead of a bare colour input.
+
+# uBlockVanced 0.3.3
+
+Rosé Pine / Material 3 Expressive restyle of every extension page. Pure CSS and asset change; no behaviour, DOM, i18n, or filtering logic changed.
+
+- **Rosé Pine dark palette** mapped onto the existing `--ctp-*` slots: `#191724` base, `#1F1D2E` cards, iris `#C4A7E7` as the single accent. Set the `catppuccinPalette` hidden setting to `catppuccin-mocha` to get the previous default back.
+- **Geist type** replaces Inter/Metropolis across popup, dashboard, logger, picker, Element Probe, and the blocked-document page.
+- **Material 3 Expressive surfaces**: solid flat cards with soft ambient elevation; every glass blur, decorative gradient, glow, and inset highlight removed. Border radius changes only on selection or toggle, never on hover. No idle animation on the power control.
+- **uOV shield mark**: new toolbar icons, off and loading variants, and the dashboard logo, rasterised from one SVG.
+- **Element Probe context menu**: "Inspect with Element Probe" now keeps the right-clicked element marked and shows an in-page hint; the panel's Inspect selection uses that element when nothing is selected in the Elements panel. Previously the entry did nothing visible.
+- **Element picker dialog**: smaller by default (27rem wide, shorter editor and candidate list) and resizable from its bottom-right corner; the candidate list grows to fill a taller dialog.
+- **My filters editor**: in short windows the toolbar, options, and per-site card left the editor a few dozen pixels tall, and focus changes scrolled the clipped page invisibly. The editor now keeps at least 16rem / 40vh and the page scrolls normally when there is not enough room.
+- **Pointer cursor**: buttons, selects, checkbox and radio rows, sliders, file and colour inputs, tabs, and the logger and CodeMirror search controls now show a pointer cursor across the dashboard; disabled controls show not-allowed.
+- **React + Material 3 Expressive popup**: the popup is now a React 19 app built on `material-expressive-react` (Google's `@material/web` components): toggle tiles for the per-site switches, tonal tiles for the tools, filter chips for the firewall row filters, and an M3E toggle for the power control. It lives in `ui/` and is overlaid onto the package at build time, so upstream files stay untouched for rebases. Remaining pages follow.
+- **JetBrains Mono** in every code editor.
+
+----------
+
+# uBlockVanced 0.3.2
+
+Release tooling and packaging update; no runtime changes to the extension.
+
+- **Every browser packaged**: `make packages` now emits chromium.zip, a signed chromium.crx, firefox.xpi, opera.zip, and thunderbird.xpi from a single `dist/version`, named `uBlockVanced-<version>.<browser>.<ext>`.
+- **Automatic releases**: pushing a new `dist/version` to `main` builds all packages, tags the commit, and publishes the GitHub release. Tags are no longer pushed by hand.
+- **Stable extension ID**: the CRX signing key is documented and stored outside git (`uBlockVanced.pem`, `.env`, and the `CRX_PRIVATE_KEY` repo secret) so the Chromium extension ID stays `ongbahmlaoecaggpjgeojpgahgeojnmo` across releases.
+- **AGENTS.md**: added a codebase overview and contribution rules for AI coding agents.
+
+----------
+
 # uBlockVanced 0.3.1
 
 Roadmap drain release: filter-list change visibility, resilient logger resizing, and the completed Element Probe and filtering improvements below.

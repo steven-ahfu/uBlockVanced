@@ -20,19 +20,17 @@
 */
 
 function getActualTheme(nominalTheme) {
-    // uBlockVanced: dark theme is always the default
-    let theme = nominalTheme || 'dark';
-    if ( nominalTheme === 'auto' ) {
-        if ( typeof self.matchMedia === 'function' ) {
-            const mql = self.matchMedia('(prefers-color-scheme: light)');
-            theme = mql instanceof Object && mql.matches === true
-                ? 'light'
-                : 'dark';
-        } else {
-            theme = 'dark';
-        }
-    }
-    return theme;
+    // uBlockVanced: this fork is dark by default, and `auto` is the stored
+    // default, so `auto` means dark here rather than "follow the OS". Only an
+    // explicit `light` gives a light UI.
+    //
+    // Following the OS used to produce a half-themed UI on a light desktop:
+    // :root.light flips --surface-* and --field-surface white, but it never
+    // redefines the --ctp-* palette, so everything driven by Material tokens
+    // stayed dark. The element picker showed it most plainly -- a dark panel
+    // around a white editor.
+    if ( nominalTheme === 'light' ) { return 'light'; }
+    return 'dark';
 }
 
 function setTheme(theme, propagate = false) {
@@ -54,7 +52,7 @@ function setTheme(theme, propagate = false) {
     }
 }
 
-const CTP_PALETTES = ['catppuccin-latte', 'catppuccin-frappe', 'catppuccin-macchiato'];
+const CTP_PALETTES = ['catppuccin-mocha', 'catppuccin-latte', 'catppuccin-frappe', 'catppuccin-macchiato']; // uBlockVanced: mocha opts back out of the Rosé Pine default
 
 function setCatppuccinPalette(palette, propagate = false) {
     let w = self;
@@ -131,6 +129,15 @@ function setAccentColor(
 }
 
 {
+    // uBlockVanced: apply the default theme synchronously, before asking the
+    // background anything. Every line below runs in a promise callback, so a
+    // document used to render with no palette at all until the round-trip
+    // came back -- and in the element picker's iframe it never came back,
+    // leaving that dialog permanently light on a dark-by-default fork. The
+    // response still refines this; it just no longer decides whether the
+    // document is styled in the first place.
+    setTheme();
+
     // https://github.com/uBlockOrigin/uBlock-issues/issues/1044
     //   Offer the possibility to bypass uBO's default styling
     vAPI.messaging.send('dom', { what: 'uiStyles' }).then(response => {

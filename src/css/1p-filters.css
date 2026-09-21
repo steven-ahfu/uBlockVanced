@@ -10,7 +10,11 @@ body {
     flex-direction: column;
     height: 100%;
     justify-content: stretch;
-    overflow: hidden;
+    /* uBlockVanced: the workbench above the editor is tall enough that short
+       windows would squeeze the editor to a sliver and hidden overflow would
+       let focus changes scroll the layout invisibly. Allow a real vertical
+       page scroll instead and guarantee the editor a usable height below. */
+    overflow: hidden auto;
     width: 100%;
 }
 
@@ -43,7 +47,7 @@ body {
     border-radius: var(--radius-large);
     box-shadow: var(--panel-shadow);
     margin: 0 auto 12px;
-    min-height: 8em;
+    min-height: max(16rem, 40vh);
     overflow: hidden;
     text-align: left;
     word-wrap: normal;
@@ -253,3 +257,11 @@ body {
     background: rgb(var(--red-40) / 18%);
     border-left: 3px solid rgb(var(--red-40));
 }
+
+/*
+ * uBlockVanced: Material 3 Expressive overlay (my filters)
+ */
+.editorToolbar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--surface-0); box-shadow: var(--el-2); padding: 10px 12px; }
+.editorToolbar button { border-radius: var(--radius-small); min-height: 40px; }
+.editorOptions > .li { background: var(--surface-2); border-color: var(--border-1); border-radius: var(--radius-medium); box-shadow: var(--el-1); }
+.editorOptions > .li:has(input:checked) { background: var(--primary-container); border-color: var(--primary-outline); border-radius: 18px; color: var(--on-primary-container); }
