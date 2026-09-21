@@ -1,3 +1,8 @@
+# uBlockVanced 0.4.5
+
+- Picking an element left the editor looking empty. CodeMirror is created while the dialog is still `display: none`, so it measured at zero size and never laid the filter out; it now re-measures when the dialog appears.
+- The picked candidate also shows immediately rather than only when the page answers, so the box is never empty while a filter exists.
+
 # uBlockVanced 0.4.4
 
 - Clicking a candidate did not fill the editor. The page answers with finished selector strings; the port treated them as the path arrays it had sent and called `.join()` on a string, so the handler threw.

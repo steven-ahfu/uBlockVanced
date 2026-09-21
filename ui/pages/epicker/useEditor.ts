@@ -8,6 +8,9 @@ import { useEffect, useRef } from 'react';
 export interface EditorHandle {
     getText(): string;
     setText(text: string): void;
+    /** Re-measure. CodeMirror sizes itself on creation, and this one is
+     *  created while the dialog is still hidden. */
+    refresh(): void;
 }
 
 export function useEditor(
@@ -40,7 +43,13 @@ export function useEditor(
                 cm.setValue(text);
                 cm.clearHistory();
                 muted = false;
+                // A value written while the host is display:none lands in the
+                // document but is never laid out, so the box looks empty even
+                // though getValue() returns the filter. Ask for a measure on
+                // the next frame, once the dialog has been shown.
+                self.requestAnimationFrame(( ) => cm.refresh());
             },
+            refresh: ( ) => { cm.refresh(); },
         };
         callbacks.current.register(handle);
 

@@ -70,7 +70,7 @@ export interface PickerActions {
     onSwipe(direction: 'left' | 'right'): void;
     onEditorChanged(text: string): void;
     refine(suffix: string): void;
-    registerEditor(handle: { setText(text: string): void; getText(): string }): void;
+    registerEditor(handle: { setText(text: string): void; getText(): string; refresh(): void }): void;
 }
 
 interface Port {
@@ -114,7 +114,7 @@ export function usePicker(): [ PickerState, PickerActions ] {
 
     // Everything the message handlers need but must not re-subscribe on.
     const port = useRef<Port | null>(null);
-    const editor = useRef<{ setText(text: string): void; getText(): string } | null>(null);
+    const editor = useRef<{ setText(text: string): void; getText(): string; refresh(): void } | null>(null);
     const parser = useRef<AstFilterParser | null>(null);
     const docURL = useRef(new URL(self.location.href));
     const resultsetOpt = useRef<string | undefined>(undefined);
@@ -189,6 +189,15 @@ export function usePicker(): [ PickerState, PickerActions ] {
             setEditorText(computedCandidate.current);
             patch({ showModifiers: true });
             return;
+        }
+        // Show the candidate as picked, straight away. The page is about to
+        // answer with a shorter equivalent, but that is a round-trip: without
+        // this the editor sits on the previous filter, or empty, until the
+        // reply lands -- and shows nothing at all if the reply never comes.
+        const raw = cosmetic.current.filters[slot];
+        if ( typeof raw === 'string' ) {
+            computedCandidate.current = raw;
+            setEditorText(raw);
         }
         const candidates = candidatePathsForSlot(
             cosmetic.current.filters, slot, cosmetic.current.needBody
@@ -486,6 +495,15 @@ export function usePicker(): [ PickerState, PickerActions ] {
             if ( timer !== 0 ) { self.cancelAnimationFrame(timer); }
         };
     }, [ post, state.paused, state.ready ]);
+
+    // The dialog is display:none until the picker pauses, and CodeMirror sizes
+    // itself when it is created -- which is while it is still hidden. Without
+    // a re-measure on the way in, the filter is in the document and invisible.
+    useEffect(() => {
+        if ( state.paused === false || state.minimized ) { return; }
+        const id = self.requestAnimationFrame(( ) => { editor.current?.refresh(); });
+        return ( ) => { self.cancelAnimationFrame(id); };
+    }, [ state.paused, state.minimized ]);
 
     // The stylesheet keys its layout on these, exactly as the upstream dialog
     // did, so they are mirrored onto the root element rather than replaced.
